@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-dns-internal
+spec:
+  template:
+    spec:
+      containers:
+        - name: external-dns
+          args:
+            - --txt-owner-id={{ .ClusterName }}
+            - --source=ingress
+            - --source=service
+            - --source=contour-httpproxy
+            - --provider=pdns
+            - --domain-filter={{ .ClusterName }}.lan
+            - --log-level=debug
+            - --interval=30s
+          env:
+            - name: EXTERNAL_DNS_PDNS_SERVER
+              value: 'https://dns-api.bealv-mgmt.lan'
+            - name: EXTERNAL_DNS_TLS_CA
+              value: '/etc/secrets/ca.crt'
+          volumeMounts:
+            - name: tls-secret
+              mountPath: '/etc/secrets'
+              readOnly: true
+      volumes:
+        - name: tls-secret
+          secret:
+            secretName: bealv-mgmt

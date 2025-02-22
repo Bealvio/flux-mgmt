@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: capmox-system
+---
+apiVersion: operator.cluster.x-k8s.io/v1alpha2
+kind: InfrastructureProvider
+metadata:
+  name: proxmox
+  namespace: capmox-system
+spec:
+  version: v0.6.2
+  configSecret:
+    name: bealv-proxmox
+    namespace: capmox-system
+  fetchConfig:
+    url: https://github.com/ionos-cloud/cluster-api-provider-proxmox/releases/download/v0.6.2/infrastructure-components.yaml

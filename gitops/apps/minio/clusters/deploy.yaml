@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-clusters
+spec:
+  selector:
+    matchLabels:
+      app: minio-clusters
+  template:
+    metadata:
+      labels:
+        app: minio-clusters
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:RELEASE.2024-09-22T00-33-43Z.fips
+          args:
+            - server
+            - /storage
+            - --console-address
+            - ':9001'
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: minio-clusters
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minio-clusters
+                  key: MINIO_ROOT_PASSWORD
+          ports:
+            - name: api
+              containerPort: 9000
+            - name: console
+              containerPort: 9001
+          volumeMounts:
+            - name: storage
+              mountPath: '/storage'
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: minio-clusters

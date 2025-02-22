@@ -1,0 +1,6 @@
+namespace: projectsveltos
+resources:
+  - namespace.yaml
+  - helmrepo.yaml
+  - helmrelease.yaml
+  - addon-controller-role-extra.yaml

@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio-clusters
+  annotations:
+    cert-manager.io/cluster-issuer: bealv-mgmt
+  labels:
+    probe: enabled
+spec:
+  rules:
+    - host: 'minio-clusters.bealv-mgmt.lan'
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio-clusters
+                port:
+                  number: 9001
+  tls:
+    - hosts:
+        - 'minio-clusters.bealv-mgmt.lan'
+      secretName: minio-clusters-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: s3-clusters
+  annotations:
+    cert-manager.io/cluster-issuer: bealv-mgmt
+  labels:
+    probe: enabled
+spec:
+  rules:
+    - host: 's3-clusters.bealv-mgmt.lan'
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio-clusters
+                port:
+                  number: 9000
+  tls:
+    - hosts:
+        - 's3-clusters.bealv-mgmt.lan'
+      secretName: s3-clusters-tls

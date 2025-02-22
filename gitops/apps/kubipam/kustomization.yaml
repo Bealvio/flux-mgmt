@@ -1,0 +1,4 @@
+namespace: kubipam-system
+resources:
+  - upstream/
+  - reserved-cidr.yaml

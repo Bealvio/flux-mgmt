@@ -1,0 +1,4 @@
+resources:
+  - ../../../../cilium/
+patches:
+  - path: helmrelease-patch.yaml

@@ -1,0 +1,547 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+    control-plane: controller-manager
+  name: powerdns-operator-system
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.16.2
+  name: rrsets.dns.cav.enablers.ob
+spec:
+  group: dns.cav.enablers.ob
+  names:
+    kind: RRset
+    listKind: RRsetList
+    plural: rrsets
+    singular: rrset
+  scope: Namespaced
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .spec.zoneRef.name
+          name: Zone
+          type: string
+        - jsonPath: .status.dnsEntryName
+          name: Name
+          type: string
+        - jsonPath: .spec.type
+          name: Type
+          type: string
+        - jsonPath: .spec.ttl
+          name: TTL
+          type: integer
+        - jsonPath: .status.syncStatus
+          name: Status
+          type: string
+        - jsonPath: .spec.records
+          name: Records
+          type: string
+      name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          description: RRset is the Schema for the rrsets API
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: RRsetSpec defines the desired state of RRset
+              properties:
+                comment:
+                  description: Comment on RRSet.
+                  type: string
+                name:
+                  description: Name of the record
+                  type: string
+                  x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
+                records:
+                  description: All records in this Resource Record Set.
+                  items:
+                    type: string
+                  type: array
+                ttl:
+                  description: DNS TTL of the records, in seconds.
+                  format: int32
+                  type: integer
+                type:
+                  description: Type of the record (e.g. "A", "PTR", "MX").
+                  type: string
+                zoneRef:
+                  description: ZoneRef reference the zone the RRSet depends on.
+                  properties:
+                    name:
+                      description: Name of the zone.
+                      type: string
+                  required:
+                    - name
+                  type: object
+              required:
+                - name
+                - records
+                - ttl
+                - type
+                - zoneRef
+              type: object
+            status:
+              description: RRsetStatus defines the observed state of RRset
+              properties:
+                dnsEntryName:
+                  type: string
+                lastUpdateTime:
+                  format: date-time
+                  type: string
+                syncErrorDescription:
+                  type: string
+                syncStatus:
+                  type: string
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.16.2
+  name: zones.dns.cav.enablers.ob
+spec:
+  group: dns.cav.enablers.ob
+  names:
+    kind: Zone
+    listKind: ZoneList
+    plural: zones
+    singular: zone
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .status.serial
+          name: Serial
+          type: integer
+        - jsonPath: .status.id
+          name: ID
+          type: string
+      name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          description: Zone is the Schema for the zones API
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: ZoneSpec defines the desired state of Zone
+              properties:
+                catalog:
+                  description: The catalog this zone is a member of
+                  type: string
+                kind:
+                  description: Kind of the zone, one of "Native", "Master", "Slave", "Producer", "Consumer".
+                  enum:
+                    - Native
+                    - Master
+                    - Slave
+                    - Producer
+                    - Consumer
+                  type: string
+                nameservers:
+                  description: List of the nameservers of the zone.
+                  items:
+                    pattern: ^([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+$
+                    type: string
+                  minItems: 1
+                  type: array
+                soa_edit_api:
+                  default: DEFAULT
+                  description: The SOA-EDIT-API metadata item, one of "DEFAULT", "INCREASE", "EPOCH", defaults to "DEFAULT"
+                  enum:
+                    - DEFAULT
+                    - INCREASE
+                    - EPOCH
+                  type: string
+              required:
+                - kind
+                - nameservers
+              type: object
+            status:
+              description: ZoneStatus defines the observed state of Zone
+              properties:
+                catalog:
+                  description: The catalog this zone is a member of.
+                  type: string
+                dnssec:
+                  description: Whether or not this zone is DNSSEC signed.
+                  type: boolean
+                edited_serial:
+                  description: The SOA serial as seen in query responses.
+                  format: int32
+                  type: integer
+                id:
+                  description: ID define the opaque zone id.
+                  type: string
+                kind:
+                  description: Kind of the zone, one of "Native", "Master", "Slave", "Producer", "Consumer".
+                  type: string
+                masters:
+                  description: List of IP addresses configured as a master for this zone ("Slave" type zones only).
+                  items:
+                    type: string
+                  type: array
+                name:
+                  description: Name of the zone (e.g. "example.com.")
+                  type: string
+                notified_serial:
+                  description: The SOA serial notifications have been sent out for
+                  format: int32
+                  type: integer
+                serial:
+                  description: The SOA serial number.
+                  format: int32
+                  type: integer
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+  name: powerdns-operator-controller-manager
+  namespace: powerdns-operator-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+  name: powerdns-operator-leader-election-role
+  namespace: powerdns-operator-system
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ''
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: powerdns-operator-manager-role
+rules:
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - rrsets
+      - zones
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - rrsets/finalizers
+      - zones/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - rrsets/status
+      - zones/status
+    verbs:
+      - get
+      - patch
+      - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+    rbac.authorization.k8s.io/aggregate-to-admin: 'true'
+    rbac.authorization.k8s.io/aggregate-to-edit: 'true'
+  name: powerdns-operator-rrset-editor-role
+rules:
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - rrsets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - rrsets/status
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+    rbac.authorization.k8s.io/aggregate-to-admin: 'true'
+    rbac.authorization.k8s.io/aggregate-to-edit: 'true'
+    rbac.authorization.k8s.io/aggregate-to-view: 'true'
+  name: powerdns-operator-rrset-viewer-role
+rules:
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - rrsets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - rrsets/status
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+  name: powerdns-operator-zone-editor-role
+rules:
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - zones
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - zones/status
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+  name: powerdns-operator-zone-viewer-role
+rules:
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - zones
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - dns.cav.enablers.ob
+    resources:
+      - zones/status
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+  name: powerdns-operator-leader-election-rolebinding
+  namespace: powerdns-operator-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: powerdns-operator-leader-election-role
+subjects:
+  - kind: ServiceAccount
+    name: powerdns-operator-controller-manager
+    namespace: powerdns-operator-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+  name: powerdns-operator-manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: powerdns-operator-manager-role
+subjects:
+  - kind: ServiceAccount
+    name: powerdns-operator-controller-manager
+    namespace: powerdns-operator-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+    control-plane: controller-manager
+  name: powerdns-operator-controller-manager-metrics-service
+  namespace: powerdns-operator-system
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    control-plane: controller-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: powerdns-operator
+    control-plane: controller-manager
+  name: powerdns-operator-controller-manager
+  namespace: powerdns-operator-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        control-plane: controller-manager
+    spec:
+      containers:
+        - args:
+            - --leader-elect
+            - --health-probe-bind-address=:8081
+            - --metrics-bind-address=0
+          command:
+            - /manager
+          envFrom:
+            - secretRef:
+                name: powerdns-operator-manager
+          image: ghcr.io/orange-opensource/powerdns-operator:v0.3.1
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          name: manager
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: powerdns-operator-controller-manager
+      terminationGracePeriodSeconds: 10
+---

@@ -1,0 +1,105 @@
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: minio-velero-cluster-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: 'cluster.x-k8s.io'
+      version: 'v1beta1'
+      kind: 'Cluster'
+      labelFilters:
+        - key: cluster.x-k8s.io/velero
+          value: 'true'
+          operation: Equal
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: minio-velero-cluster-eventtrigger
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      type: mgmt
+  eventSourceName: minio-velero-cluster-eventsource
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  oneForEvent: true
+  policyRefs:
+    - kind: ConfigMap
+      name: minio-velero-bucket
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minio-velero-bucket
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  zone.yaml: |
+    apiVersion: minio.crossplane.io/v1
+    kind: Bucket
+    metadata:
+      name: velero-{{ .Resource.metadata.name }}
+    spec:
+      deletionPolicy: Orphan
+      forProvider: {}
+      providerConfigRef:
+        name: provider-config-clusters
+---
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: velero
+spec:
+  clusterSelector:
+    matchLabels:
+      cluster.x-k8s.io/velero: 'true'
+      cluster.x-k8s.io/fluxcd: 'true'
+  syncMode: ContinuousWithDriftDetection
+  kustomizationRefs:
+    - kind: GitRepository
+      name: infra
+      namespace: flux-system
+      path: ./gitops/apps/sveltos/clusterprofiles/templates/velero
+      values:
+        ClusterName: '{{ .Cluster.metadata.name }}'
+        CaCert: '{{ index (getResource "caSecret").data "ca.crt" }}'
+  templateResourceRefs:
+    - resource:
+        apiVersion: v1
+        kind: Secret
+        name: root-ca
+        namespace: cert-manager
+      identifier: caSecret
+    - resource:
+        apiVersion: v1
+        kind: Secret
+        name: minio-credentials-clusters
+        namespace: velero
+      identifier: minioCredentials
+  policyRefs:
+    - kind: Secret
+      name: minio-credentials-clusterprofile
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-credentials-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+type: addons.projectsveltos.io/cluster-profile
+stringData:
+  secret.yaml: |
+    apiVersion: v1
+    data:
+      AWS_ACCESS_KEY_ID: {{ (getResource "minioCredentials").data.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: {{ (getResource "minioCredentials").data.AWS_SECRET_ACCESS_KEY }}
+      cloud: {{ (getResource "minioCredentials").data.cloud }}
+    kind: Secret
+    metadata:
+      name: minio-credentials
+      namespace: velero
+    type: Opaque

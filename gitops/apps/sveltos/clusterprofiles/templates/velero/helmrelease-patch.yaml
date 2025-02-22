@@ -1,0 +1,19 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: velero
+  namespace: velero
+spec:
+  values:
+    configuration:
+      backupStorageLocation:
+        - bucket: 'velero-{{ .ClusterName }}'
+          name: default
+          provider: aws
+          prefix: csi
+          default: true
+          caCert: '{{ .CaCert }}'
+          config:
+            region: minio
+            s3ForcePathStyle: true
+            s3Url: http://s3-clusters.bealv-mgmt.lan

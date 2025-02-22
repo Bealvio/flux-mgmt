@@ -1,0 +1,28 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+networking:
+  serviceSubnet: '10.96.0.0/20'
+  podSubnet: '10.244.0.0/16'
+  dnsDomain: 'bealv-mgmt.local'
+kubernetesVersion: 'v1.31.4'
+apiServer:
+  extraArgs:
+    enable-admission-plugins: DefaultTolerationSeconds
+controllerManager:
+  extraArgs:
+    bind-address: '0.0.0.0'
+scheduler:
+  extraArgs:
+    bind-address: '0.0.0.0'
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+skipPhases:
+  - addon/kube-proxy
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+featureGates:
+  SidecarContainers: true
+args:
+  - --node-labels='topology.kubernetes.io/region=proxmox-alv,topology.kubernetes.io/zone=proxmox-alv'

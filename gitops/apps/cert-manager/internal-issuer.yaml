@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: bealv-mgmt
+spec:
+  vault:
+    path: pki-int/sign/bealv-mgmt-dot-lan
+    server: http://vault.vault.svc:8200
+    auth:
+      tokenSecretRef:
+        name: cert-vault
+        key: token
+---

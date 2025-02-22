@@ -1,0 +1,4 @@
+resources:
+  - upstream/
+  - internal-issuer.yaml
+  - secrets.yaml

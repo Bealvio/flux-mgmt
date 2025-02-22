@@ -1,0 +1,82 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxClusterTemplate
+metadata:
+  name: kamaji-proxmox
+  namespace: capi-system
+spec:
+  template:
+    spec:
+      allowedNodes:
+        - proxmox-alv
+      externalManagedControlPlane: true
+      dnsServers:
+        - 1.1.1.1
+      ipv4Config:
+        addresses:
+          - 2.2.2.2-2.2.2.2
+        gateway: 1.1.1.1
+        prefix: 16
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha1
+kind: KamajiControlPlaneTemplate
+metadata:
+  name: kamaji-proxmox
+  namespace: capi-system
+spec:
+  template:
+    spec:
+      addons:
+        coreDNS:
+          dnsServiceIPs: []
+        konnectivity:
+          agent:
+            image: registry.k8s.io/kas-network-proxy/proxy-agent
+            tolerations:
+              - key: CriticalAddonsOnly
+                operator: Exists
+            version: v0.28.6
+          server:
+            image: registry.k8s.io/kas-network-proxy/proxy-server
+            port: 8132
+            version: v0.28.6
+      dataStoreName: default
+      kubelet:
+        cgroupfs: systemd
+        preferredAddressTypes:
+          - InternalIP
+      network:
+        serviceType: LoadBalancer
+      registry: registry.k8s.io
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxMachineTemplate
+metadata:
+  name: kamaji-proxmox
+  namespace: capi-system
+spec:
+  template:
+    spec:
+      checks:
+        skipCloudInitStatus: true
+      format: qcow2
+      network:
+        default:
+          bridge: vmbr2
+          model: virtio
+      sourceNode: proxmox-alv
+      templateID: 102
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: kamaji-proxmox
+  namespace: capi-system
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            provider-id: proxmox://'{{ ds.meta_data.instance_id }}'
+            node-labels: 'topology.kubernetes.io/region=proxmox-alv,topology.kubernetes.io/zone=proxmox-alv'
+---

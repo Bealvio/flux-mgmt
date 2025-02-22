@@ -1,0 +1,4 @@
+namespace: powerdns-operator-system
+resources:
+  - zone.yaml
+  - upstream/

@@ -1,0 +1,7 @@
+namespace: minio-clusters
+resources:
+  - namespace.yaml
+  - deploy.yaml
+  - ing.yaml
+  - svc.yaml
+  - pvc.yaml

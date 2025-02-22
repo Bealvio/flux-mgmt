@@ -1,0 +1,5 @@
+namespace: velero
+resources:
+  - velero-helmrepo.yaml
+  - velero-helmrelease.yaml
+  - namespace.yaml

@@ -1,0 +1,8 @@
+apiVersion: dns.cav.enablers.ob/v1alpha1
+kind: Zone
+metadata:
+  name: bealv-mgmt.lan
+spec:
+  nameservers:
+    - dummy.bealv.lan
+  kind: Native

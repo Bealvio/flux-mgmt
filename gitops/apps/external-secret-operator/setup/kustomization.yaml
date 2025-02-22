@@ -1,0 +1,5 @@
+resources:
+  - rbac.yaml
+  - ns.yaml
+  - eso-helmrelease.yaml
+  - eso-helmrepo.yaml

@@ -1,0 +1,16 @@
+apiVersion: ipam.didactiklabs.io/v1alpha1
+kind: IPCidr
+metadata:
+  name: available-cidr
+spec:
+  cidr: 10.250.0.0/16
+---
+apiVersion: ipam.didactiklabs.io/v1alpha1
+kind: IPClaim
+metadata:
+  name: reserved-cidr
+spec:
+  type: CIDR
+  ipCidrRef:
+    name: available-cidr
+  specificChildCidr: 10.250.0.0/17

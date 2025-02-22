@@ -1,0 +1,4 @@
+resources:
+  - helmrelease.yaml
+  - helmrepo.yaml
+  - l2announcementspolicy.yaml

@@ -1,0 +1,49 @@
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: pdns-cluster-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: 'cluster.x-k8s.io'
+      version: 'v1beta1'
+      kind: 'Cluster'
+      labelFilters:
+        - key: cluster.x-k8s.io/external-dns
+          value: 'true'
+          operation: Equal
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: pdns-cluster-eventtrigger
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      type: mgmt
+  eventSourceName: pdns-cluster-eventsource
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  oneForEvent: true
+  policyRefs:
+    - kind: ConfigMap
+      name: pdns-zone
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pdns-zone
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  zone.yaml: |
+    apiVersion: dns.cav.enablers.ob/v1alpha1
+    kind: Zone
+    metadata:
+      name: {{ .Resource.metadata.name }}.lan
+    spec:
+      nameservers:
+        - dummy.{{ .Resource.metadata.name }}.lan
+      kind: Native
+---

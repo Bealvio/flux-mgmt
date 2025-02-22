@@ -1,0 +1,6 @@
+namespace: proxmox-csi
+resources:
+  - namespace.yaml
+  - helmrepo.yaml
+  - helmrelease.yaml
+  - sc.yaml

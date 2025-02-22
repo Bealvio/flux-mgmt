@@ -1,0 +1,13 @@
+namespace: projectsveltos
+resources:
+  - cilium.yaml
+  - cilium-lb.yaml
+  - fluxcd.yaml
+  - proxmox-csi.yaml
+  - cert-manager.yaml
+  - cert-vault.yaml
+  - external-dns.yaml
+  - ingress-controller.yaml
+  - pdns-zone.yaml
+  - external-secret.yaml
+  - minio-velero-bucket.yaml

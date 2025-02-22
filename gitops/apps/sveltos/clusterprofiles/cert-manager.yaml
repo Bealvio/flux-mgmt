@@ -1,0 +1,84 @@
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: cert-manager
+spec:
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  clusterSelector:
+    matchLabels:
+      cluster.x-k8s.io/cert-manager: 'true'
+  kustomizationRefs:
+    - kind: GitRepository
+      name: infra
+      namespace: flux-system
+      path: ./gitops/apps/cert-manager/upstream
+  policyRefs:
+    - kind: Secret
+      name: cacert-clusterprofile
+      namespace: projectsveltos
+    - name: clusterissuer-clusterprofile
+      namespace: projectsveltos
+      kind: ConfigMap
+  templateResourceRefs:
+    - resource:
+        apiVersion: v1
+        kind: Secret
+        name: root-ca
+        namespace: cert-manager
+      identifier: caSecrets
+    - resource:
+        apiVersion: v1
+        kind: Secret
+        name: vault-token-certmanager-{{ .Cluster.metadata.name }}
+        namespace: crossplane-system
+      identifier: certManagerVaultToken
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clusterissuer-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+data:
+  clusterissuer.yaml: |
+    apiVersion: cert-manager.io/v1
+    kind: ClusterIssuer
+    metadata:
+      name: {{ .Cluster.metadata.name }}
+    spec:
+      vault:
+        path: pki-int/sign/{{ .Cluster.metadata.name }}-dot-lan
+        server: http://vault.bealv-mgmt.lan
+        caBundleSecretRef:
+          name: bealv-mgmt
+          key: ca.crt
+        auth:
+          tokenSecretRef:
+            name: cert-vault
+            key: token
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cacert-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+type: addons.projectsveltos.io/cluster-profile
+stringData:
+  secret.yaml: |
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: bealv-mgmt
+      namespace: {{ (getResource "caSecrets").metadata.namespace }}
+    data:
+      ca.crt: {{ index (getResource "caSecrets").data "ca.crt" }}
+  token.yaml: |
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: cert-vault
+      namespace: {{ (getResource "caSecrets").metadata.namespace }}
+    data:
+      token: {{ index (getResource "certManagerVaultToken").data "attribute.client_token" }}

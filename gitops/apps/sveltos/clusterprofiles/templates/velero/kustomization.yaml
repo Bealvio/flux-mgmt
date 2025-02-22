@@ -1,0 +1,4 @@
+resources:
+  - ../../../../velero
+patches:
+  - path: helmrelease-patch.yaml

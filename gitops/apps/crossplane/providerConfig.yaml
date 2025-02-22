@@ -1,0 +1,36 @@
+apiVersion: vault.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  address: http://vault.vault.svc:8200
+  credentials:
+    source: Secret
+    secretRef:
+      name: vault-creds
+      namespace: crossplane-system
+      key: credentials
+---
+apiVersion: minio.crossplane.io/v1
+kind: ProviderConfig
+metadata:
+  name: provider-config
+spec:
+  credentials:
+    apiSecretRef:
+      name: minio
+      namespace: minio
+    source: InjectedIdentity
+  minioURL: http://minio-mgmt.minio.svc:9000/
+---
+apiVersion: minio.crossplane.io/v1
+kind: ProviderConfig
+metadata:
+  name: provider-config-clusters
+spec:
+  credentials:
+    apiSecretRef:
+      name: minio-clusters
+      namespace: minio-clusters
+    source: InjectedIdentity
+  minioURL: http://minio-clusters.minio-clusters.svc:9000/

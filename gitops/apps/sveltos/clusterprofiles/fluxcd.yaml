@@ -1,0 +1,112 @@
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: fluxcd
+spec:
+  reloader: true
+  syncMode: ContinuousWithDriftDetection
+  clusterSelector:
+    matchLabels:
+      cluster.x-k8s.io/fluxcd: 'true'
+  kustomizationRefs:
+    - kind: GitRepository
+      name: infra
+      namespace: flux-system
+      path: ./bootstrap/fluxcd/upstream/
+      targetNamespace: flux-system
+  templateResourceRefs:
+    - resource:
+        apiVersion: v1
+        kind: Secret
+        name: 'github-fluxcd-chan'
+        namespace: 'flux-system'
+      identifier: fluxcdChan
+  policyRefs:
+    - name: fluxinstance-clusterprofile
+      namespace: projectsveltos
+      kind: ConfigMap
+    - kind: Secret
+      name: fluxcdchan-secrets
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fluxcdchan-secrets
+  annotations:
+    projectsveltos.io/template: 'true'
+type: addons.projectsveltos.io/cluster-profile
+stringData:
+  secret.yaml: |
+    {{ copy "fluxcdChan" }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluxinstance-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+data:
+  fluxinstance.yaml: |
+    apiVersion: fluxcd.controlplane.io/v1
+    kind: FluxInstance
+    metadata:
+      name: flux
+      namespace: flux-system
+      annotations:
+        fluxcd.controlplane.io/reconcileEvery: '1h'
+        fluxcd.controlplane.io/reconcileTimeout: '5m'
+    spec:
+      distribution:
+        version: '2.x'
+        registry: 'ghcr.io/fluxcd'
+        artifact: 'oci://ghcr.io/controlplaneio-fluxcd/flux-operator-manifests'
+      cluster:
+        type: kubernetes
+        domain: {{ .Cluster.metadata.name }}.local
+        networkPolicy: false
+      components:
+        - source-controller
+        - kustomize-controller
+        - helm-controller
+        - notification-controller
+      kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: '(kustomize-controller|helm-controller)'
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/0/args/-
+                value: --concurrent=10
+  gitrepo.yaml: |
+    apiVersion: source.toolkit.fluxcd.io/v1
+    kind: GitRepository
+    metadata:
+      name: infra
+      namespace: flux-system
+    spec:
+      secretRef:
+        name: github-fluxcd-chan
+      interval: 1m
+      provider: github
+      ref:
+        branch: main
+      url: https://github.com/Bealvio/{{ .Cluster.metadata.name }}
+      ignore: |
+        /*
+        !/gitops
+  kustomization.yaml: |
+    apiVersion: kustomize.toolkit.fluxcd.io/v1
+    kind: Kustomization
+    metadata:
+      name: apps
+      namespace: flux-system
+    spec:
+      interval: 2m
+      path: ./gitops/kustomizations
+      prune: true
+      sourceRef:
+        kind: GitRepository
+        name: infra
+---

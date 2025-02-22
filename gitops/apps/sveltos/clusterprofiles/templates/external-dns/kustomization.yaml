@@ -1,0 +1,5 @@
+namespace: external-dns
+resources:
+  - ../../../../external-dns/
+patches:
+  - path: deploy-patch.yaml

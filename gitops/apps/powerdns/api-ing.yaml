@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: powerdns-api
+  annotations:
+    cert-manager.io/cluster-issuer: bealv-mgmt
+  labels:
+    probe: enabled
+spec:
+  rules:
+    - host: 'dns-api.bealv-mgmt.lan'
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: powerdns-api
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - 'dns-api.bealv-mgmt.lan'
+      secretName: pdns-api-tls

@@ -1,0 +1,6 @@
+namespace: kamaji-system
+resources:
+  - rbacs-proxmox.yaml
+  - gitrepo.yaml
+  - helmrelease.yaml
+  - namespace.yaml

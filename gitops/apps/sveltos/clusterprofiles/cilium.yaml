@@ -1,0 +1,60 @@
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: cilium
+spec:
+  clusterSelector:
+    matchLabels:
+      cluster.x-k8s.io/cni: cilium
+      cluster.x-k8s.io/fluxcd: 'true'
+  syncMode: ContinuousWithDriftDetection
+  kustomizationRefs:
+    - kind: GitRepository
+      name: infra
+      namespace: flux-system
+      path: ./gitops/apps/sveltos/clusterprofiles/templates/cilium
+      values:
+        controlPlaneEndpointHost: '{{ .Cluster.spec.controlPlaneEndpoint.host }}'
+        controlPlaneEndpointPort: '{{ .Cluster.spec.controlPlaneEndpoint.port }}'
+        podsCidrBlocks: '{{ index .Cluster.spec.clusterNetwork.pods.cidrBlocks 0 }}'
+---
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: cilium-bootstrap
+  namespace: projectsveltos
+spec:
+  clusterSelector:
+    matchLabels:
+      cluster.x-k8s.io/cni: cilium
+  syncMode: OneTime
+  helmCharts:
+    - repositoryURL: https://helm.cilium.io/
+      repositoryName: cilium
+      chartName: cilium/cilium
+      chartVersion: 1.17.0
+      releaseName: cilium
+      releaseNamespace: kube-system
+      helmChartAction: Install
+      values: |
+        k8sServiceHost: "{{ .Cluster.spec.controlPlaneEndpoint.host }}"
+        k8sServicePort: "{{ .Cluster.spec.controlPlaneEndpoint.port }}"
+        operator:
+          replicas: 1
+          updateStrategy:
+            type: Recreate
+            rollingUpdate: null
+        l2announcements:
+          enabled: true
+        socketLB:
+          hostNamespaceOnly: true
+        kubeProxyReplacement: true
+        envoy:
+          enabled: false
+        cni:
+          exclusive: false
+        ipam:
+          operator:
+            clusterPoolIPv4PodCIDRList:
+              - {{ index .Cluster.spec.clusterNetwork.pods.cidrBlocks 0 }}
+            clusterPoolIPv4MaskSize: 23

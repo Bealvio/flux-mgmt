@@ -1,0 +1,44 @@
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: proxmox-csi
+spec:
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  clusterSelector:
+    matchLabels:
+      cluster.x-k8s.io/proxmox-csi: 'true'
+  kustomizationRefs:
+    - kind: GitRepository
+      name: infra
+      namespace: flux-system
+      path: ./gitops/apps/proxmox-csi
+      targetNamespace: proxmox-csi
+  templateResourceRefs:
+    - resource:
+        apiVersion: v1
+        kind: Secret
+        name: proxmox-csi-secrets
+        namespace: proxmox-csi
+      identifier: ProxmoxCSISecrets
+  policyRefs:
+    - kind: Secret
+      name: proxmox-csi-secrets-clusterprofile
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: proxmox-csi-secrets-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+type: addons.projectsveltos.io/cluster-profile
+stringData:
+  secret.yaml: |
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: proxmox-csi-secrets
+      namespace: {{ (getResource "ProxmoxCSISecrets").metadata.namespace }}
+    data:
+      config.yaml: {{ index (getResource "ProxmoxCSISecrets").data "config.yaml" }}

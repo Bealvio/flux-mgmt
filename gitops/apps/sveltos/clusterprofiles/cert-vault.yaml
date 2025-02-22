@@ -1,0 +1,100 @@
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: certvault-cluster-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: 'cluster.x-k8s.io'
+      version: 'v1beta1'
+      kind: 'Cluster'
+      labelFilters:
+        - key: cluster.x-k8s.io/cert-manager
+          value: 'true'
+          operation: Equal
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: certvault-cluster-eventtrigger
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      type: mgmt
+  eventSourceName: certvault-cluster-eventsource
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  oneForEvent: true
+  policyRefs:
+    - kind: ConfigMap
+      name: certvault-vault
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: certvault-vault
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  certmanager-vault-token: |
+    apiVersion: vault.vault.upbound.io/v1alpha1
+    kind: Token
+    metadata:
+      name: vault-token-certmanager-{{ .Resource.metadata.name }}
+    spec:
+      forProvider:
+        ttl: '0h'
+        policies:
+          - 'certs-{{ .Resource.metadata.name }}'
+      providerConfigRef:
+        name: default
+      writeConnectionSecretToRef:
+        name: vault-token-certmanager-{{ .Resource.metadata.name }}
+        namespace: crossplane-system
+  policy.yaml: |
+    apiVersion: vault.vault.upbound.io/v1alpha1
+    kind: Policy
+    metadata:
+      name: certs-{{ .Resource.metadata.name }}
+    spec:
+      forProvider:
+        name: certs-{{ .Resource.metadata.name }}
+        policy: |
+          path "pki-int/sign/{{ .Resource.metadata.name }}-dot-lan" {
+            capabilities = ["create", "update"]
+          }
+          path "pki-int/issue/{{ .Resource.metadata.name }}-dot-lan" {
+            capabilities = ["create", "update"]
+          }
+      providerConfigRef:
+        name: default
+  backend.yaml: |
+    apiVersion: pki.vault.upbound.io/v1alpha1
+    kind: SecretBackendRole
+    metadata:
+      name: {{ .Resource.metadata.name }}
+    spec:
+      forProvider:
+        name: {{ .Resource.metadata.name }}-dot-lan
+        backend: pki-int
+        ttl: '2592000'
+        allowIpSans: true
+        keyType: rsa
+        keyBits: 2048
+        allowedDomains:
+          - '{{ .Resource.metadata.name }}.lan'
+        allowSubdomains: true
+        organization:
+          - 'Bealv'
+        locality:
+          - 'Bordeaux'
+        province:
+          - 'Gironde'
+        country:
+          - 'FR'
+        postalCode:
+          - '33000'
+        requireCn: false
+      providerConfigRef:
+        name: default

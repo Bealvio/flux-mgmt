@@ -1,0 +1,8 @@
+apiVersion: minio.crossplane.io/v1
+kind: Bucket
+metadata:
+  name: velero-mgmt
+spec:
+  forProvider: {}
+  providerConfigRef:
+    name: provider-config

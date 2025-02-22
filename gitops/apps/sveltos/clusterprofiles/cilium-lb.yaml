@@ -1,0 +1,101 @@
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: cilium-cluster-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: 'cluster.x-k8s.io'
+      version: 'v1beta1'
+      kind: 'Cluster'
+      labelFilters:
+        - key: cluster.x-k8s.io/cni
+          value: cilium
+          operation: Equal
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: cilium-cluster-eventtrigger
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      type: mgmt
+  eventSourceName: cilium-cluster-eventsource
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  oneForEvent: true
+  policyRefs:
+    - kind: ConfigMap
+      name: cilium-lb-ipclaim
+      namespace: projectsveltos
+    - kind: ConfigMap
+      name: cilium-lb-cp
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cilium-lb-ipclaim
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  ipclaim.yaml: |
+    apiVersion: ipam.didactiklabs.io/v1alpha1
+    kind: IPClaim
+    metadata:
+      name: reserved-{{ .Resource.metadata.name }}-{{ .Resource.metadata.namespace }}
+    spec:
+      type: CIDR
+      cidrPrefixLength: 25
+      ipCidrRef:
+        name: available-cidr
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cilium-lb-cp
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  cp.yaml: |
+    apiVersion: config.projectsveltos.io/v1beta1
+    kind: ClusterProfile
+    metadata:
+      name: "lb-{{ .Resource.metadata.name }}-{{ .Resource.metadata.namespace }}"
+    spec:
+      reloader: true
+      syncMode: ContinuousWithDriftDetection
+      clusterRefs:
+      - apiVersion: cluster.x-k8s.io/v1beta1
+        kind: Cluster
+        name: "{{ .Resource.metadata.name }}"
+        namespace: "{{ .Resource.metadata.namespace }}"
+      templateResourceRefs:
+      - identifier: IPClaim
+        resource:
+          apiVersion: ipam.didactiklabs.io/v1alpha1
+          kind: IPClaim
+          name: "reserved-{{ .Resource.metadata.name }}-{{ .Resource.metadata.namespace }}"
+      policyRefs:
+      - kind: ConfigMap
+        name: cilium-lbpool
+        namespace: projectsveltos
+        deploymentType: Remote
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cilium-lbpool
+  annotations:
+    projectsveltos.io/template: 'true'
+data:
+  cilium-lbpool.yaml: |
+    apiVersion: 'cilium.io/v2alpha1'
+    kind: CiliumLoadBalancerIPPool
+    metadata:
+      name: default
+    spec:
+      allowFirstLastIPs: 'No'
+      blocks:
+        - cidr: "{{ (getResource "IPClaim").status.claim }}"

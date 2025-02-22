@@ -1,0 +1,4 @@
+namespace: crossplane-system
+resources:
+  - secrets.yaml
+  - providerConfig.yaml
