@@ -12,6 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: cilium
+        namespace: kube-system
       interval: 1h
   values:
     k8sServiceHost: 10.250.0.9

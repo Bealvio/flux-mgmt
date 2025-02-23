@@ -7,7 +7,8 @@ scms:
       owner: 'Bealvio'
       repository: 'flux-mgmt'
       token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-      username: '{{ requiredEnv "GITHUB_ACTOR" }}'
+      user: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN_USER" }}'
+      username: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN_USER" }}'
       branch: 'main'
 autodiscovery:
   groupby: individual
@@ -17,9 +18,9 @@ autodiscovery:
     flux:
       digest: true
       helmrelease: true
+      ocirepository: true
       versionfilter:
-        kind: semver
-        pattern: '*'
+        kind: latest
       ignore:
         - path: gitops/apps/arc/*
 actions:
