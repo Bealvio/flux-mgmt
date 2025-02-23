@@ -14,6 +14,7 @@ controllerManager:
 scheduler:
   extraArgs:
     bind-address: '0.0.0.0'
+controlPlaneEndpoint: '10.250.0.3:6443'
 ---
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: InitConfiguration

@@ -1,0 +1,6 @@
+.env
+.terraform
+.terraform.lock.hcl
+secrets.tf
+result*
+secrets.yaml

@@ -18,23 +18,13 @@ then run:
 kubectl apply -f bootstrap/kubernetes/secrets.yaml
 ```
 
-## Fluxcd (GitOps)
-
-Deploy fluxcd and gitops resources in the cluster
-
-```bash
-kustomize build bootstrap/fluxcd/upstream | kubectl apply -f -
-kustomize build bootstrap/fluxcd/setup | kubectl apply -f -
-kustomize build bootstrap/fluxcd/ | kubectl apply -f -
-```
-
 ## Cilium init
 
 ```bash
 cd bootstrap/cilium
 helm repo add cilium https://helm.cilium.io/
 helm repo update
-API_SERVER_IP=10.250.0.9
+API_SERVER_IP=10.250.0.3
 API_SERVER_PORT=6443
 helm template cilium cilium/cilium --version 1.16.5 \
     --namespace kube-system \
@@ -53,6 +43,16 @@ helm template cilium cilium/cilium --version 1.16.5 \
 ```
 
 Don't stress, fluxcd will take control post-bootstrap later on.
+
+## Fluxcd (GitOps)
+
+Deploy fluxcd and gitops resources in the cluster
+
+```bash
+kustomize build bootstrap/fluxcd/upstream | kubectl apply -f -
+kustomize build bootstrap/fluxcd/setup | kubectl apply -f -
+kustomize build bootstrap/fluxcd/ | kubectl apply -f -
+```
 
 ## Configure loadbalancer ippool
 
