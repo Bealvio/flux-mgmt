@@ -9,7 +9,7 @@ spec:
       version: 'v1beta1'
       kind: 'Cluster'
       labelFilters:
-        - key: cluster.x-k8s.io/external-dns
+        - key: external-dns
           value: 'true'
           operation: Equal
 ---

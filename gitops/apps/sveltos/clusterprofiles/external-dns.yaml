@@ -7,8 +7,8 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      cluster.x-k8s.io/external-dns: 'true'
-      cluster.x-k8s.io/cert-manager: 'true'
+      external-dns: 'true'
+      cert-manager: 'true'
   kustomizationRefs:
     - kind: GitRepository
       name: infra

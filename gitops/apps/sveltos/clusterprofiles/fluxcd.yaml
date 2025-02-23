@@ -7,7 +7,7 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      cluster.x-k8s.io/fluxcd: 'true'
+      fluxcd: 'true'
   kustomizationRefs:
     - kind: GitRepository
       name: infra

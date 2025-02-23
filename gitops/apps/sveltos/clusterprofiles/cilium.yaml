@@ -5,8 +5,8 @@ metadata:
 spec:
   clusterSelector:
     matchLabels:
-      cluster.x-k8s.io/cni: cilium
-      cluster.x-k8s.io/fluxcd: 'true'
+      cni: cilium
+      fluxcd: 'true'
   syncMode: ContinuousWithDriftDetection
   kustomizationRefs:
     - kind: GitRepository
@@ -26,7 +26,7 @@ metadata:
 spec:
   clusterSelector:
     matchLabels:
-      cluster.x-k8s.io/cni: cilium
+      cni: cilium
   syncMode: OneTime
   helmCharts:
     - repositoryURL: https://helm.cilium.io/

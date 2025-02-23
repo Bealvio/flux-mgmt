@@ -7,7 +7,7 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      cluster.x-k8s.io/cert-manager: 'true'
+      cert-manager: 'true'
   kustomizationRefs:
     - kind: GitRepository
       name: infra

@@ -6,7 +6,7 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      cluster.x-k8s.io/ingress-controller: 'true'
+      ingress-controller: 'true'
   kustomizationRefs:
     - kind: GitRepository
       name: infra

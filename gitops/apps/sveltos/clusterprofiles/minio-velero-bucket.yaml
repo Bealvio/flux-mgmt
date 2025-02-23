@@ -9,7 +9,7 @@ spec:
       version: 'v1beta1'
       kind: 'Cluster'
       labelFilters:
-        - key: cluster.x-k8s.io/velero
+        - key: velero
           value: 'true'
           operation: Equal
 ---
@@ -55,8 +55,8 @@ metadata:
 spec:
   clusterSelector:
     matchLabels:
-      cluster.x-k8s.io/velero: 'true'
-      cluster.x-k8s.io/fluxcd: 'true'
+      velero: 'true'
+      fluxcd: 'true'
   syncMode: ContinuousWithDriftDetection
   kustomizationRefs:
     - kind: GitRepository

@@ -9,7 +9,7 @@ spec:
       version: 'v1beta1'
       kind: 'Cluster'
       labelFilters:
-        - key: cluster.x-k8s.io/cert-manager
+        - key: cert-manager
           value: 'true'
           operation: Equal
 ---
