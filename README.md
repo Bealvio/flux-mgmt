@@ -5,7 +5,14 @@
 Run kubeadm init with the kubeadmconfig of this repo.
 
 ```bash
-sudo kubeadm init --config bootstrap/kubernetes/kubeadm.yaml
+sudo kubeadm init --config bootstrap/kubernetes/kubeadm.yaml --upload-certs
+```
+
+You need to also label the nodes:
+
+```yaml
+topology.kubernetes.io/region: proxmox-alv
+topology.kubernetes.io/zone: proxmox-alv
 ```
 
 ## Bootstrap initial secrets
