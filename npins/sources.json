@@ -60,6 +60,21 @@
       "url": "https://api.github.com/repos/controlplaneio-fluxcd/flux-operator/tarball/v0.13.0",
       "hash": "1bcqn291f2fv88vabg0y5y3gjf5plajpbk91gc1bsvfvllin0mkl"
     },
+    "kamaji": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "clastix",
+        "repo": "kamaji"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "release_prefix": null,
+      "version": "edge-24.12.1",
+      "revision": "9171f46c6072a82867d7ae564150b69aec4e5768",
+      "url": "https://api.github.com/repos/clastix/kamaji/tarball/edge-24.12.1",
+      "hash": "1kidjrmcn0x4aa5fmncx71l21wjjcv6n3shg2lyik0fk859w7j0q"
+    },
     "nixpkgs": {
       "type": "Channel",
       "name": "nixos-24.11",

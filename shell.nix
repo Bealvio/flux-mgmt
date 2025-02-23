@@ -42,5 +42,12 @@ pkgs.mkShell {
       mkdir -p gitops/apps/ingress-controller/upstream
       cp -r --no-preserve=mode $(nix-build nix/ingress-contour.nix)/* gitops/apps/ingress-controller/upstream/
     '')
+    (pkgs.writeShellScriptBin "buildKamaji" ''
+      #!/bin/bash
+      set -e
+      rm -rf gitops/apps/kamaji/upstream
+      mkdir -p gitops/apps/kamaji/upstream
+      cp -r --no-preserve=mode $(nix-build nix/kamaji.nix)/* gitops/apps/kamaji/upstream/
+    '')
   ];
 }
