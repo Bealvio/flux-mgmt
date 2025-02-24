@@ -28,11 +28,16 @@ spec:
         namespace: cert-manager
       identifier: caSecrets
     - resource:
+        apiVersion: approle.vault.upbound.io/v1alpha1
+        kind: AuthBackendRole
+        name: cert-manager-{{ .Cluster.metadata.name }}
+      identifier: AuthBackendRoleCert
+    - resource:
         apiVersion: v1
         kind: Secret
-        name: vault-token-certmanager-{{ .Cluster.metadata.name }}
+        name: cert-manager-approle-{{ .Cluster.metadata.name }}
         namespace: crossplane-system
-      identifier: certManagerVaultToken
+      identifier: certManagerApproleSecretId
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -54,9 +59,12 @@ data:
           name: bealv-mgmt
           key: ca.crt
         auth:
-          tokenSecretRef:
-            name: cert-vault
-            key: token
+          appRole:
+            roleId: '{{ index (getResource "AuthBackendRoleCert").status.atProvider "roleId" }}'
+            path: approle
+            secretRef:
+              name: cert-manager-approle-{{ .Cluster.metadata.name }}
+              key: 'attribute.secret_id'
 ---
 apiVersion: v1
 kind: Secret
@@ -78,7 +86,7 @@ stringData:
     apiVersion: v1
     kind: Secret
     metadata:
-      name: cert-vault
-      namespace: {{ (getResource "caSecrets").metadata.namespace }}
+      name: cert-manager-approle-{{ .Cluster.metadata.name }}
+      namespace: cert-manager
     data:
-      token: {{ index (getResource "certManagerVaultToken").data "attribute.client_token" }}
+      attribute.secret_id: '{{ index (getResource "certManagerApproleSecretId").data "attribute.secret_id" }}'

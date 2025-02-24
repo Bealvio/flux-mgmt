@@ -37,29 +37,39 @@ metadata:
   annotations:
     projectsveltos.io/instantiate: 'true'
 data:
-  certmanager-vault-token: |
-    apiVersion: vault.vault.upbound.io/v1alpha1
-    kind: Token
+  certmanager-roleid: |
+    apiVersion: approle.vault.upbound.io/v1alpha1
+    kind: AuthBackendRole
     metadata:
-      name: vault-token-certmanager-{{ .Resource.metadata.name }}
+      name: cert-manager-{{ .Resource.metadata.name }}
     spec:
       forProvider:
-        ttl: '0h'
-        policies:
-          - 'certs-{{ .Resource.metadata.name }}'
+        roleName: cert-manager-{{ .Resource.metadata.name }}
+        tokenPolicies:
+          - cert-manager-{{ .Resource.metadata.name }}
       providerConfigRef:
         name: default
+  certmanager-role-secretid: |
+    apiVersion: approle.vault.upbound.io/v1alpha1
+    kind: AuthBackendRoleSecretID
+    metadata:
+      name: cert-manager-{{ .Resource.metadata.name }}
+    spec:
+      forProvider:
+        roleName: cert-manager-{{ .Resource.metadata.name }}
       writeConnectionSecretToRef:
-        name: vault-token-certmanager-{{ .Resource.metadata.name }}
+        name: cert-manager-approle-{{ .Resource.metadata.name }}
         namespace: crossplane-system
+      providerConfigRef:
+        name: default
   policy.yaml: |
     apiVersion: vault.vault.upbound.io/v1alpha1
     kind: Policy
     metadata:
-      name: certs-{{ .Resource.metadata.name }}
+      name: cert-manager-{{ .Resource.metadata.name }}
     spec:
       forProvider:
-        name: certs-{{ .Resource.metadata.name }}
+        name: certs-manager-{{ .Resource.metadata.name }}
         policy: |
           path "pki-int/sign/{{ .Resource.metadata.name }}-dot-lan" {
             capabilities = ["create", "update"]

@@ -1,3 +1,4 @@
 namespace: crossplane-system
 resources:
   - buckets.yaml
+  - approles.yaml

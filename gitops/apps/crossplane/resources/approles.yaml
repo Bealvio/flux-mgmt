@@ -1,0 +1,24 @@
+apiVersion: approle.vault.upbound.io/v1alpha1
+kind: AuthBackendRole
+metadata:
+  name: cert-manager
+spec:
+  forProvider:
+    roleName: cert-manager
+    tokenPolicies:
+      - cert-manager
+  providerConfigRef:
+    name: default
+---
+apiVersion: approle.vault.upbound.io/v1alpha1
+kind: AuthBackendRoleSecretID
+metadata:
+  name: cert-manager
+spec:
+  forProvider:
+    roleName: cert-manager
+  writeConnectionSecretToRef:
+    name: cert-manager-approle
+    namespace: cert-manager
+  providerConfigRef:
+    name: default

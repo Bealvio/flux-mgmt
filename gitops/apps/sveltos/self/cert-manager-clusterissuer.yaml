@@ -1,0 +1,52 @@
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: cert-manager-mgmt-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: 'approle.vault.upbound.io'
+      version: 'v1alpha1'
+      kind: 'AuthBackendRole'
+      name: cert-manager
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: cert-manager-mgmt-eventtrigger
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      type: mgmt
+  eventSourceName: cert-manager-mgmt-eventsource
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  oneForEvent: true
+  policyRefs:
+    - kind: ConfigMap
+      name: cert-manager-clusterissuer
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cert-manager-clusterissuer
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  certmanager-clusterissuer.yaml: |
+    apiVersion: cert-manager.io/v1
+    kind: ClusterIssuer
+    metadata:
+      name: bealv-mgmt
+    spec:
+      vault:
+        path: pki-int/sign/bealv-mgmt-dot-lan
+        server: http://vault.vault.svc:8200
+        auth:
+          appRole:
+            roleId: {{ .Resource.status.atProvider.roleId }}
+            path: approle
+            secretRef:
+              name: cert-manager-approle
+              key: 'attribute.secret_id'

@@ -1,5 +1,6 @@
 namespace: projectsveltos
 resources:
+  - self/
   - namespace.yaml
   - helmrepo.yaml
   - helmrelease.yaml

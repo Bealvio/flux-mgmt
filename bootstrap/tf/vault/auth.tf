@@ -48,17 +48,3 @@ resource "vault_kv_secret_v2" "crossplane" {
     }
   JSON
 }
-
-resource "vault_token" "cert-manager" {
-  policies = ["cert-manager"]
-  ttl      = "0"
-}
-
-resource "vault_kv_secret_v2" "cert_manager_secret" {
-  mount = vault_mount.secrets.path
-  name  = "vault/cert-manager"
-
-  data_json = jsonencode({
-    "token" = vault_token.cert-manager.client_token
-  })
-}
