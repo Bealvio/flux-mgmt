@@ -24,7 +24,7 @@ spec:
     - resource:
         apiVersion: v1
         kind: Secret
-        name: root-ca
+        name: bealv-mgmt-bundle
         namespace: cert-manager
       identifier: caSecrets
     - resource:
@@ -56,7 +56,7 @@ data:
         path: pki-int/sign/{{ .Cluster.metadata.name }}-dot-lan
         server: http://vault.bealv-mgmt.lan
         caBundleSecretRef:
-          name: bealv-mgmt
+          name: bealv-mgmt-bundle
           key: ca.crt
         auth:
           appRole:
@@ -78,7 +78,7 @@ stringData:
     apiVersion: v1
     kind: Secret
     metadata:
-      name: bealv-mgmt
+      name: root-ca
       namespace: {{ (getResource "caSecrets").metadata.namespace }}
     data:
       ca.crt: {{ index (getResource "caSecrets").data "ca.crt" }}

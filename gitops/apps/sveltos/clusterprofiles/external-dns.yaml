@@ -27,12 +27,6 @@ spec:
         name: powerdns
         namespace: powerdns
       identifier: dnsSecrets
-    - resource:
-        apiVersion: v1
-        kind: Secret
-        name: root-ca
-        namespace: cert-manager
-      identifier: caSecrets
 ---
 apiVersion: v1
 kind: Secret
@@ -50,11 +44,3 @@ stringData:
       namespace: external-dns
     data:
       api_key: {{ index (getResource "dnsSecrets").data "api_key" }}
-  ca.crt.yaml: |
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name: bealv-mgmt
-      namespace: external-dns
-    data:
-      ca.crt: {{ index (getResource "caSecrets").data "ca.crt" }}

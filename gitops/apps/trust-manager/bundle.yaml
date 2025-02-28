@@ -1,0 +1,12 @@
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: bealv-mgmt-bundle
+spec:
+  sources:
+    - secret:
+        name: root-ca
+        key: 'ca.crt'
+  target:
+    secret:
+      key: 'ca.crt'

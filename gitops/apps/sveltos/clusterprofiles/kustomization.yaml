@@ -5,6 +5,7 @@ resources:
   - fluxcd.yaml
   - proxmox-csi.yaml
   - cert-manager.yaml
+  - trust-manager.yaml
   - cert-vault.yaml
   - external-dns.yaml
   - ingress-controller.yaml

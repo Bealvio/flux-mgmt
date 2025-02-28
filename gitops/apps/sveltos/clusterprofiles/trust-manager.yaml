@@ -1,0 +1,16 @@
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: trust-manager
+spec:
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  clusterSelector:
+    matchLabels:
+      cert-manager: 'true'
+  kustomizationRefs:
+    - kind: GitRepository
+      name: infra
+      namespace: flux-system
+      path: ./gitops/apps/trust-manager
+      targetNamespace: proxmox-csi
