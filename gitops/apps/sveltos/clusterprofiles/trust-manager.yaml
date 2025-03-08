@@ -13,4 +13,3 @@ spec:
       name: infra
       namespace: flux-system
       path: ./gitops/apps/trust-manager
-      targetNamespace: proxmox-csi

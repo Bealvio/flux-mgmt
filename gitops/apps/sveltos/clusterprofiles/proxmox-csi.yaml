@@ -3,8 +3,7 @@ kind: ClusterProfile
 metadata:
   name: proxmox-csi
 spec:
-  syncMode: ContinuousWithDriftDetection
-  reloader: true
+  syncMode: Continuous
   clusterSelector:
     matchLabels:
       proxmox-csi: 'true'

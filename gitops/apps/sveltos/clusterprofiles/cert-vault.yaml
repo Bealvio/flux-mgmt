@@ -69,7 +69,7 @@ data:
       name: cert-manager-{{ .Resource.metadata.name }}
     spec:
       forProvider:
-        name: certs-manager-{{ .Resource.metadata.name }}
+        name: cert-manager-{{ .Resource.metadata.name }}
         policy: |
           path "pki-int/sign/{{ .Resource.metadata.name }}-dot-lan" {
             capabilities = ["create", "update"]

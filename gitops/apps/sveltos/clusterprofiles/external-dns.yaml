@@ -3,8 +3,7 @@ kind: ClusterProfile
 metadata:
   name: external-dns
 spec:
-  reloader: true
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   clusterSelector:
     matchLabels:
       external-dns: 'true'

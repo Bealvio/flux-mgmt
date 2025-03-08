@@ -4,7 +4,7 @@ metadata:
   name: fluxcd
 spec:
   reloader: true
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   clusterSelector:
     matchLabels:
       fluxcd: 'true'
@@ -14,6 +14,17 @@ spec:
       namespace: flux-system
       path: ./bootstrap/fluxcd/upstream/
       targetNamespace: flux-system
+---
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: fluxcd-conf
+spec:
+  reloader: true
+  syncMode: ContinuousWithDriftDetection
+  clusterSelector:
+    matchLabels:
+      fluxcd: 'true'
   templateResourceRefs:
     - resource:
         apiVersion: v1
