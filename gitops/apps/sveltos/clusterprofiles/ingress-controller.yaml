@@ -4,6 +4,7 @@ metadata:
   name: ingress-controller
 spec:
   syncMode: Continuous
+  reloader: true
   clusterSelector:
     matchLabels:
       ingress-controller: 'true'
