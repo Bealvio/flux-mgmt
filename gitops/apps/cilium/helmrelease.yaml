@@ -15,7 +15,7 @@ spec:
         namespace: kube-system
       interval: 1h
   values:
-    k8sServiceHost: 10.250.0.9
+    k8sServiceHost: 10.250.0.3
     k8sServicePort: 6443
     operator:
       replicas: 1
