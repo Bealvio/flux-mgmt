@@ -3,7 +3,7 @@ kind: ClusterProfile
 metadata:
   name: cert-manager
 spec:
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   reloader: true
   clusterSelector:
     matchLabels:
@@ -13,6 +13,17 @@ spec:
       name: infra
       namespace: flux-system
       path: ./gitops/apps/cert-manager/upstream
+---
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: cert-manager-configs
+spec:
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  clusterSelector:
+    matchLabels:
+      cert-manager: 'true'
   policyRefs:
     - kind: Secret
       name: cacert-clusterprofile
