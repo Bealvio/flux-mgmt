@@ -1,0 +1,15 @@
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: external-snapshotter
+spec:
+  syncMode: Continuous
+  reloader: true
+  clusterSelector:
+    matchLabels:
+      external-snapshotter: 'true'
+  kustomizationRefs:
+    - kind: GitRepository
+      name: infra
+      namespace: flux-system
+      path: ./gitops/apps/external-snapshotter

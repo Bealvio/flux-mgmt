@@ -45,6 +45,21 @@
       "url": "https://api.github.com/repos/projectcontour/contour/tarball/v1.30.2",
       "hash": "0z0s50laxckaap6kdhb7faisrjl17dzjfqbcvdybch3vffwwmmms"
     },
+    "external-snapshotter": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "kubernetes-csi",
+        "repo": "external-snapshotter"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "release_prefix": null,
+      "version": "v8.2.1",
+      "revision": "a6a3d9d6b5f6f1e6fa0d311148b696556e4499e8",
+      "url": "https://api.github.com/repos/kubernetes-csi/external-snapshotter/tarball/v8.2.1",
+      "hash": "03lyj0b8vsnrxdg4zc998xs58i6w0zifl17mq1ayi6sjq1d5k64q"
+    },
     "flux-operator": {
       "type": "GitRelease",
       "repository": {

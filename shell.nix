@@ -11,6 +11,13 @@ pkgs.mkShell {
     pkgs.kustomize
   ];
   packages = [
+    (pkgs.writeShellScriptBin "buildSnapshotter" ''
+      #!/bin/bash
+      set -e
+      rm -rf gitops/apps/external-snapshotter/upstream
+      mkdir -p gitops/apps/external-snapshotter/upstream
+      cp -r --no-preserve=mode $(nix-build nix/external-snapshotter.nix)/* gitops/apps/external-snapshotter/upstream/
+    '')
     (pkgs.writeShellScriptBin "buildFlux" ''
       #!/bin/bash
       set -e

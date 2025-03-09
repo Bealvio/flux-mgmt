@@ -12,3 +12,4 @@ resources:
   - pdns-zone.yaml
   - external-secret.yaml
   - minio-velero-bucket.yaml
+  - external-snapshotter.yaml

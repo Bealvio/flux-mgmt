@@ -1,0 +1,4 @@
+namespace: external-snapshotter
+resources:
+  - upstream
+  - namespace.yaml
