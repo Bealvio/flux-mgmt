@@ -13,7 +13,6 @@ spec:
       name: infra
       namespace: flux-system
       path: ./bootstrap/fluxcd/upstream/
-      targetNamespace: flux-system
 ---
 apiVersion: config.projectsveltos.io/v1beta1
 kind: ClusterProfile

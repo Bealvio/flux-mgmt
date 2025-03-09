@@ -3,3 +3,4 @@ resources:
   - velero-helmrepo.yaml
   - velero-helmrelease.yaml
   - namespace.yaml
+  - cm-policies.yaml

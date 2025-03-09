@@ -3,7 +3,7 @@ kind: ClusterProfile
 metadata:
   name: trust-manager
 spec:
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   reloader: true
   clusterSelector:
     matchLabels:

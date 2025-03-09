@@ -4,6 +4,7 @@ metadata:
   name: proxmox-csi
 spec:
   syncMode: Continuous
+  reloader: true
   clusterSelector:
     matchLabels:
       proxmox-csi: 'true'
@@ -12,7 +13,6 @@ spec:
       name: infra
       namespace: flux-system
       path: ./gitops/apps/proxmox-csi
-      targetNamespace: proxmox-csi
   templateResourceRefs:
     - resource:
         apiVersion: v1
