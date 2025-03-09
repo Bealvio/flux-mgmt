@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: k8s
+spec:
+  externalLabels:
+    cluster: bealv-mgmt
+  replicas: 1
+  retentionSize: 10GiB
+  resources:
+    requests:
+      cpu: 2
+      memory: 1000Mi
+    limits:
+      cpu: 2
+      memory: 1000Mi
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: 'disk-hdd'
+        resources:
+          requests:
+            storage: 20Gi
