@@ -10,10 +10,10 @@ spec:
         - bucket: 'velero-{{ .ClusterName }}'
           name: default
           provider: aws
-          prefix: csi
+          prefix: fsb
           default: true
           caCert: '{{ .CaCert }}'
           config:
             region: minio
             s3ForcePathStyle: true
-            s3Url: http://s3-clusters.bealv-mgmt.lan
+            s3Url: https://s3-clusters.bealv-mgmt.lan

@@ -13,26 +13,24 @@ spec:
         kind: HelmRepository
         name: velero
   values:
+    snapshotsEnabled: false
     deployNodeAgent: true
     nodeAgent:
       containerSecurityContext:
         privileged: true
     configuration:
+      uploaderType: kopia
       features: EnableCSI
       backupStorageLocation:
         - bucket: velero-mgmt
           name: default
           provider: aws
-          prefix: csi
+          prefix: fsb
           default: true
           config:
             region: minio
             s3ForcePathStyle: true
             s3Url: http://minio-mgmt.minio.svc:9000
-      volumeSnapshotLocation:
-        - name: default
-          provider: aws
-          config:
     initContainers:
       - name: velero-plugin-for-aws
         image: velero/velero-plugin-for-aws:v1.8.1
