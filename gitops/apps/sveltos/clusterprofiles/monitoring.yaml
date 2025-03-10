@@ -1,0 +1,74 @@
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: monitoring
+spec:
+  clusterSelector:
+    matchLabels:
+      monitoring: 'true'
+      fluxcd: 'true'
+  syncMode: Continuous
+  reloader: true
+  policyRefs:
+    - name: monitoring-clusterprofile
+      namespace: projectsveltos
+      kind: ConfigMap
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: monitoring-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+data:
+  crds.yaml: |
+    apiVersion: kustomize.toolkit.fluxcd.io/v1
+    kind: Kustomization
+    metadata:
+      name: monitoring-crds
+      namespace: flux-system
+    spec:
+      interval: 1m
+      path: ./gitops/apps/monitoring/upstream/kube-prometheus/crds
+      prune: true
+      sourceRef:
+        kind: GitRepository
+        name: mgmt
+    ---
+  deploy.yaml: |
+    apiVersion: kustomize.toolkit.fluxcd.io/v1
+    kind: Kustomization
+    metadata:
+      name: monitoring
+      namespace: flux-system
+    spec:
+      interval: 1m
+      path: ./gitops/apps/monitoring
+      prune: true
+      sourceRef:
+        kind: GitRepository
+        name: mgmt
+      dependsOn:
+        - name: monitoring-crds
+      patches:
+        - patch: |-
+            - op: remove
+              path: /spec/template/spec/containers/0/args/-1
+            - op: add
+              path: /spec/template/spec/containers/0/args/-
+              value: '--cluster-domain={{ .Cluster.metadata.name }}.local'
+          target:
+            kind: Deployment
+            name: prometheus-operator
+        - patch: |-
+            apiVersion: monitoring.coreos.com/v1
+            kind: Prometheus
+            metadata:
+              name: k8s
+            spec:
+              externalLabels:
+                cluster: '{{ .Cluster.metadata.name }}'
+          target:
+            kind: Prometheus
+            name: k8s
+            namespace: monitoring

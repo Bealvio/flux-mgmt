@@ -74,6 +74,13 @@ metadata:
 spec:
   template:
     spec:
+      clusterConfiguration:
+        scheduler:
+          extraArgs:
+            bind-address: '0.0.0.0'
+        controllerManager:
+          extraArgs:
+            bind-address: '0.0.0.0'
       joinConfiguration:
         nodeRegistration:
           kubeletExtraArgs:

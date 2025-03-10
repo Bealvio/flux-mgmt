@@ -20,35 +20,14 @@ metadata:
   name: fluxcd-conf
 spec:
   reloader: true
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   clusterSelector:
     matchLabels:
       fluxcd: 'true'
-  templateResourceRefs:
-    - resource:
-        apiVersion: v1
-        kind: Secret
-        name: 'github-fluxcd-chan'
-        namespace: 'flux-system'
-      identifier: fluxcdChan
   policyRefs:
     - name: fluxinstance-clusterprofile
       namespace: projectsveltos
       kind: ConfigMap
-    - kind: Secret
-      name: fluxcdchan-secrets
-      namespace: projectsveltos
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: fluxcdchan-secrets
-  annotations:
-    projectsveltos.io/template: 'true'
-type: addons.projectsveltos.io/cluster-profile
-stringData:
-  secret.yaml: |
-    {{ copy "fluxcdChan" }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -89,6 +68,56 @@ data:
               - op: add
                 path: /spec/template/spec/containers/0/args/-
                 value: --concurrent=10
+---
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: fluxcdresources-conf
+spec:
+  reloader: true
+  syncMode: Continuous
+  clusterSelector:
+    matchLabels:
+      fluxcd: 'true'
+  templateResourceRefs:
+    - resource:
+        apiVersion: v1
+        kind: Secret
+        name: 'github-fluxcd-chan'
+        namespace: 'flux-system'
+      identifier: fluxcdChan
+  policyRefs:
+    - name: fluxresources-clusterprofile
+      namespace: projectsveltos
+      kind: ConfigMap
+    - kind: Secret
+      name: fluxcdchan-secrets
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluxresources-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+data:
+  gitrepo-mgmt.yaml: |
+    apiVersion: source.toolkit.fluxcd.io/v1
+    kind: GitRepository
+    metadata:
+      name: mgmt
+      namespace: flux-system
+    spec:
+      secretRef:
+        name: github-fluxcd-chan
+      interval: 1m
+      provider: github
+      ref:
+        branch: main
+      url: https://github.com/Bealvio/flux-mgmt
+      ignore: |
+        /*
+        !/gitops
   gitrepo.yaml: |
     apiVersion: source.toolkit.fluxcd.io/v1
     kind: GitRepository
@@ -120,3 +149,13 @@ data:
         kind: GitRepository
         name: infra
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fluxcdchan-secrets
+  annotations:
+    projectsveltos.io/template: 'true'
+type: addons.projectsveltos.io/cluster-profile
+stringData:
+  secret.yaml: |
+    {{ copy "fluxcdChan" }}

@@ -13,3 +13,4 @@ resources:
   - external-secret.yaml
   - minio-velero-bucket.yaml
   - external-snapshotter.yaml
+  - monitoring.yaml

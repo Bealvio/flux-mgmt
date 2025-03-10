@@ -5,14 +5,14 @@ metadata:
 spec:
   externalLabels:
     cluster: bealv-mgmt
-  replicas: 1
+  replicas: 2
   retentionSize: 10GiB
   resources:
     requests:
-      cpu: 2
+      cpu: 200m
       memory: 1000Mi
     limits:
-      cpu: 2
+      cpu: 500m
       memory: 1000Mi
   storage:
     volumeClaimTemplate:

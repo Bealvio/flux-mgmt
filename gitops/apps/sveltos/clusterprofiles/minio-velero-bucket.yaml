@@ -74,6 +74,19 @@ spec:
         name: root-ca
         namespace: cert-manager
       identifier: caSecret
+---
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: velero-secrets
+spec:
+  clusterSelector:
+    matchLabels:
+      velero: 'true'
+      fluxcd: 'true'
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  templateResourceRefs:
     - resource:
         apiVersion: v1
         kind: Secret

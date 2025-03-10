@@ -177,7 +177,7 @@ let
     spec:
       instanceSelector:
         matchLabels:
-          dashboards: 'grafana'
+          alertmanager-default: 'true'
       resyncPeriod: 1m
       datasource:
         name: alertmanager
