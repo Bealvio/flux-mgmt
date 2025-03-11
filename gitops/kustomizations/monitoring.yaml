@@ -25,3 +25,18 @@ spec:
     name: infra
   dependsOn:
     - name: monitoring-crds
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: monitoring-mgmt
+  namespace: flux-system
+spec:
+  interval: 1m
+  path: ./gitops/apps/monitoring-mgmt
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: infra
+  dependsOn:
+    - name: monitoring-crds

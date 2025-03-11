@@ -25,6 +25,12 @@ metadata:
 spec:
   template:
     spec:
+      scheduler:
+        extraArgs:
+          - --bind-address=0.0.0.0
+      controllerManager:
+        extraArgs:
+          - --bind-address=0.0.0.0
       addons:
         coreDNS:
           dnsServiceIPs: []

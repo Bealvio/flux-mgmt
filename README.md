@@ -108,14 +108,16 @@ metadata:
   name: bealv-test
   namespace: capi-system
   labels:
-    cluster.x-k8s.io/cni: cilium
-    cluster.x-k8s.io/fluxcd: 'true'
-    cluster.x-k8s.io/proxmox-csi: 'true'
-    cluster.x-k8s.io/cert-manager: 'true'
-    cluster.x-k8s.io/external-dns: 'true'
-    cluster.x-k8s.io/external-secret: 'true'
-    cluster.x-k8s.io/ingress-controller: 'true'
-    cluster.x-k8s.io/velero: 'true'
+    cert-manager: 'true'
+    cni: cilium
+    external-dns: 'true'
+    external-secret: 'true'
+    external-snapshotter: 'true'
+    fluxcd: 'true'
+    ingress-controller: 'true'
+    monitoring: 'true'
+    proxmox-csi: 'true'
+    velero: 'true'
 spec:
   clusterNetwork:
     pods:
