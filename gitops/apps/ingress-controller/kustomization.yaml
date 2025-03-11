@@ -2,3 +2,8 @@ namespace: ingress-contour
 resources:
   - upstream/
   - rbacs.yaml
+patches:
+  - path: cm-patch.yaml
+    target:
+      kind: ConfigMap
+      name: contour
