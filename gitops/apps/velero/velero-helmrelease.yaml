@@ -32,7 +32,6 @@ spec:
         - bucket: velero-mgmt
           name: default
           provider: aws
-          prefix: fsb
           default: true
           config:
             region: minio
