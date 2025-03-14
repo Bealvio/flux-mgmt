@@ -10,6 +10,7 @@ spec:
         - bucket: 'velero-{{ .ClusterName }}'
           name: default
           provider: aws
+          prefix: fsb
           default: true
           caCert: '{{ .CaCert }}'
           config:
