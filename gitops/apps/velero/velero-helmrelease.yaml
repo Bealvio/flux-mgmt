@@ -19,7 +19,7 @@ spec:
       containerSecurityContext:
         privileged: true
     configuration:
-      uploaderType: kopia
+      uploaderType: restic
       features: EnableCSI
       repositoryMaintenanceJob:
         requests:
