@@ -34,4 +34,3 @@ spec:
                 secretKeyRef:
                   name: external-dns-internal
                   key: api_key
----
