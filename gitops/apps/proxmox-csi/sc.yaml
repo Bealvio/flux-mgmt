@@ -46,3 +46,25 @@ provisioner: csi.proxmox.sinextra.dev
 allowVolumeExpansion: true
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: disk-hddb
+parameters:
+  csi.storage.k8s.io/fstype: ext4
+  ## Proxmox storage ID
+  storage: disk_hddb
+  ssd: 'false'
+allowedTopologies:
+  - matchLabelExpressions:
+      - key: topology.kubernetes.io/region
+        values:
+          - proxmox-alv
+      - key: topology.kubernetes.io/zone
+        values:
+          - proxmox-alv
+provisioner: csi.proxmox.sinextra.dev
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
