@@ -5,7 +5,7 @@ metadata:
 spec:
   externalLabels:
     cluster: bealv-mgmt
-  replicas: 2
+  replicas: 1
   retentionSize: 10GiB
   resources:
     requests:
