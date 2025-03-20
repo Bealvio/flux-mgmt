@@ -6,7 +6,7 @@ spec:
   interval: 1m
   url: https://github.com/clastix/kamaji.git
   ref:
-    tag: edge-24.12.1
+    tag: edge-25.03.1
   ignore: |
     # exclude all
     /*
