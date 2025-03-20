@@ -52,14 +52,23 @@ targets:
         set -e
         nix run nixpkgs#npins -- add --name kamaji github clastix kamaji --at {{ source `kamaji` }}
         nix-shell shell.nix --run "buildKamaji"
-  image:
+  git:
     scmid: 'default'
     name: update kamaji image tag to {{ source `kamaji` }}
     kind: yaml
     disablesourceinput: true
     spec:
       file: 'gitops/apps/kamaji/setup/gitrepo.yaml'
-      key: '.spec.ref.tag'
+      key: '$.spec.ref.tag'
+      value: '{{ source `kamaji` }}'
+  image:
+    scmid: 'default'
+    name: update kamaji image tag to {{ source `kamaji` }}
+    kind: yaml
+    disablesourceinput: true
+    spec:
+      file: 'gitops/apps/kamaji/setup/helmrelease.yaml'
+      key: '$.spec.values.image.tag'
       value: '{{ source `kamaji` }}'
 actions:
   default:
