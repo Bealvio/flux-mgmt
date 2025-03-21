@@ -66,6 +66,7 @@ data:
             metadata:
               name: k8s
             spec:
+              replicas: 2
               externalLabels:
                 cluster: '{{ .Cluster.metadata.name }}'
           target:
