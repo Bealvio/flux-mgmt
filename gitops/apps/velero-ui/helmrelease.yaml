@@ -32,7 +32,6 @@ spec:
       type: ClusterIP
       port: 3000
     ingress:
-      # -- Enable ingress controller resource
       enabled: true
       annotations:
         cert-manager.io/cluster-issuer: bealv-mgmt
