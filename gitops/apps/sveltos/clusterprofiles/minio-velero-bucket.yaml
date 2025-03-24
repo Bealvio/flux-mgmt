@@ -58,7 +58,6 @@ spec:
       velero: 'true'
       fluxcd: 'true'
   syncMode: Continuous
-  reloader: true
   kustomizationRefs:
     - kind: GitRepository
       name: infra
