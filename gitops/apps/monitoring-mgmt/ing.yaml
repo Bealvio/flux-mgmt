@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: alertmanager
+  annotations:
+    cert-manager.io/cluster-issuer: bealv-mgmt
+  labels:
+    probe: enabled
+spec:
+  rules:
+    - host: 'alertmanager.bealv-mgmt.lan'
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: alertmanager-main
+                port:
+                  number: 9093
+  tls:
+    - hosts:
+        - 'alertmanager.bealv-mgmt.lan'
+      secretName: alertmanager-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all-to-alertmanager
+  namespace: monitoring # Replace with the namespace where Alertmanager is deployed
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: alert-router
+      app.kubernetes.io/instance: main
+      app.kubernetes.io/name: alertmanager
+      app.kubernetes.io/part-of: kube-prometheus
+  ingress:
+    - from:
+        - namespaceSelector: {} # This allows traffic from all namespaces
+      ports:
+        - protocol: TCP
+          port: 9093

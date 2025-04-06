@@ -73,3 +73,14 @@ data:
             kind: Prometheus
             name: k8s
             namespace: monitoring
+        - patch: |-
+            apiVersion: monitoring.coreos.com/v1
+            kind: Alertmanager
+            metadata:
+              name: main
+              namespace: monitoring
+            spec:
+              alertmanagerConfiguration:
+                name: main
+              replicas: 3
+              externalUrl: https://alertmanager.{{ .Cluster.metadata.name }}.lan

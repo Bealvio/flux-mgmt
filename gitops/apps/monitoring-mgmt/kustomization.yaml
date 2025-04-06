@@ -1,6 +1,7 @@
 resources:
   - alertmanager-config.yaml
   - secrets.yaml
+  - ing.yaml
 transformers:
   - |-
     apiVersion: builtin
