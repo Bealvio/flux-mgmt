@@ -1,0 +1,7 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: kamaji-console
+spec:
+  url: https://clastix.github.io/charts
+  interval: 1h

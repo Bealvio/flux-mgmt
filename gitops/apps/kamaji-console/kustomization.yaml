@@ -1,0 +1,6 @@
+namespace: kamaji-console
+resources:
+  - helmrelease.yaml
+  - helmrepo.yaml
+  - namespace.yaml
+  - secrets.yaml

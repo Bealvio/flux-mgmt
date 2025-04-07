@@ -1,0 +1,42 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kamaji-console
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: kamaji-console
+      version: 0.1.1
+      sourceRef:
+        kind: HelmRepository
+        name: kamaji-console
+      interval: 1h
+  values:
+    replicaCount: 2
+    image:
+      repository: ghcr.io/clastix/kamaji-console
+      pullPolicy: IfNotPresent
+      tag: ''
+    sveltos:
+      url: ''
+      namespace:
+      # -- Secret containing the access token, required for the Application Delivery
+      secretName:
+    credentialsSecret:
+      generate: false
+      name: 'kamaji-console-secrets'
+    ingress:
+      enabled: true
+      className: ''
+      annotations:
+        cert-manager.io/cluster-issuer: bealv-mgmt
+      hosts:
+        - host: kamaji.bealv-mgmt.lan
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls:
+        - secretName: kamaji-console-tls
+          hosts:
+            - kamaji.bealv-mgmt.lan
