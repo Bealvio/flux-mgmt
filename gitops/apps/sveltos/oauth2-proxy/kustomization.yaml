@@ -1,4 +1,0 @@
-resources:
-  - helmrepo.yaml
-  - helmrelease.yaml
-  - secrets.yaml

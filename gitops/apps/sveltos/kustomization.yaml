@@ -1,9 +1,8 @@
 namespace: projectsveltos
 resources:
   - self/
-  - oauth2-proxy
-  - ing.yaml
   - namespace.yaml
+  - sa.yaml
   - helmrepo.yaml
   - helmrelease.yaml
   - helmrelease-dashboard.yaml
