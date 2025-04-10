@@ -11,7 +11,7 @@ resources:
   - grafana-netpol.yaml
 images:
   - name: ghcr.io/grafana/grafana-operator
-    newTag: 'v5.17.0'
+    newTag: 'v5.17.1'
 patches:
   - path: prometheus-operator-patch.yaml
     target:
