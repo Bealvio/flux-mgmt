@@ -1312,6 +1312,13 @@ spec:
                       description: Manager defines the properties that can be enabled
                         on the controller manager for the additional provider deployment.
                       properties:
+                        additionalArgs:
+                          additionalProperties:
+                            type: string
+                          description: |-
+                            AdditionalArgs is a map of additional options that will be passed
+                            in as container args to the provider's controller manager.
+                          type: object
                         cacheNamespace:
                           description: |-
                             CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -2843,6 +2850,13 @@ spec:
                 description: Manager defines the properties that can be enabled on
                   the controller manager for the provider.
                 properties:
+                  additionalArgs:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      AdditionalArgs is a map of additional options that will be passed
+                      in as container args to the provider's controller manager.
+                    type: object
                   cacheNamespace:
                     description: |-
                       CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -3055,27 +3069,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -3085,6 +3104,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -4717,27 +4738,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -4747,6 +4773,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -6049,6 +6077,13 @@ spec:
                       description: Manager defines the properties that can be enabled
                         on the controller manager for the additional provider deployment.
                       properties:
+                        additionalArgs:
+                          additionalProperties:
+                            type: string
+                          description: |-
+                            AdditionalArgs is a map of additional options that will be passed
+                            in as container args to the provider's controller manager.
+                          type: object
                         cacheNamespace:
                           description: |-
                             CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -7580,6 +7615,13 @@ spec:
                 description: Manager defines the properties that can be enabled on
                   the controller manager for the provider.
                 properties:
+                  additionalArgs:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      AdditionalArgs is a map of additional options that will be passed
+                      in as container args to the provider's controller manager.
+                    type: object
                   cacheNamespace:
                     description: |-
                       CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -7792,27 +7834,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -7822,6 +7869,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -9455,27 +9504,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -9485,6 +9539,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -10788,6 +10844,13 @@ spec:
                       description: Manager defines the properties that can be enabled
                         on the controller manager for the additional provider deployment.
                       properties:
+                        additionalArgs:
+                          additionalProperties:
+                            type: string
+                          description: |-
+                            AdditionalArgs is a map of additional options that will be passed
+                            in as container args to the provider's controller manager.
+                          type: object
                         cacheNamespace:
                           description: |-
                             CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -12319,6 +12382,13 @@ spec:
                 description: Manager defines the properties that can be enabled on
                   the controller manager for the provider.
                 properties:
+                  additionalArgs:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      AdditionalArgs is a map of additional options that will be passed
+                      in as container args to the provider's controller manager.
+                    type: object
                   cacheNamespace:
                     description: |-
                       CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -12532,27 +12602,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -12562,6 +12637,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -14194,27 +14271,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -14224,6 +14306,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -15526,6 +15610,13 @@ spec:
                       description: Manager defines the properties that can be enabled
                         on the controller manager for the additional provider deployment.
                       properties:
+                        additionalArgs:
+                          additionalProperties:
+                            type: string
+                          description: |-
+                            AdditionalArgs is a map of additional options that will be passed
+                            in as container args to the provider's controller manager.
+                          type: object
                         cacheNamespace:
                           description: |-
                             CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -17057,6 +17148,13 @@ spec:
                 description: Manager defines the properties that can be enabled on
                   the controller manager for the provider.
                 properties:
+                  additionalArgs:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      AdditionalArgs is a map of additional options that will be passed
+                      in as container args to the provider's controller manager.
+                    type: object
                   cacheNamespace:
                     description: |-
                       CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -17269,27 +17367,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -17299,6 +17402,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -18932,27 +19037,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -18962,6 +19072,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -20265,6 +20377,13 @@ spec:
                       description: Manager defines the properties that can be enabled
                         on the controller manager for the additional provider deployment.
                       properties:
+                        additionalArgs:
+                          additionalProperties:
+                            type: string
+                          description: |-
+                            AdditionalArgs is a map of additional options that will be passed
+                            in as container args to the provider's controller manager.
+                          type: object
                         cacheNamespace:
                           description: |-
                             CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -21796,6 +21915,13 @@ spec:
                 description: Manager defines the properties that can be enabled on
                   the controller manager for the provider.
                 properties:
+                  additionalArgs:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      AdditionalArgs is a map of additional options that will be passed
+                      in as container args to the provider's controller manager.
+                    type: object
                   cacheNamespace:
                     description: |-
                       CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -22009,27 +22135,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -22039,6 +22170,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -23373,6 +23506,13 @@ spec:
                       description: Manager defines the properties that can be enabled
                         on the controller manager for the additional provider deployment.
                       properties:
+                        additionalArgs:
+                          additionalProperties:
+                            type: string
+                          description: |-
+                            AdditionalArgs is a map of additional options that will be passed
+                            in as container args to the provider's controller manager.
+                          type: object
                         cacheNamespace:
                           description: |-
                             CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -24904,6 +25044,13 @@ spec:
                 description: Manager defines the properties that can be enabled on
                   the controller manager for the provider.
                 properties:
+                  additionalArgs:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      AdditionalArgs is a map of additional options that will be passed
+                      in as container args to the provider's controller manager.
+                    type: object
                   cacheNamespace:
                     description: |-
                       CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -25116,27 +25263,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -25146,6 +25298,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -26482,6 +26636,13 @@ spec:
                       description: Manager defines the properties that can be enabled
                         on the controller manager for the additional provider deployment.
                       properties:
+                        additionalArgs:
+                          additionalProperties:
+                            type: string
+                          description: |-
+                            AdditionalArgs is a map of additional options that will be passed
+                            in as container args to the provider's controller manager.
+                          type: object
                         cacheNamespace:
                           description: |-
                             CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -28013,6 +28174,13 @@ spec:
                 description: Manager defines the properties that can be enabled on
                   the controller manager for the provider.
                 properties:
+                  additionalArgs:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      AdditionalArgs is a map of additional options that will be passed
+                      in as container args to the provider's controller manager.
+                    type: object
                   cacheNamespace:
                     description: |-
                       CacheNamespace if specified restricts the manager's cache to watch objects in
@@ -28226,27 +28394,32 @@ spec:
                   properties:
                     lastTransitionTime:
                       description: |-
-                        Last time the condition transitioned from one status to another.
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
                         This should be when the underlying condition changed. If that is not known, then using the time when
                         the API field changed is acceptable.
                       format: date-time
                       type: string
                     message:
                       description: |-
-                        A human readable message indicating details about the transition.
+                        message is a human readable message indicating details about the transition.
                         This field may be empty.
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
                       description: |-
-                        The reason for the condition's last transition in CamelCase.
+                        reason is the reason for the condition's last transition in CamelCase.
                         The specific API may choose whether or not this field is considered a guaranteed API.
                         This field may be empty.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: |-
                         severity provides an explicit classification of Reason code, so the users or machines can immediately
                         understand the current situation and act accordingly.
                         The Severity field MUST be set only when Status=False.
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -28256,6 +28429,8 @@ spec:
                         type of condition in CamelCase or in foo.example.com/CamelCase.
                         Many .condition.type values are consistent across resources like Available, but because arbitrary conditions
                         can be useful (see .node.status.conditions), the ability to deconflict is important.
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime
@@ -28425,7 +28600,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: registry.k8s.io/capi-operator/cluster-api-operator:v0.18.1
+        image: registry.k8s.io/capi-operator/cluster-api-operator:v0.19.0
         imagePullPolicy: IfNotPresent
         name: manager
         ports:
