@@ -10,10 +10,10 @@
       "pre_releases": false,
       "version_upper_bound": null,
       "release_prefix": null,
-      "version": "v1.17.1",
-      "revision": "79c8eae15bf2e22c69f97bc32ff365a75d49f221",
-      "url": "https://api.github.com/repos/cert-manager/cert-manager/tarball/v1.17.1",
-      "hash": "00rahp4khqrn95krplin85g5yhvdh3lf03hcjyynfzqbsph357kj"
+      "version": "v1.17.2",
+      "revision": "8d465a2251c178442fbbb2125c31ccd491ef7a42",
+      "url": "https://api.github.com/repos/cert-manager/cert-manager/tarball/v1.17.2",
+      "hash": "1m588vc8fsarjkd319rsww0hk2grj699jhhfnshcplw9lbv1bhfa"
     },
     "cluster-api-operator": {
       "type": "GitRelease",
