@@ -5,5 +5,5 @@ resources:
   - sa.yaml
   - helmrepo.yaml
   - helmrelease.yaml
-  - helmrelease-dashboard.yaml
+  # - helmrelease-dashboard.yaml
   - addon-controller-role-extra.yaml
