@@ -1,33 +1,12 @@
 apiVersion: config.projectsveltos.io/v1beta1
 kind: ClusterProfile
 metadata:
-  name: cilium
-spec:
-  clusterSelector:
-    matchLabels:
-      cni: cilium
-      fluxcd: 'true'
-  syncMode: Continuous
-  kustomizationRefs:
-    - kind: GitRepository
-      name: infra
-      namespace: flux-system
-      path: ./gitops/apps/sveltos/clusterprofiles/templates/cilium
-      values:
-        controlPlaneEndpointHost: '{{ .Cluster.spec.controlPlaneEndpoint.host }}'
-        controlPlaneEndpointPort: '{{ .Cluster.spec.controlPlaneEndpoint.port }}'
-        podsCidrBlocks: '{{ index .Cluster.spec.clusterNetwork.pods.cidrBlocks 0 }}'
----
-apiVersion: config.projectsveltos.io/v1beta1
-kind: ClusterProfile
-metadata:
   name: cilium-bootstrap
   namespace: projectsveltos
 spec:
   clusterSelector:
     matchLabels:
       cni: cilium
-  syncMode: OneTime
   helmCharts:
     - repositoryURL: https://helm.cilium.io/
       repositoryName: cilium
