@@ -7,6 +7,10 @@ spec:
   clusterSelector:
     matchLabels:
       cni: cilium
+  policyRefs:
+    - name: cilium-conf-clusterprofile
+      namespace: projectsveltos
+      kind: ConfigMap
   helmCharts:
     - repositoryURL: https://helm.cilium.io/
       repositoryName: cilium
@@ -37,3 +41,19 @@ spec:
             clusterPoolIPv4PodCIDRList:
               - {{ index .Cluster.spec.clusterNetwork.pods.cidrBlocks 0 }}
             clusterPoolIPv4MaskSize: 23
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cilium-conf-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+data:
+  cilium-conf.yaml: |
+    apiVersion: 'cilium.io/v2alpha1'
+    kind: CiliumL2AnnouncementPolicy
+    metadata:
+      name: default
+    spec:
+      externalIPs: false
+      loadBalancerIPs: true
