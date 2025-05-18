@@ -3,7 +3,7 @@ kind: ClusterProfile
 metadata:
   name: proxmox-csi
 spec:
-  syncMode: Continuous
+  syncMode: OneTime
   reloader: true
   clusterSelector:
     matchLabels:
