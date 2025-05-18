@@ -22,7 +22,7 @@ spec:
     matchLabels:
       type: mgmt
   eventSourceName: pdns-cluster-eventsource
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   reloader: true
   oneForEvent: true
   policyRefs:
