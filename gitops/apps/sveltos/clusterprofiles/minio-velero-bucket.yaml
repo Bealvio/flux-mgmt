@@ -22,7 +22,7 @@ spec:
     matchLabels:
       type: mgmt
   eventSourceName: minio-velero-cluster-eventsource
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   reloader: true
   oneForEvent: true
   policyRefs:
@@ -83,7 +83,7 @@ spec:
     matchLabels:
       velero: 'true'
       fluxcd: 'true'
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   reloader: true
   templateResourceRefs:
     - resource:

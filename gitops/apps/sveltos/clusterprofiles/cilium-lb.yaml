@@ -22,7 +22,7 @@ spec:
     matchLabels:
       type: mgmt
   eventSourceName: cilium-cluster-eventsource
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   reloader: true
   oneForEvent: true
   policyRefs:
