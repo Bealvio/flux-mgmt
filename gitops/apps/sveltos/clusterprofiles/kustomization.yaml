@@ -11,6 +11,6 @@ resources:
   - ingress-controller.yaml
   - pdns-zone.yaml
   - external-secret.yaml
-  - minio-velero-bucket.yaml
+  # - minio-velero-bucket.yaml
   - external-snapshotter.yaml
   - monitoring.yaml
