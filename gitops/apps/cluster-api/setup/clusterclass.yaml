@@ -93,12 +93,3 @@ spec:
               kind: ProxmoxMachineTemplate
               name: kamaji-proxmox
               namespace: capi-system
-        machineHealthCheck:
-          nodeStartupTimeout: 20m
-          unhealthyConditions:
-            - type: Ready
-              status: Unknown
-              timeout: 1200s
-            - type: Ready
-              status: 'False'
-              timeout: 1200s
