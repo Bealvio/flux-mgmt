@@ -32,8 +32,7 @@ spec:
         extraArgs:
           - --bind-address=0.0.0.0
       addons:
-        coreDNS:
-          dnsServiceIPs: []
+        coreDNS: {}
         konnectivity:
           agent:
             image: registry.k8s.io/kas-network-proxy/proxy-agent
