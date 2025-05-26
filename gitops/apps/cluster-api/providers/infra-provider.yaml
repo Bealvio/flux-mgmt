@@ -9,7 +9,7 @@ metadata:
   name: proxmox
   namespace: capmox-system
 spec:
-  version: v0.7.0
+  version: v0.7.1
   configSecret:
     name: bealv-proxmox
     namespace: capmox-system

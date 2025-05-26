@@ -9,6 +9,6 @@ metadata:
   name: ipamincluster
   namespace: capi-ipam-in-cluster-system
 spec:
-  version: v1.0.0
+  version: v1.0.1
   fetchConfig:
     url: https://github.com/kubernetes-sigs/cluster-api-ipam-provider-in-cluster/releases/download/v1.0.0/ipam-components.yaml
