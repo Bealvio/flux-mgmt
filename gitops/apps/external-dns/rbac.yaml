@@ -24,7 +24,7 @@ rules:
     verbs: ['get', 'watch', 'list']
   - apiGroups: ['']
     resources: ['nodes']
-    verbs: ['list']
+    verbs: ['list', 'watch']
   - apiGroups: ['']
     resources: ['namespaces']
     verbs: ['list']
