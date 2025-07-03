@@ -23,6 +23,10 @@ spec:
           jsonPath: .spec.kubernetes.version
           name: Version
           type: string
+        - description: The actual installed Kubernetes version from status
+          jsonPath: .status.kubernetesResources.version.version
+          name: Installed Version
+          type: string
         - description: Status
           jsonPath: .status.kubernetesResources.version.status
           name: Status
@@ -6535,7 +6539,7 @@ spec:
                       properties:
                         cgroupfs:
                           description: |-
-                            CGroupFS defines the  cgroup driver for Kubelet
+                            CGroupFS defines the cgroup driver for Kubelet
                             https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/
                           enum:
                             - systemd
@@ -6543,12 +6547,12 @@ spec:
                           type: string
                         preferredAddressTypes:
                           default:
-                            - Hostname
                             - InternalIP
                             - ExternalIP
+                            - Hostname
                           description: |-
                             Ordered list of the preferred NodeAddressTypes to use for kubelet connections.
-                            Default to Hostname, InternalIP, ExternalIP.
+                            Default to InternalIP, ExternalIP, Hostname.
                           items:
                             enum:
                               - Hostname
@@ -6559,6 +6563,7 @@ spec:
                             type: string
                           minItems: 1
                           type: array
+                          x-kubernetes-list-type: set
                       type: object
                     version:
                       description: Kubernetes Version for the tenant control plane
