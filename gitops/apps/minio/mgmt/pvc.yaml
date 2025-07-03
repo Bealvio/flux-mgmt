@@ -11,4 +11,4 @@ spec:
   storageClassName: disk-hdd
   resources:
     requests:
-      storage: 40Gi
+      storage: 50Gi
