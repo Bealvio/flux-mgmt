@@ -10,6 +10,7 @@
       "pre_releases": false,
       "version_upper_bound": null,
       "release_prefix": null,
+      "submodules": false,
       "version": "v1.17.2",
       "revision": "8d465a2251c178442fbbb2125c31ccd491ef7a42",
       "url": "https://api.github.com/repos/cert-manager/cert-manager/tarball/v1.17.2",
@@ -25,6 +26,7 @@
       "pre_releases": false,
       "version_upper_bound": null,
       "release_prefix": null,
+      "submodules": false,
       "version": "v0.20.0",
       "revision": "221f27f4f0e78bec0f23ebc3d7b439b2163ca3be",
       "url": "https://api.github.com/repos/kubernetes-sigs/cluster-api-operator/tarball/v0.20.0",
@@ -40,6 +42,7 @@
       "pre_releases": false,
       "version_upper_bound": null,
       "release_prefix": null,
+      "submodules": false,
       "version": "v1.32.0",
       "revision": "b0f4d6fa82c2443befde43c08bc46d2c915fb3fc",
       "url": "https://api.github.com/repos/projectcontour/contour/tarball/v1.32.0",
@@ -55,6 +58,7 @@
       "pre_releases": false,
       "version_upper_bound": null,
       "release_prefix": null,
+      "submodules": false,
       "version": "v8.2.1",
       "revision": "a6a3d9d6b5f6f1e6fa0d311148b696556e4499e8",
       "url": "https://api.github.com/repos/kubernetes-csi/external-snapshotter/tarball/v8.2.1",
@@ -70,6 +74,7 @@
       "pre_releases": false,
       "version_upper_bound": null,
       "release_prefix": null,
+      "submodules": false,
       "version": "v0.13.0",
       "revision": "e8dc35b53311995457e140de83ac0f1c0b8196b6",
       "url": "https://api.github.com/repos/controlplaneio-fluxcd/flux-operator/tarball/v0.13.0",
@@ -85,6 +90,7 @@
       "pre_releases": false,
       "version_upper_bound": null,
       "release_prefix": null,
+      "submodules": false,
       "version": "v5.18.0",
       "revision": "bb4abde8ca5dd6b0705a90f6cf537d130a63f881",
       "url": "https://api.github.com/repos/grafana-operator/grafana-operator/tarball/v5.18.0",
@@ -100,6 +106,7 @@
       "pre_releases": false,
       "version_upper_bound": null,
       "release_prefix": null,
+      "submodules": false,
       "version": "edge-25.4.1",
       "revision": "994ca7687d0feebf775c06dc116a8b74d20290d0",
       "url": "https://api.github.com/repos/clastix/kamaji/tarball/edge-25.4.1",
@@ -113,6 +120,7 @@
         "repo": "kube-prometheus"
       },
       "branch": "main",
+      "submodules": false,
       "revision": "9bf26583e305e22ce76edc022f6f86c93017ae80",
       "url": "https://github.com/prometheus-operator/kube-prometheus/archive/9bf26583e305e22ce76edc022f6f86c93017ae80.tar.gz",
       "hash": "19pymk5frv31nscphz0c448b6snpi4v55wh9x276aq4v8ff2w4zv"
@@ -125,6 +133,7 @@
         "repo": "monitoring"
       },
       "branch": "main",
+      "submodules": false,
       "revision": "234f65f076465b7f96edd23a028fd943000a3493",
       "url": "https://github.com/kubevirt/monitoring/archive/234f65f076465b7f96edd23a028fd943000a3493.tar.gz",
       "hash": "02gjb8a0lwv6kwa95wvg05038vw26hfmzngv8d06nsq73ldh1cf7"
@@ -136,5 +145,5 @@
       "hash": "150nmrbs3aplxj8w5qwg4aqvwqxdkfap597l20rvqimgbr99gzm7"
     }
   },
-  "version": 3
+  "version": 5
 }
