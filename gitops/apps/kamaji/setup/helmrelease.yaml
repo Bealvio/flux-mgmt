@@ -17,7 +17,7 @@ spec:
     image:
       repository: clastix/kamaji
       pullPolicy: Always
-      tag: edge-25.4.1
+      tag: edge-25.7.1
     kamaji-etcd:
       deploy: true
       fullnameOverride: kamaji-etcd
