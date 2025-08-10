@@ -17,8 +17,7 @@ autodiscovery:
   crawlers:
     flux:
       digest: true
-      helmrelease: true
-      ocirepository: true
+      helmrelease: false # broken somewhere
       versionfilter:
         kind: latest
 actions:
