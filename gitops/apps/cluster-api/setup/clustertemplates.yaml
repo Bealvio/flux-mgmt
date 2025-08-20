@@ -30,7 +30,7 @@ spec:
           - --oidc-client-id=334209622304948997
           - --oidc-username-claim=preferred_username
           - --oidc-groups-claim=groups
-          - --oidc-issuer-url=https://zitadel.bealv.io/.well-known/openid-configuration
+          - --oidc-issuer-url=https://zitadel.bealv.io
       scheduler:
         extraArgs:
           - --bind-address=0.0.0.0
