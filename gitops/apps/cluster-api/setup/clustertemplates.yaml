@@ -28,7 +28,7 @@ spec:
       apiServer:
         extraArgs:
           - --oidc-client-id=334209622304948997
-          - --oidc-username-claim=username
+          - --oidc-username-claim=email
           - --oidc-groups-claim=groups
           - --oidc-issuer-url=https://zitadel.bealv.io
       scheduler:
