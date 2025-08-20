@@ -28,6 +28,7 @@ spec:
       apiServer:
         extraArgs:
           - --oidc-client-id=334209622304948997
+          - --oidc-client-secret=atKig5advxYcMMNBP6vPeAymkU3nSaWv82LvffcpfYw8MuqRnXQhcpNVEtfdIjcb
           - --oidc-username-claim=preferred_username
           - --oidc-groups-claim=groups
           - --oidc-issuer-url=https://zitadel.bealv.io
