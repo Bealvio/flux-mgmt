@@ -50,7 +50,7 @@ targets:
         - name: NIX_PATH
       command: |
         set -e
-        npins add --name external-snapshotter github kubernetes-csi external-snapshotter --at {{ source `external-snapshotter` }}
+        nix run nixpkgs#npins -- add --name external-snapshotter github kubernetes-csi external-snapshotter --at {{ source `external-snapshotter` }}
         nix-shell shell.nix --run "buildSnapshotter"
 actions:
   default:

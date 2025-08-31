@@ -50,7 +50,7 @@ targets:
         - name: NIX_PATH
       command: |
         set -e
-        npins add --name contour github projectcontour contour --at {{ source `contour` }}
+        nix run nixpkgs#npins -- add --name contour github projectcontour contour --at {{ source `contour` }}
         nix-shell shell.nix --run "buildIngressContour"
 actions:
   default:
