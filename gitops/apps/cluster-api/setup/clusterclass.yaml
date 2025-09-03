@@ -31,6 +31,11 @@ spec:
       schema:
         openAPIV3Schema:
           type: integer
+    - name: templateGPUID
+      required: true
+      schema:
+        openAPIV3Schema:
+          type: integer
   patches:
     - name: proxmox-cluster
       definitions:
@@ -62,6 +67,20 @@ spec:
               path: /spec/template/spec/templateID
               valueFrom:
                 variable: templateID
+    - name: templateGPUID
+      definitions:
+        - selector:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+            kind: ProxmoxMachineTemplate
+            matchResources:
+              machineDeploymentClass:
+                names:
+                  - default-worker-gpu
+          jsonPatches:
+            - op: replace
+              path: /spec/template/spec/templateID
+              valueFrom:
+                variable: templateID
   controlPlane:
     ref:
       apiVersion: controlplane.cluster.x-k8s.io/v1alpha1
@@ -77,6 +96,23 @@ spec:
   workers:
     machineDeployments:
       - class: default-worker
+        template:
+          metadata:
+            labels:
+              node-role.kubernetes.io/slave: ''
+          bootstrap:
+            ref:
+              apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+              kind: KubeadmConfigTemplate
+              name: kamaji-proxmox
+              namespace: capi-system
+          infrastructure:
+            ref:
+              apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+              kind: ProxmoxMachineTemplate
+              name: kamaji-proxmox
+              namespace: capi-system
+      - class: default-worker-gpu
         template:
           metadata:
             labels:
