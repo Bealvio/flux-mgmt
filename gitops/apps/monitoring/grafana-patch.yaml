@@ -6,7 +6,7 @@ metadata:
     dashboards: 'grafana'
     alertmanager-default: 'true'
 spec:
-  version: 12.1.1
+  version: 12.2.0
   config:
     log:
       mode: 'console'
