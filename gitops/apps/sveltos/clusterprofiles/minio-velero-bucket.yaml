@@ -57,7 +57,7 @@ spec:
     matchLabels:
       velero: 'true'
       fluxcd: 'true'
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   kustomizationRefs:
     - kind: GitRepository
       name: infra

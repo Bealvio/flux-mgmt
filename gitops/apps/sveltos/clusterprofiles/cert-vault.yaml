@@ -22,7 +22,7 @@ spec:
     matchLabels:
       type: mgmt
   eventSourceName: certvault-cluster-eventsource
-  syncMode: ContinuousWithDriftDetection
+  syncMode: Continuous
   reloader: true
   policyRefs:
     - kind: ConfigMap
