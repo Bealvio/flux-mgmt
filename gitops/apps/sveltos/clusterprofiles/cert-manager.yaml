@@ -65,7 +65,7 @@ data:
     spec:
       vault:
         path: pki-int/sign/{{ .Cluster.metadata.name }}-dot-lan
-        server: http://vault.bealv-mgmt.lan
+        server: https://vault.bealv-mgmt.lan
         caBundleSecretRef:
           name: bealv-mgmt-bundle
           key: ca.crt
