@@ -5,12 +5,12 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'config.projectsveltos.io'
+    - group: 'cluster.x-k8s.io'
       version: 'v1beta1'
-      kind: 'ClusterProfile'
+      kind: 'Cluster'
       labelFilters:
-        - key: projectsveltos.io/cluster-profile-name
-          value: 'cert-manager'
+        - key: cert-manager
+          value: 'true'
           operation: Equal
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
@@ -40,24 +40,24 @@ data:
     apiVersion: approle.vault.upbound.io/v1alpha1
     kind: AuthBackendRole
     metadata:
-      name: cert-manager-{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}
+      name: cert-manager-{{ .Resource.metadata.name }}
     spec:
       forProvider:
-        roleName: cert-manager-{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}
+        roleName: cert-manager-{{ .Resource.metadata.name }}
         tokenPolicies:
-          - cert-manager-{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}
+          - cert-manager-{{ .Resource.metadata.name }}
       providerConfigRef:
         name: default
   certmanager-role-secretid: |
     apiVersion: approle.vault.upbound.io/v1alpha1
     kind: AuthBackendRoleSecretID
     metadata:
-      name: cert-manager-{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}
+      name: cert-manager-{{ .Resource.metadata.name }}
     spec:
       forProvider:
-        roleName: cert-manager-{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}
+        roleName: cert-manager-{{ .Resource.metadata.name }}
       writeConnectionSecretToRef:
-        name: cert-manager-approle-{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}
+        name: cert-manager-approle-{{ .Resource.metadata.name }}
         namespace: crossplane-system
       providerConfigRef:
         name: default
@@ -65,15 +65,15 @@ data:
     apiVersion: vault.vault.upbound.io/v1alpha1
     kind: Policy
     metadata:
-      name: cert-manager-{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}
+      name: cert-manager-{{ .Resource.metadata.name }}
     spec:
       forProvider:
-        name: cert-manager-{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}
+        name: cert-manager-{{ .Resource.metadata.name }}
         policy: |
-          path "pki-int/sign/{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}-dot-lan" {
+          path "pki-int/sign/{{ .Resource.metadata.name }}-dot-lan" {
             capabilities = ["create", "update"]
           }
-          path "pki-int/issue/{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}-dot-lan" {
+          path "pki-int/issue/{{ .Resource.metadata.name }}-dot-lan" {
             capabilities = ["create", "update"]
           }
       providerConfigRef:
@@ -82,17 +82,17 @@ data:
     apiVersion: pki.vault.upbound.io/v1alpha1
     kind: SecretBackendRole
     metadata:
-      name: {{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}
+      name: {{ .Resource.metadata.name }}
     spec:
       forProvider:
-        name: {{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}-dot-lan
+        name: {{ .Resource.metadata.name }}-dot-lan
         backend: pki-int
         ttl: '2592000'
         allowIpSans: true
         keyType: rsa
         keyBits: 2048
         allowedDomains:
-          - '{{ index .Resource.metadata.labels "projectsveltos.io/cluster-name" }}.lan'
+          - '{{ .Resource.metadata.name }}.lan'
         allowSubdomains: true
         organization:
           - 'Bealv'
