@@ -24,7 +24,6 @@ spec:
   eventSourceName: certvault-cluster-eventsource
   syncMode: Continuous
   reloader: true
-  oneForEvent: true
   policyRefs:
     - kind: ConfigMap
       name: certvault-vault
