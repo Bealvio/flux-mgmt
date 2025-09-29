@@ -71,6 +71,7 @@ stringData:
               - kube-user
               - kube-admin
             forceTenantPrefix: true
+            ignoreUserWithGroups: []
         webhooks:
           hooks:
             nodes:
