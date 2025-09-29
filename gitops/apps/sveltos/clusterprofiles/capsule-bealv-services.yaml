@@ -5,13 +5,21 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'cluster.x-k8s.io'
-      version: 'v1beta1'
-      kind: 'Cluster'
-      labelFilters:
-        - key: capsule
-          value: 'true'
-          operation: Equal
+    - group: ''
+      version: 'v1'
+      kind: 'Service'
+      name: capsule-proxy-lb
+      namespace: capsule-system
+  evaluate: |
+    function evaluate()
+      hs = {}
+      hs.matching = false
+      hs.message = ""
+      if obj.status.loadBalancer.ingress ~= nil then
+        hs.matching = true
+      end
+      return hs
+    end
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventTrigger
@@ -20,7 +28,7 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      type: mgmt
+      capsule: 'true'
   destinationCluster:
     name: 'bealv'
     namespace: 'capi-system'
