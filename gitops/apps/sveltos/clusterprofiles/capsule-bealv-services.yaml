@@ -1,0 +1,105 @@
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: capsule-cluster-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: 'cluster.x-k8s.io'
+      version: 'v1beta1'
+      kind: 'Cluster'
+      labelFilters:
+        - key: capsule
+          value: 'true'
+          operation: Equal
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: capsule-bealv-eventtrigger
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      type: mgmt
+  destinationClusterSelector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: bealv
+  eventSourceName: capsule-cluster-eventsource
+  syncMode: Continuous
+  reloader: true
+  templateResourceRefs:
+    - resource:
+        apiVersion: v1
+        kind: Service
+        name: capsule-proxy-lb
+        namespace: capsule-system
+      identifier: capsuleProxyService
+  policyRefs:
+    - kind: ConfigMap
+      name: capsule-bealv-services
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: capsule-bealv-services
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  service.yaml: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: capsule-proxy-{{ .Resource.metadata.name }}
+      namespace: kube-system
+    spec:
+      internalTrafficPolicy: Cluster
+      ipFamilies:
+      - IPv4
+      ipFamilyPolicy: SingleStack
+      ports:
+      - port: 8080
+  endpointslice.yaml: |
+    addressType: IPv4
+    apiVersion: discovery.k8s.io/v1
+    endpoints:
+    - addresses:
+      - {{ index (getResource "capsuleProxyService").status.loadBalancer.ingress 0 "ip" }}
+      conditions:
+        ready: true
+    kind: EndpointSlice
+    metadata:
+      labels:
+        kubernetes.io/service-name: capsule-proxy-{{ .Resource.metadata.name }}
+      name: capsule-proxy-{{ .Resource.metadata.name }}
+      namespace: kube-system
+    ports:
+    - name: ""
+      port: 9001
+      protocol: TCP
+  ingress.yaml: |
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      annotations:
+        cert-manager.io/cluster-issuer: bealvio
+        external-dns.alpha.kubernetes.io/target: bealv.io
+      name: {{ .Resource.metadata.name }}
+      namespace: kube-system
+    spec:
+      ingressClassName: external
+      rules:
+      - host: {{ .Resource.metadata.name }}.bealv.io
+        http:
+          paths:
+          - backend:
+              service:
+                name: capsule-proxy-{{ .Resource.metadata.name }}
+                port:
+                  number: 8080
+            path: /
+            pathType: Prefix
+      tls:
+      - hosts:
+        - {{ .Resource.metadata.name }}.bealv.io
+        secretName: {{ .Resource.metadata.name }}-tls

@@ -1,0 +1,135 @@
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: capsule
+spec:
+  syncMode: Continuous
+  reloader: true
+  clusterSelector:
+    matchLabels:
+      capsule: 'true'
+  policyRefs:
+    - kind: Secret
+      name: capsule-helm-resources
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: capsule-helm-resources
+  namespace: projectsveltos
+type: addons.projectsveltos.io/cluster-profile
+stringData:
+  helmrepository.yaml: |
+    apiVersion: source.toolkit.fluxcd.io/v1
+    kind: HelmRepository
+    metadata:
+      name: capsule
+      namespace: flux-system
+    spec:
+      type: 'oci'
+      interval: 12h0m0s
+      url: oci://ghcr.io/projectcapsule/charts
+  helmrelease.yaml: |-
+    apiVersion: helm.toolkit.fluxcd.io/v2
+    kind: HelmRelease
+    metadata:
+      name: capsule
+      namespace: flux-system
+    spec:
+      serviceAccountName: kustomize-controller
+      targetNamespace: 'capsule-system'
+      interval: 10m
+      releaseName: 'capsule'
+      chart:
+        spec:
+          chart: capsule
+          version: '0.10.6'
+          sourceRef:
+            kind: HelmRepository
+            name: capsule
+          interval: 24h
+      install:
+        createNamespace: true
+      upgrade:
+        remediation:
+          remediateLastFailure: true
+      driftDetection:
+        mode: enabled
+      values:
+        crds:
+          install: true
+        certManager:
+          generateCertificates: true
+        tls:
+          enableController: false
+          create: false
+        manager:
+          options:
+            capsuleConfiguration: default
+            capsuleUserGroups:
+              - kube-user
+              - kube-admin
+            forceTenantPrefix: true
+        webhooks:
+          hooks:
+            nodes:
+              failurePolicy: Ignore
+        serviceMonitor:
+          enabled: false
+        proxy:
+          enabled: true
+          webhooks:
+            enabled: true
+          certManager:
+            generateCertificates: false
+          options:
+            SSLCertFileName: ''
+            SSLKeyFileName: ''
+            enableSSL: false
+            generateCertificates: false
+            oidcUsernameClaim: 'email'
+            extraArgs:
+              - '--feature-gates=ProxyClusterScoped=true'
+              - '--feature-gates=ProxyAllNamespaced=true'
+          resources:
+            limits:
+              memory: 256Mi
+  tenant.yaml: |
+    apiVersion: capsule.clastix.io/v1beta2
+    kind: Tenant
+    metadata:
+      labels:
+        kubernetes.io/metadata.name: kube-user
+      name: kube-user
+    spec:
+      cordoned: false
+      ingressOptions:
+        hostnameCollisionScope: Disabled
+      owners:
+      - clusterRoles:
+        - admin
+        - capsule-namespace-deleter
+        kind: Group
+        name: kube-user
+      preventDeletion: false
+      resourceQuotas:
+        scope: Tenant
+  service.yaml: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: capsule-proxy-lb
+      namespace: capsule-system
+    spec:
+      internalTrafficPolicy: Cluster
+      ipFamilies:
+      - IPv4
+      ipFamilyPolicy: SingleStack
+      ports:
+      - name: proxy
+        port: 9001
+      selector:
+        app.kubernetes.io/instance: capsule
+        app.kubernetes.io/name: proxy
+      type: LoadBalancer
