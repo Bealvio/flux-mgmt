@@ -37,13 +37,6 @@ spec:
   eventSourceName: capsule-cluster-eventsource
   syncMode: Continuous
   reloader: true
-  templateResourceRefs:
-    - resource:
-        apiVersion: v1
-        kind: Service
-        name: capsule-proxy-lb
-        namespace: capsule-system
-      identifier: capsuleProxyService
   policyRefs:
     - kind: ConfigMap
       name: capsule-bealv-services
@@ -60,7 +53,7 @@ data:
     apiVersion: v1
     kind: Service
     metadata:
-      name: capsule-proxy-{{ .Resource.metadata.name }}
+      name: capsule-proxy-{{ .Cluster.metadata.name }}
       namespace: kube-system
     spec:
       internalTrafficPolicy: Cluster
@@ -74,14 +67,14 @@ data:
     apiVersion: discovery.k8s.io/v1
     endpoints:
     - addresses:
-      - {{ index (getResource "capsuleProxyService").status.loadBalancer.ingress 0 "ip" }}
+      - {{ index .Resource.status.loadBalancer.ingress 0 "ip" }}
       conditions:
         ready: true
     kind: EndpointSlice
     metadata:
       labels:
-        kubernetes.io/service-name: capsule-proxy-{{ .Resource.metadata.name }}
-      name: capsule-proxy-{{ .Resource.metadata.name }}
+        kubernetes.io/service-name: capsule-proxy-{{ .Cluster.metadata.name }}
+      name: capsule-proxy-{{ .Cluster.metadata.name }}
       namespace: kube-system
     ports:
     - name: ""
@@ -94,22 +87,22 @@ data:
       annotations:
         cert-manager.io/cluster-issuer: bealvio
         external-dns.alpha.kubernetes.io/target: bealv.io
-      name: {{ .Resource.metadata.name }}
+      name: {{ .Cluster.metadata.name }}
       namespace: kube-system
     spec:
       ingressClassName: external
       rules:
-      - host: {{ .Resource.metadata.name }}.bealv.io
+      - host: {{ .Cluster.metadata.name }}.bealv.io
         http:
           paths:
           - backend:
               service:
-                name: capsule-proxy-{{ .Resource.metadata.name }}
+                name: capsule-proxy-{{ .Cluster.metadata.name }}
                 port:
                   number: 8080
             path: /
             pathType: Prefix
       tls:
       - hosts:
-        - {{ .Resource.metadata.name }}.bealv.io
-        secretName: {{ .Resource.metadata.name }}-tls
+        - {{ .Cluster.metadata.name }}.bealv.io
+        secretName: {{ .Cluster.metadata.name }}-tls
