@@ -21,9 +21,11 @@ spec:
   sourceClusterSelector:
     matchLabels:
       type: mgmt
-  destinationClusterSelector:
-    matchLabels:
-      cluster.x-k8s.io/cluster-name: bealv
+  destinationCluster:
+    name: 'bealv'
+    namespace: 'capi-system'
+    kind: Cluster
+    apiVersion: cluster.x-k8s.io/v1beta1
   eventSourceName: capsule-cluster-eventsource
   syncMode: Continuous
   reloader: true
