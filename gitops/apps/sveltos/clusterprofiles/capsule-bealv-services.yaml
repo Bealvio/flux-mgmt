@@ -29,13 +29,12 @@ spec:
   sourceClusterSelector:
     matchLabels:
       capsule: 'true'
-  destinationCluster:
-    name: 'bealv'
-    namespace: 'capi-system'
-    kind: Cluster
-    apiVersion: cluster.x-k8s.io/v1beta1
+  destinationClusterSelector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: bealv
   eventSourceName: capsule-cluster-eventsource
   syncMode: Continuous
+  oneForEvent: true
   reloader: true
   policyRefs:
     - kind: ConfigMap
@@ -46,6 +45,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: capsule-bealv-services
+  namespace: projectsveltos
   annotations:
     projectsveltos.io/instantiate: 'true'
 data:
@@ -65,17 +65,17 @@ data:
   endpointslice.yaml: |
     addressType: IPv4
     apiVersion: discovery.k8s.io/v1
-    endpoints:
-    - addresses:
-      - {{ index .Resource.status.loadBalancer.ingress 0 "ip" }}
-      conditions:
-        ready: true
     kind: EndpointSlice
     metadata:
       labels:
-        kubernetes.io/service-name: capsule-proxy-{{ .Cluster.metadata.name }}
-      name: capsule-proxy-{{ .Cluster.metadata.name }}
+        kubernetes.io/service-name: "capsule-proxy-{{ .Cluster.metadata.name }}"
+      name: "capsule-proxy-{{ .Cluster.metadata.name }}"
       namespace: kube-system
+    endpoints:
+    - addresses:
+      - {{ (index .Resource.status.loadBalancer.ingress 0).ip }}
+      conditions:
+        ready: true
     ports:
     - name: ""
       port: 9001
@@ -87,22 +87,22 @@ data:
       annotations:
         cert-manager.io/cluster-issuer: bealvio
         external-dns.alpha.kubernetes.io/target: bealv.io
-      name: {{ .Cluster.metadata.name }}
+      name: "{{ .Cluster.metadata.name  }}"
       namespace: kube-system
     spec:
       ingressClassName: external
       rules:
-      - host: {{ .Cluster.metadata.name }}.bealv.io
+      - host: "kube.{{ .Cluster.metadata.name }}.bealv.io"
         http:
           paths:
           - backend:
               service:
-                name: capsule-proxy-{{ .Cluster.metadata.name }}
+                name: "capsule-proxy-{{ .Cluster.metadata.name }}"
                 port:
                   number: 8080
             path: /
             pathType: Prefix
       tls:
       - hosts:
-        - {{ .Cluster.metadata.name }}.bealv.io
-        secretName: {{ .Cluster.metadata.name }}-tls
+        - "kube.{{ .Cluster.metadata.name }}.bealv.io"
+        secretName: "kube.{{ .Cluster.metadata.name }}-tls"
