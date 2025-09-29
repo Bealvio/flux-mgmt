@@ -5,21 +5,21 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: ''
-      version: 'v1'
-      kind: 'Service'
-      name: capsule-proxy-lb
-      namespace: capsule-system
-  evaluate: |
-    function evaluate()
-      hs = {}
-      hs.matching = false
-      hs.message = ""
-      if obj.status.loadBalancer.ingress ~= nil then
-        hs.matching = true
+    evaluate: |
+      function evaluate()
+        hs = {}
+        hs.matching = false
+        hs.message = ""
+        if obj.status.loadBalancer.ingress ~= nil then
+          hs.matching = true
+        end
+        return hs
       end
-      return hs
-    end
+    group: ''
+    version: 'v1'
+    kind: 'Service'
+    name: capsule-proxy-lb
+    namespace: capsule-system
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventTrigger
