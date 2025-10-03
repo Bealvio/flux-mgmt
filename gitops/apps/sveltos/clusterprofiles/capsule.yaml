@@ -81,6 +81,10 @@ stringData:
           enabled: false
         proxy:
           enabled: true
+          image:
+            registry: zot.bealv.io
+            repository: public/capsule-proxy
+            tag: dev
           webhooks:
             enabled: true
           certManager:
