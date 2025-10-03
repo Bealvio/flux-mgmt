@@ -135,13 +135,6 @@ stringData:
         - capsule-namespace-deleter
         kind: Group
         name: kube-user
-      networkPolicies:
-        items:
-        - ingress:
-          - from:
-            - namespaceSelector:
-                matchLabels:
-                  capsule.clastix.io/tenant: kube-user
           podSelector: {}
           policyTypes:
           - Ingress
