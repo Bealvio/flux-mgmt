@@ -125,18 +125,16 @@ stringData:
             requests.memory: 6Gi
         - hard:
             requests.storage: 20Gi
+      namespaceOptions:
+        additionalMetadataList:
+          - annotations:
+              pod-security.kubernetes.io/enforce: restricted
       owners:
       - clusterRoles:
         - admin
         - capsule-namespace-deleter
         kind: Group
         name: kube-user
-      additionalRoleBindings:
-      - clusterRoleName: tenant:psp
-        subjects:
-        - kind: "Group"
-          apiGroup: "rbac.authorization.k8s.io"
-          name: "system:authenticated"
       networkPolicies:
         items:
         - ingress:
@@ -150,52 +148,6 @@ stringData:
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
-  psp.yaml: |
-    apiVersion: policy/v1beta1
-    kind: PodSecurityPolicy
-    metadata:
-      name: tenant
-    spec:
-      privileged: false
-      # Required to prevent escalations to root.
-      allowPrivilegeEscalation: false
-      hostIPC: false
-      hostPID: false
-      hostNetwork: false
-      hostPorts: []
-      volumes: # hostPath is not permitted
-        - 'configMap'
-        - 'emptyDir'
-        - 'projected'
-        - 'secret'
-        - 'downwardAPI'
-        - 'persistentVolumeClaim'
-      runAsUser:
-        rule: MustRunAsNonRoot
-      seLinux:
-        rule: RunAsAny
-      supplementalGroups:
-        rule: MustRunAs
-        ranges:
-          # Forbid adding the root group.
-          - min: 1
-            max: 65535
-      fsGroup:
-        rule: MustRunAs
-        ranges:
-          # Forbid adding the root group.
-          - min: 1
-            max: 65535
-  cr.yaml: |
-    kind: ClusterRole
-    apiVersion: rbac.authorization.k8s.io/v1
-    metadata:
-      name: tenant:psp
-    rules:
-    - apiGroups: ['policy']
-      resources: ['podsecuritypolicies']
-      resourceNames: ['tenant']
-      verbs: ['use']
   service.yaml: |
     apiVersion: v1
     kind: Service
