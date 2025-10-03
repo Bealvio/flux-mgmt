@@ -3,7 +3,7 @@ kind: ClusterProfile
 metadata:
   name: capsule
 spec:
-  syncMode: Continuous
+  syncMode: ContinousWithDriftDetection
   reloader: true
   clusterSelector:
     matchLabels:

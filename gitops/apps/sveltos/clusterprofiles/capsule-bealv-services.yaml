@@ -33,7 +33,7 @@ spec:
     matchLabels:
       cluster.x-k8s.io/cluster-name: bealv
   eventSourceName: capsule-cluster-eventsource
-  syncMode: Continuous
+  syncMode: ContinuousWithDriftDetection
   reloader: true
   policyRefs:
     - kind: ConfigMap

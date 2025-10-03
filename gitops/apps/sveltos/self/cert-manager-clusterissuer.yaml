@@ -19,7 +19,7 @@ spec:
     matchLabels:
       type: mgmt
   eventSourceName: cert-manager-mgmt-eventsource
-  syncMode: Continuous
+  syncMode: ContinuousWithDriftDetection
   reloader: true
   oneForEvent: true
   policyRefs:

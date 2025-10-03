@@ -3,7 +3,7 @@ kind: ClusterProfile
 metadata:
   name: cert-manager
 spec:
-  syncMode: Continuous
+  syncMode: ContinousWithDriftDetection
   reloader: true
   clusterSelector:
     matchLabels:
@@ -19,7 +19,7 @@ kind: ClusterProfile
 metadata:
   name: cert-manager-configs
 spec:
-  syncMode: Continuous
+  syncMode: ContinousWithDriftDetection
   reloader: true
   clusterSelector:
     matchLabels:

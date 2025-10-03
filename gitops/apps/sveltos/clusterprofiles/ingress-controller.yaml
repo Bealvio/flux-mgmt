@@ -3,7 +3,7 @@ kind: ClusterProfile
 metadata:
   name: ingress-controller
 spec:
-  syncMode: Continuous
+  syncMode: ContinuousWithDriftDetection
   reloader: true
   clusterSelector:
     matchLabels:

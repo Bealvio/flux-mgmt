@@ -7,7 +7,7 @@ spec:
     matchLabels:
       monitoring: 'true'
       fluxcd: 'true'
-  syncMode: Continuous
+  syncMode: ContinuousWithDriftDetection
   reloader: true
   policyRefs:
     - name: monitoring-clusterprofile
