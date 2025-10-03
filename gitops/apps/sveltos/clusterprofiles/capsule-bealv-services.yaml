@@ -34,7 +34,6 @@ spec:
       cluster.x-k8s.io/cluster-name: bealv
   eventSourceName: capsule-cluster-eventsource
   syncMode: Continuous
-  oneForEvent: true
   reloader: true
   policyRefs:
     - kind: ConfigMap
@@ -63,23 +62,26 @@ data:
       ports:
       - port: 8080
   endpointslice.yaml: |
+    {{ $cluster := .Cluster }}
+    {{- range $resource := .Resources }}
     addressType: IPv4
     apiVersion: discovery.k8s.io/v1
     kind: EndpointSlice
     metadata:
       labels:
-        kubernetes.io/service-name: "capsule-proxy-{{ .Cluster.metadata.name }}"
-      name: "capsule-proxy-{{ .Cluster.metadata.name }}"
+        kubernetes.io/service-name: "capsule-proxy-{{ $cluster.metadata.name }}"
+      name: "capsule-proxy-{{ $cluster.metadata.name }}"
       namespace: kube-system
     endpoints:
     - addresses:
-      - {{ (index .Resource.status.loadBalancer.ingress 0).ip }}
+      - {{ (index $resource.status.loadBalancer.ingress 0).ip }}
       conditions:
         ready: true
     ports:
     - name: ""
       port: 9001
       protocol: TCP
+    {{ end }}
   ingress.yaml: |
     apiVersion: networking.k8s.io/v1
     kind: Ingress

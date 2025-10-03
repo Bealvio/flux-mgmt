@@ -1,0 +1,333 @@
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: ingress-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: 'networking.k8s.io'
+      version: 'v1'
+      kind: 'Ingress'
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: backend-service-detector
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      ingress-replication: 'true'
+  destinationClusterSelector:
+    matchLabels:
+      type: mgmt
+  eventSourceName: ingress-eventsource
+  policyRefs:
+    - kind: ConfigMap
+      name: backend-service-eventsource-template
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-service-eventsource-template
+  namespace: projectsveltos
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  eventsource-svclb.yaml: |
+    {{ $cluster := .Cluster }}
+    {{- range $resource := .Resources }}
+    {{ range $rule := $resource.spec.rules }}
+    {{ range $path := $rule.http.paths }}
+    ---
+    apiVersion: lib.projectsveltos.io/v1beta1
+    kind: EventSource
+    metadata:
+      name: es{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
+    spec:
+      collectResources: true
+      resourceSelectors:
+        - group: ''
+          version: 'v1'
+          kind: 'Service'
+          name: '{{ $path.backend.service.name }}'
+          namespace: '{{ $resource.metadata.namespace }}'
+    ---
+    apiVersion: lib.projectsveltos.io/v1beta1
+    kind: EventTrigger
+    metadata:
+      name: et{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
+    spec:
+      sourceClusterSelector:
+        matchLabels:
+          cluster.x-k8s.io/cluster-name: {{ $cluster.metadata.name }}
+      destinationClusterSelector:
+        matchLabels:
+          cluster.x-k8s.io/cluster-name: {{ $cluster.metadata.name }}
+      eventSourceName: es{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
+      policyRefs:
+        - kind: ConfigMap
+          name: service-to-loadbalancer-template
+          namespace: projectsveltos
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ingresshosts{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
+      namespace: projectsveltos
+    data:
+      host: "{{ $rule.host }}"
+      serviceName: "{{ $path.backend.service.name }}"
+      serviceNamespace: "{{ $resource.metadata.namespace }}"
+      clusterName: "{{ $cluster.metadata.name }}"
+    {{ end }}
+    {{ end }}
+    {{ end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-to-loadbalancer-template
+  namespace: projectsveltos
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  lb.yaml: |
+    {{ $cluster := .Cluster }}
+    {{- range $resource := .Resources }}
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: {{ $resource.metadata.name }}lb
+      namespace: {{ $resource.metadata.namespace }}
+      labels:
+        generated-by: sveltosingressreplication
+        originalservice: {{ $resource.metadata.name }}
+    spec:
+      type: LoadBalancer
+      selector:
+        {{ range $key, $value := $resource.spec.selector }}
+        {{ $key }}: {{ $value }}
+        {{ end }}
+      ports:
+        {{ range $port := $resource.spec.ports }}
+        - port: {{ $port.port }}
+          targetPort: {{ $port.targetPort }}
+          protocol: {{ $port.protocol }}
+        {{ end }}
+    {{ end }}
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: mgmt-eventsource-deployer
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      ingress-replication: 'true'
+  destinationClusterSelector:
+    matchLabels:
+      type: mgmt
+  eventSourceName: ingress-eventsource
+  policyRefs:
+    - kind: ConfigMap
+      name: mgmt-eventsource-template
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mgmt-eventsource-template
+  namespace: projectsveltos
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  mgmt-resources.yaml: |
+    {{ $cluster := .Cluster }}
+    {{- range $resource := .Resources }}
+    {{ range $rule := $resource.spec.rules }}
+    {{ range $path := $rule.http.paths }}
+    ---
+    apiVersion: lib.projectsveltos.io/v1beta1
+    kind: EventSource
+    metadata:
+      name: eslb{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
+    spec:
+      collectResources: true
+      resourceSelectors:
+        - group: ''
+          version: 'v1'
+          kind: 'Service'
+          name: '{{ $path.backend.service.name }}lb'
+          namespace: '{{ $resource.metadata.namespace }}'
+          evaluate: |
+            function evaluate()
+              hs = {}
+              hs.matching = false
+              hs.message = ""
+              if obj.status.loadBalancer ~= nil and obj.status.loadBalancer.ingress ~= nil then
+                hs.matching = true
+              end
+              return hs
+            end
+    ---
+    apiVersion: lib.projectsveltos.io/v1beta1
+    kind: EventTrigger
+    metadata:
+      name: etlb{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
+    spec:
+      sourceClusterSelector:
+        matchLabels:
+          cluster.x-k8s.io/cluster-name: {{ $cluster.metadata.name }}
+      destinationClusterSelector:
+        matchLabels:
+          type: mgmt
+      eventSourceName: eslb{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
+      syncMode: Continuous
+      reloader: true
+      templateResourceRefs:
+        - resource:
+            kind: ConfigMap
+            name: ingresshosts{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
+            namespace: projectsveltos
+          identifier: HostConfigMap
+      policyRefs:
+        - kind: ConfigMap
+          name: bealv-lb-data-creator
+          namespace: projectsveltos
+    {{ end }}
+    {{ end }}
+    {{ end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bealv-lb-data-creator
+  namespace: projectsveltos
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  lb-data.yaml: |
+    {{ $cluster := .Cluster }}
+    {{- range $resource := .Resources }}
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: lbdata{{ printf "%s%s" $resource.metadata.labels.originalservice $cluster.metadata.name | sha256sum | trunc 8 }}
+      namespace: projectsveltos
+    data:
+      originalservice: "{{ $resource.metadata.labels.originalservice }}"
+      namespace: "{{ $resource.metadata.namespace }}"
+      clusterName: "{{ $cluster.metadata.name }}"
+      loadBalancerIP: "{{ (index $resource.status.loadBalancer.ingress 0).ip }}"
+      port: "{{ (index $resource.spec.ports 0).port }}"
+    {{ end }}
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: dummy-trigger-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: ''
+      version: 'v1'
+      kind: 'ConfigMap'
+      name: 'dummy-trigger'
+      namespace: 'projectsveltos'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dummy-trigger
+  namespace: projectsveltos
+data:
+  trigger: 'true'
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: lbdata-configmap-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: ''
+      version: 'v1'
+      kind: 'ConfigMap'
+      namespace: 'projectsveltos'
+      evaluate: |
+        function evaluate()
+          hs = {}
+          hs.matching = false
+          hs.message = ""
+          if obj.metadata.name:match("^lbdata") then
+            hs.matching = true
+          end
+          return hs
+        end
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: bealv-ingress-deployer
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      type: mgmt
+  destinationClusterSelector:
+    matchLabels:
+      type: mgmt
+  eventSourceName: lbdata-configmap-eventsource
+  syncMode: Continuous
+  reloader: true
+  policyRefs:
+    - kind: ConfigMap
+      name: bealv-ingress-final-deployer
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bealv-ingress-final-deployer
+  namespace: projectsveltos
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  final-ingress.yaml: |
+    {{ $cluster := .Cluster }}
+    {{- range $resource := .Resources }}
+    {{ $serviceName := index $resource.data "originalservice" }}
+    {{ $serviceNamespace := index $resource.data "namespace" }}
+    {{ $clusterName := index $resource.data "clusterName" }}
+    {{ $loadBalancerIP := index $resource.data "loadBalancerIP" }}
+    {{ $port := index $resource.data "port" }}
+    {{ $hostConfigMapName := printf "ingresshosts%s" (printf "%s%s%s" $serviceName $serviceNamespace $clusterName | sha256sum | trunc 8) }}
+    ---
+    apiVersion: config.projectsveltos.io/v1beta1
+    kind: ClusterProfile
+    metadata:
+      name: ingress-{{ $resource.metadata.name }}
+    spec:
+      clusterSelector:
+        matchLabels:
+          cluster.x-k8s.io/cluster-name: bealv
+      syncMode: Continuous
+      reloader: true
+      templateResourceRefs:
+        - resource:
+            kind: ConfigMap
+            name: {{ $hostConfigMapName }}
+            namespace: projectsveltos
+          identifier: HostConfigMap
+        - resource:
+            kind: ConfigMap
+            name: {{ $resource.metadata.name }}
+            namespace: projectsveltos
+          identifier: LBDataConfigMap
+      policyRefs:
+        - kind: ConfigMap
+          name: bealv-ingress-template
+          namespace: projectsveltos
+    {{ end }}
