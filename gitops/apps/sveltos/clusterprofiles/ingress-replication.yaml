@@ -184,7 +184,7 @@ data:
         matchLabels:
           type: mgmt
       eventSourceName: eslb{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
-      syncMode: Continuous
+      syncMode: ContinuousWithDriftDetection
       reloader: true
       templateResourceRefs:
         - resource:
@@ -280,7 +280,7 @@ spec:
     matchLabels:
       type: mgmt
   eventSourceName: lbdata-configmap-eventsource
-  syncMode: Continuous
+  syncMode: ContinuousWithDriftDetection
   reloader: true
   policyRefs:
     - kind: ConfigMap
@@ -313,7 +313,7 @@ data:
       clusterSelector:
         matchLabels:
           cluster.x-k8s.io/cluster-name: bealv
-      syncMode: Continuous
+      syncMode: ContinuousWithDriftDetection
       reloader: true
       templateResourceRefs:
         - resource:
