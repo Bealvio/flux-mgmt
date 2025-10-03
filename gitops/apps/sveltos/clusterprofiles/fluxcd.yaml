@@ -4,7 +4,7 @@ metadata:
   name: fluxcd
 spec:
   reloader: true
-  syncMode: Continuous
+  syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
       fluxcd: 'true'
@@ -20,7 +20,7 @@ metadata:
   name: fluxcd-conf
 spec:
   reloader: true
-  syncMode: Continuous
+  syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
       fluxcd: 'true'
@@ -75,7 +75,7 @@ metadata:
   name: fluxcdresources-conf
 spec:
   reloader: true
-  syncMode: Continuous
+  syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
       fluxcd: 'true'

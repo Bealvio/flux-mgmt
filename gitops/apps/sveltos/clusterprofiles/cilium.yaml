@@ -4,6 +4,7 @@ metadata:
   name: cilium-bootstrap
   namespace: projectsveltos
 spec:
+  syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
       cni: cilium

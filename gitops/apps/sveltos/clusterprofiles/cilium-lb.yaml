@@ -22,7 +22,7 @@ spec:
     matchLabels:
       type: mgmt
   eventSourceName: cilium-cluster-eventsource
-  syncMode: Continuous
+  syncMode: ContinousWithDriftDetection
   reloader: true
   oneForEvent: true
   policyRefs:
@@ -65,7 +65,7 @@ data:
       name: "lb-{{ .Resource.metadata.name }}-{{ .Resource.metadata.namespace }}"
     spec:
       reloader: true
-      syncMode: Continuous
+      syncMode: ContinousWithDriftDetection
       clusterRefs:
       - apiVersion: cluster.x-k8s.io/v1beta1
         kind: Cluster
