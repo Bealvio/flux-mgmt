@@ -21,6 +21,7 @@ spec:
     matchLabels:
       type: mgmt
   eventSourceName: ingress-eventsource
+  syncMode: ContinuousWithDriftDetection
   policyRefs:
     - kind: ConfigMap
       name: backend-service-eventsource-template
@@ -65,6 +66,7 @@ data:
         matchLabels:
           cluster.x-k8s.io/cluster-name: {{ $cluster.metadata.name }}
       eventSourceName: es{{ printf "%s%s%s" $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
+      syncMode: ContinuousWithDriftDetection
       policyRefs:
         - kind: ConfigMap
           name: service-to-loadbalancer-template
@@ -130,6 +132,7 @@ spec:
     matchLabels:
       type: mgmt
   eventSourceName: ingress-eventsource
+  syncMode: ContinuousWithDriftDetection
   policyRefs:
     - kind: ConfigMap
       name: mgmt-eventsource-template
