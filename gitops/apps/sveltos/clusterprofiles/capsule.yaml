@@ -135,9 +135,6 @@ stringData:
         - capsule-namespace-deleter
         kind: Group
         name: kube-user
-          podSelector: {}
-          policyTypes:
-          - Ingress
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
