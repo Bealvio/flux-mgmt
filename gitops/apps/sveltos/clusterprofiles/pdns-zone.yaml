@@ -5,13 +5,11 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'cluster.x-k8s.io'
-      version: 'v1beta1'
-      kind: 'Cluster'
-      labelFilters:
-        - key: external-dns
-          value: 'true'
-          operation: Equal
+    - group: 'apps'
+      version: 'v1'
+      kind: 'Deployment'
+      name: 'external-dns-internal'
+      namespace: 'external-dns'
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventTrigger
