@@ -68,7 +68,7 @@ stringData:
           options:
             capsuleConfiguration: default
             capsuleUserGroups:
-              - {{ .Cluster.metadata.name }}-kube-user
+              - "{{ .Cluster.metadata.name }}-kube-user"
               - kube-admin
             forceTenantPrefix: true
             ignoreUserWithGroups:
@@ -132,7 +132,7 @@ stringData:
         - admin
         - capsule-namespace-deleter
         kind: Group
-        name: {{ .Cluster.metadata.name }}-kube-user
+        name: "{{ .Cluster.metadata.name }}-kube-user"
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
