@@ -85,7 +85,7 @@ data:
           image:
             registry: zot.bealv.io
             repository: public/capsule-proxy
-            tag: dev
+            tag: dev2
           webhooks:
             enabled: true
           certManager:
