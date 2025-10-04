@@ -129,6 +129,17 @@ data:
           - labels:
               pod-security.kubernetes.io/enforce: restricted
       owners:
+      {{- if .Cluster.metadata.labels.groups }}
+      {{- $groups := splitList "," .Cluster.metadata.labels.groups }}
+      {{- range $groups }}
+      {{- $group := trim . }}
+      - clusterRoles:
+        - admin
+        - capsule-namespace-deleter
+        kind: Group
+        name: "{{ $group }}"
+      {{- end }}
+      {{- else }}
       - clusterRoles:
         - admin
         - capsule-namespace-deleter
@@ -139,6 +150,7 @@ data:
         - capsule-namespace-deleter
         kind: Group
         name: "kube-admin"
+      {{- end }}
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
