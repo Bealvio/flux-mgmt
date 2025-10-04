@@ -68,7 +68,7 @@ stringData:
           options:
             capsuleConfiguration: default
             capsuleUserGroups:
-              - kube-user
+              - {{ .Cluster.metadata.name }}-kube-user
               - kube-admin
             forceTenantPrefix: true
             ignoreUserWithGroups:
@@ -105,9 +105,7 @@ stringData:
     apiVersion: capsule.clastix.io/v1beta2
     kind: Tenant
     metadata:
-      labels:
-        kubernetes.io/metadata.name: kube-user
-      name: kube-user
+      name: {{ .Cluster.metadata.name }}-kube-user
     spec:
       cordoned: false
       ingressOptions:
@@ -134,7 +132,7 @@ stringData:
         - admin
         - capsule-namespace-deleter
         kind: Group
-        name: kube-user
+        name: {{ .Cluster.metadata.name }}-kube-user
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
