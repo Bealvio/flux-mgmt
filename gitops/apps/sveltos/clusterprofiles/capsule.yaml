@@ -129,8 +129,8 @@ data:
           - labels:
               pod-security.kubernetes.io/enforce: restricted
       owners:
-      {{- if .Cluster.metadata.labels.groups }}
-      {{- $groups := splitList "," .Cluster.metadata.labels.groups }}
+      {{- if .Cluster.metadata.annotations.groups }}
+      {{- $groups := splitList "," .Cluster.metadata.annotations.groups }}
       {{- range $groups }}
       {{- $group := trim . }}
       - clusterRoles:
