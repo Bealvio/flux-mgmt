@@ -134,6 +134,11 @@ data:
         - capsule-namespace-deleter
         kind: Group
         name: "{{ .Cluster.metadata.name }}-kube-user"
+      - clusterRoles:
+        - admin
+        - capsule-namespace-deleter
+        kind: Group
+        name: "kube-admin"
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
