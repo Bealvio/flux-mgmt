@@ -85,7 +85,7 @@ data:
           image:
             registry: zot.bealv.io
             repository: public/capsule-proxy
-            tag: dev2
+            tag: latest
           webhooks:
             enabled: true
           certManager:
@@ -129,7 +129,6 @@ data:
           - labels:
               pod-security.kubernetes.io/enforce: restricted
       owners:
-      {{- if .Cluster.metadata.annotations."chihiro.io/groups" }}
       {{- $groups := splitList "," (index .Cluster.metadata.annotations "chihiro.io/groups") }}
       {{- range $groups }}
       {{- $group := trim . }}
@@ -139,7 +138,6 @@ data:
         kind: Group
         name: "{{ $group }}"
       {{- end }}
-      {{- end }}
       - clusterRoles:
         - admin
         - capsule-namespace-deleter
@@ -148,6 +146,59 @@ data:
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
+  globaltenantresource.yaml: |
+    apiVersion: capsule.clastix.io/v1beta2
+    kind: GlobalTenantResource
+    metadata:
+      name: netpol-lock
+    spec:
+      tenantSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: "{{ .Cluster.metadata.name }}-kube-user"
+      resyncPeriod: 60s
+      resources:
+        - namespaceSelector:
+            matchLabels:
+              capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
+          rawItems:
+          - apiVersion: networking.k8s.io/v1
+            kind: NetworkPolicy
+            metadata:
+              labels:
+                capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
+              name: netpol-lock
+            spec:
+              ingress:
+              - from:
+                - namespaceSelector:
+                    matchLabels:
+                      capsule.clastix.io/tenant: oil
+              policyTypes:
+              - Ingress
+          - apiVersion: networking.k8s.io/v1
+            kind: NetworkPolicy
+            metadata:
+              name: allow-all-except-local
+              namespace: default
+            spec:
+              podSelector: {} # Applies to all pods in the namespace
+              policyTypes:
+                - Ingress
+                - Egress
+              ingress:
+                - from:
+                    - ipBlock:
+                        cidr: 0.0.0.0/0
+                        except:
+                          - 192.168.0.0/16
+                          - 10.0.0.0/8
+              egress:
+                - to:
+                    - ipBlock:
+                        cidr: 0.0.0.0/0
+                        except:
+                          - 192.168.0.0/16
+                          - 10.0.0.0/8
   namespace.yaml: |
     apiVersion: v1
     kind: Namespace
