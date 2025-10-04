@@ -32,7 +32,7 @@ spec:
         openAPIV3Schema:
           type: integer
     - name: templateGPUID
-      required: true
+      required: false
       schema:
         openAPIV3Schema:
           type: integer
