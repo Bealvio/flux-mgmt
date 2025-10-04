@@ -139,6 +139,7 @@ data:
         kind: Group
         name: "{{ $group }}"
       {{- end }}
+      {{- end }}
       - clusterRoles:
         - admin
         - capsule-namespace-deleter
