@@ -9,17 +9,18 @@ spec:
     matchLabels:
       capsule: 'true'
   policyRefs:
-    - kind: Secret
+    - kind: ConfigMap
       name: capsule-helm-resources
       namespace: projectsveltos
 ---
 apiVersion: v1
-kind: Secret
+kind: ConfigMap
 metadata:
   name: capsule-helm-resources
   namespace: projectsveltos
-type: addons.projectsveltos.io/cluster-profile
-stringData:
+  annotations:
+    projectsveltos.io/template: 'true'
+data:
   helmrepository.yaml: |
     apiVersion: source.toolkit.fluxcd.io/v1
     kind: HelmRepository
