@@ -129,8 +129,8 @@ data:
           - labels:
               pod-security.kubernetes.io/enforce: restricted
       owners:
-      {{- if .Cluster.metadata.annotations.groups }}
-      {{- $groups := splitList "," .Cluster.metadata.annotations.groups }}
+      {{- if .Cluster.metadata.annotations."chihiro.io/groups" }}
+      {{- $groups := splitList "," (index .Cluster.metadata.annotations "chihiro.io/groups") }}
       {{- range $groups }}
       {{- $group := trim . }}
       - clusterRoles:
