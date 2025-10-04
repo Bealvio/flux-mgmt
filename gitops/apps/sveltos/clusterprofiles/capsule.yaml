@@ -142,6 +142,16 @@ data:
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
+  namespace.yaml: |
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      labels:
+        capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
+        kubernetes.io/metadata.name: "{{ .Cluster.metadata.name }}-kube-user-default"
+        pod-security.kubernetes.io/enforce: restricted
+      name: dev-kube-user-default
+    spec:
   service.yaml: |
     apiVersion: v1
     kind: Service
