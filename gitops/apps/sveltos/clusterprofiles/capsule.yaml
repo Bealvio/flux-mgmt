@@ -139,18 +139,11 @@ data:
         kind: Group
         name: "{{ $group }}"
       {{- end }}
-      {{- else }}
-      - clusterRoles:
-        - admin
-        - capsule-namespace-deleter
-        kind: Group
-        name: "{{ .Cluster.metadata.name }}-kube-user"
       - clusterRoles:
         - admin
         - capsule-namespace-deleter
         kind: Group
         name: "kube-admin"
-      {{- end }}
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
