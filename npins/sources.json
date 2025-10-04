@@ -59,10 +59,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v8.2.1",
-      "revision": "a6a3d9d6b5f6f1e6fa0d311148b696556e4499e8",
-      "url": "https://api.github.com/repos/kubernetes-csi/external-snapshotter/tarball/v8.2.1",
-      "hash": "03lyj0b8vsnrxdg4zc998xs58i6w0zifl17mq1ayi6sjq1d5k64q"
+      "version": "v8.3.0",
+      "revision": "6b2feaaf7fc3d6d0fe21029d1032ea0eee2081e9",
+      "url": "https://api.github.com/repos/kubernetes-csi/external-snapshotter/tarball/v8.3.0",
+      "hash": "0jk3xvbnv1sb5wdli37k8wrnmr5318r4wwajqk6z6d95hkyksmm5"
     },
     "flux-operator": {
       "type": "GitRelease",
