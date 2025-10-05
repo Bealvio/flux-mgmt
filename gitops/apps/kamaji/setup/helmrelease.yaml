@@ -22,6 +22,8 @@ spec:
       deploy: true
       fullnameOverride: kamaji-etcd
       clusterDomain: bealv-mgmt.local
+      image:
+        tag: v3.6.5
       datastore:
         enabled: true
         name: default
