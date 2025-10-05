@@ -36,6 +36,19 @@ data:
         metadata:
           name: PLACEHOLDER_NAME
           namespace: capi-system
+          labels:
+            capsule: "true"
+            cert-manager: "true"
+            cni: cilium
+            external-dns: "false"
+            external-secret: "false"
+            external-snapshotter: "true"
+            fluxcd: "true"
+            ingress-controller: "false"
+            ingress-replication: "true"
+            monitoring: "false"
+            proxmox-csi: "true"
+            velero: "false"
         spec:
           clusterNetwork:
             pods:
