@@ -1,0 +1,9 @@
+namespace: chihiro-system
+resources:
+  - cm.yaml
+  - deploy.yaml
+  - dragonfly.yaml
+  - namespace.yaml
+  - rbacs.yaml
+  - svc.yaml
+  - secrets.yaml
