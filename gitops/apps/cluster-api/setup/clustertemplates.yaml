@@ -74,6 +74,10 @@ spec:
         default:
           bridge: vmbr2
           model: virtio
+          ipv4PoolRef:
+            apiGroup: ipam.cluster.x-k8s.io
+            kind: InClusterIPPool
+            name: proxmox-slave-reserved
       sourceNode: proxmox-alv
       templateID: 102
 ---

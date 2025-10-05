@@ -5,20 +5,6 @@ metadata:
   namespace: capi-system
 spec:
   variables:
-    - name: ipv4Config
-      required: true
-      schema:
-        openAPIV3Schema:
-          type: object
-          properties:
-            addresses:
-              type: array
-              items:
-                type: string
-            gateway:
-              type: string
-            prefix:
-              type: integer
     - name: dnsServers
       required: true
       schema:
@@ -31,7 +17,7 @@ spec:
       schema:
         openAPIV3Schema:
           type: integer
-    - name: templateGPUID
+    - name: templateAltID
       required: false
       schema:
         openAPIV3Schema:
@@ -45,10 +31,6 @@ spec:
             matchResources:
               infrastructureCluster: true
           jsonPatches:
-            - op: replace
-              path: /spec/template/spec/ipv4Config
-              valueFrom:
-                variable: ipv4Config
             - op: replace
               path: /spec/template/spec/dnsServers
               valueFrom:
@@ -67,7 +49,7 @@ spec:
               path: /spec/template/spec/templateID
               valueFrom:
                 variable: templateID
-    - name: templateGPUID
+    - name: templateAltID
       definitions:
         - selector:
             apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
@@ -75,12 +57,12 @@ spec:
             matchResources:
               machineDeploymentClass:
                 names:
-                  - default-worker-gpu
+                  - default-worker-alt
           jsonPatches:
             - op: replace
               path: /spec/template/spec/templateID
               valueFrom:
-                variable: templateGPUID
+                variable: templateAltID
   controlPlane:
     ref:
       apiVersion: controlplane.cluster.x-k8s.io/v1alpha1
@@ -112,11 +94,11 @@ spec:
               kind: ProxmoxMachineTemplate
               name: kamaji-proxmox
               namespace: capi-system
-      - class: default-worker-gpu
+      - class: default-worker-alt
         template:
           metadata:
             labels:
-              node-role.kubernetes.io/slave: ''
+              node-role.kubernetes.io/slave-hddb: ''
           bootstrap:
             ref:
               apiVersion: bootstrap.cluster.x-k8s.io/v1beta1

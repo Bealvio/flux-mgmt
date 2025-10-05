@@ -1,0 +1,10 @@
+apiVersion: ipam.cluster.x-k8s.io/v1alpha2
+kind: InClusterIPPool
+metadata:
+  name: proxmox-slave-reserved
+  namespace: capi-system
+spec:
+  addresses:
+    - 10.250.1.2-10.250.1.250
+  gateway: 10.250.0.1
+  prefix: 16
