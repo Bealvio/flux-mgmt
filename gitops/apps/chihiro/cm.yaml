@@ -24,6 +24,8 @@ data:
         - 'v1.34.0'  # REPLACE with your available Kubernetes versions
       admin_groups:
         - kube-admin  # REPLACE with your admin groups
+      creator_groups:
+        - dev-kube-user
       limits:
         max_clusters: 2  # Maximum clusters per user
         max_total_nodes: 2  # Maximum total nodes per user
