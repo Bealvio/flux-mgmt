@@ -19,15 +19,8 @@ spec:
       containerSecurityContext:
         privileged: true
     configuration:
-      uploaderType: restic
+      # uploaderType: restic
       features: EnableCSI
-      repositoryMaintenanceJob:
-        requests:
-          cpu: 100m
-          memory: 1024Mi
-        limits:
-          cpu: "1"
-          memory: 1024Mi
       backupStorageLocation:
         - bucket: velero-mgmt
           name: default
