@@ -52,7 +52,7 @@ data:
               value:
               - 10.250.0.1
             - name: templateID
-              value: 995
+              value: 997
             controlPlane:
               replicas: 3
             version: PLACEHOLDER_VERSION
