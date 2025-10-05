@@ -13,8 +13,8 @@ spec:
       resource:
         apiVersion: cluster.x-k8s.io/v1beta1
         kind: Cluster
-        name: "{{ .Cluster.metadata.name }}"
-        namespace: "{{ .Cluster.metadata.namespace }}"
+        name: '{{ .Cluster.metadata.name }}'
+        namespace: '{{ .Cluster.metadata.namespace }}'
   policyRefs:
     - kind: ConfigMap
       name: capsule-helm-resources
