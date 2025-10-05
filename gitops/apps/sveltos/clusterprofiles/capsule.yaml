@@ -8,6 +8,13 @@ spec:
   clusterSelector:
     matchLabels:
       capsule: 'true'
+  templateResourceRefs:
+    - identifier: ClusterAnnotations
+      resource:
+        apiVersion: cluster.x-k8s.io/v1beta1
+        kind: Cluster
+        name: "{{ .Cluster.metadata.name }}"
+        namespace: "{{ .Cluster.metadata.namespace }}"
   policyRefs:
     - kind: ConfigMap
       name: capsule-helm-resources
@@ -129,7 +136,7 @@ data:
           - labels:
               pod-security.kubernetes.io/enforce: restricted
       owners:
-      {{- $groups := splitList "," (index .Cluster.metadata.annotations "chihiro.io/groups") }}
+      {{- $groups := splitList "," (index (getResource "ClusterAnnotations").metadata.annotations "chihiro.io/groups") }}
       {{- range $groups }}
       {{- $group := trim . }}
       - clusterRoles:
