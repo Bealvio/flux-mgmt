@@ -46,7 +46,7 @@ data:
               cidrBlocks:
                 - 172.17.0.0/16
           topology:
-            class: default  # REPLACE with your cluster class
+            class: kamaji-proxmox
             controlPlane:
               replicas: 3
             version: PLACEHOLDER_VERSION
