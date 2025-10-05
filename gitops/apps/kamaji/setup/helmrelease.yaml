@@ -14,6 +14,13 @@ spec:
         namespace: kamaji-system
   values:
     replicaCount: 1
+    resources:
+      limits:
+        cpu: 400m
+        memory: 300Mi
+      requests:
+        cpu: 200m
+        memory: 60Mi
     image:
       repository: clastix/kamaji
       pullPolicy: Always
