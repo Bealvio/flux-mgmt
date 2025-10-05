@@ -45,14 +45,6 @@ data:
             services:
               cidrBlocks:
                 - 172.17.0.0/16
-          controlPlaneRef:
-            apiGroup: controlplane.cluster.x-k8s.io
-            kind: KamajiControlPlane
-            name: dev-h6w2j
-          infrastructureRef:
-            apiGroup: infrastructure.cluster.x-k8s.io
-            kind: ProxmoxCluster
-            name: dev-t2gdm
           topology:
             class: kamaji-proxmox
             variables:
