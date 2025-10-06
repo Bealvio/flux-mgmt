@@ -229,3 +229,51 @@ data:
         app.kubernetes.io/instance: capsule
         app.kubernetes.io/name: proxy
       type: LoadBalancer
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: tenant-created
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: 'capsule.clastix.io'
+      version: 'v1beta2'
+      kind: 'Tenant'
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: tenant-namespace-creator
+spec:
+  sourceClusterSelector:
+    matchLabels:
+      capsule: 'true'
+  eventSourceName: tenant-created
+  syncMode: ContinuousWithDriftDetection
+  policyRefs:
+    - kind: ConfigMap
+      name: tenant-namespace-template
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tenant-namespace-template
+  namespace: projectsveltos
+  annotations:
+    projectsveltos.io/instantiate: 'true'
+data:
+  namespace.yaml: |
+    {{- range $resource := .Resources }}
+    ---
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: {{ $resource.metadata.name }}
+      ownerReferences:
+        - apiVersion: {{ $resource.apiVersion }}
+          kind: {{ $resource.kind }}
+          name: {{ $resource.metadata.name }}
+          uid: {{ $resource.metadata.uid }}
+    {{ end }}
