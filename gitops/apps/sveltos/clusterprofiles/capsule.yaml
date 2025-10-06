@@ -315,6 +315,9 @@ spec:
   sourceClusterSelector:
     matchLabels:
       capsule: 'true'
+  destinationClusterSelector:
+    matchLabels:
+      capsule: 'true'
   eventSourceName: tenant-created
   syncMode: ContinuousWithDriftDetection
   templateResourceRefs:
@@ -327,9 +330,6 @@ spec:
   policyRefs:
     - kind: ConfigMap
       name: tenant-namespace-template
-      namespace: projectsveltos
-    - kind: ConfigMap
-      name: tenant-readme-html
       namespace: projectsveltos
 ---
 apiVersion: v1
