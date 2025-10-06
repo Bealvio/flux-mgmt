@@ -271,6 +271,8 @@ data:
     kind: Namespace
     metadata:
       name: {{ $resource.metadata.name }}-default
+      labels:
+        pod-security.kubernetes.io/enforce: restricted
       ownerReferences:
         - apiVersion: {{ $resource.apiVersion }}
           kind: {{ $resource.kind }}
