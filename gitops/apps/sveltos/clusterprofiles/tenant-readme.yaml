@@ -160,6 +160,34 @@ data:
           <strong>Note:</strong> This cluster does not support Service type LoadBalancer as it is fully managed. All external access must be configured through Ingress resources.
         </div>
 
+        <h2>🔐 Kubeconfig Setup</h2>
+        <p>To access the cluster, you need to set up your kubeconfig file:</p>
+
+        <h3>Option 1: Set KUBECONFIG Environment Variable</h3>
+        <pre><code>export KUBECONFIG=/path/to/downloaded/kubeconfig.yaml
+kubectl get pods -A</code></pre>
+
+        <h3>Option 2: Merge with Default Kubeconfig</h3>
+        <pre><code># Backup your current config
+cp ~/.kube/config ~/.kube/config.backup
+
+# Merge the downloaded kubeconfig
+KUBECONFIG=~/.kube/config:/path/to/downloaded/kubeconfig.yaml kubectl config view --flatten > /tmp/merged-config
+mv /tmp/merged-config ~/.kube/config
+
+# Switch to the new context
+kubectl config use-context CLUSTER_NAME-kube-user@CLUSTER_NAME
+
+# Verify access
+kubectl get namespaces</code></pre>
+
+        <h3>Option 3: Use with --kubeconfig Flag</h3>
+        <pre><code>kubectl --kubeconfig=/path/to/downloaded/kubeconfig.yaml get pods -A</code></pre>
+
+        <div class="info">
+          <strong>💡 Tip:</strong> The downloaded kubeconfig is pre-configured with your tenant context. You can switch between contexts using <code>kubectl config use-context</code>.
+        </div>
+
       </div>
     </body>
     </html>
