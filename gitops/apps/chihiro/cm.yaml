@@ -4,52 +4,52 @@ metadata:
   name: chihiro-config
 data:
   config.yaml: |
-    # All configuration is now via environment variables (see deployment.yaml)
-    # Only the cluster template remains in the ConfigMap
-    # Cluster template as raw YAML string - CUSTOMIZE for your infrastructure
-    template: |
-      apiVersion: cluster.x-k8s.io/v1beta1
-      kind: Cluster
-      metadata:
-        name: PLACEHOLDER_NAME
-        namespace: capi-system
-        labels:
-          capsule: "true"
-          cert-manager: "true"
-          cni: cilium
-          external-dns: "false"
-          external-secret: "false"
-          external-snapshotter: "true"
-          fluxcd: "true"
-          ingress-controller: "false"
-          ingress-replication: "true"
-          monitoring: "false"
-          proxmox-csi: "true"
-          velero: "false"
-      spec:
-        clusterNetwork:
-          pods:
-            cidrBlocks:
-              - 172.16.0.0/16
-          serviceDomain: PLACEHOLDER_SERVICE_DOMAIN
-          services:
-            cidrBlocks:
-              - 172.17.0.0/16
-        topology:
-          class: kamaji-proxmox
-          variables:
-          - name: dnsServers
-            value:
-            - 10.250.0.1
-          - name: templateID
-            value: 997
-          controlPlane:
-            replicas: 3
-          version: PLACEHOLDER_VERSION
-          workers:
-            machineDeployments:
-              - class: default-worker
-                name: worker
-                replicas: PLACEHOLDER_NODES
-    # Field mapping: specify where to inject the node count
-    node_count_path: 'spec.topology.workers.machineDeployments[0].replicas'
+    # Most configuration is now handled via environment variables
+    # See deployment.yaml for CHIHIRO_* environment variables
+    cluster:
+      template: |
+        apiVersion: cluster.x-k8s.io/v1beta1
+        kind: Cluster
+        metadata:
+          name: PLACEHOLDER_NAME
+          namespace: capi-system
+          labels:
+            capsule: "true"
+            cert-manager: "true"
+            cni: cilium
+            external-dns: "false"
+            external-secret: "false"
+            external-snapshotter: "true"
+            fluxcd: "true"
+            ingress-controller: "false"
+            ingress-replication: "true"
+            monitoring: "false"
+            proxmox-csi: "true"
+            velero: "false"
+        spec:
+          clusterNetwork:
+            pods:
+              cidrBlocks:
+                - 172.16.0.0/16
+            serviceDomain: PLACEHOLDER_SERVICE_DOMAIN
+            services:
+              cidrBlocks:
+                - 172.17.0.0/16
+          topology:
+            class: kamaji-proxmox
+            variables:
+            - name: dnsServers
+              value:
+              - 10.250.0.1
+            - name: templateID
+              value: 997
+            controlPlane:
+              replicas: 3
+            version: PLACEHOLDER_VERSION
+            workers:
+              machineDeployments:
+                - class: default-worker
+                  name: worker
+                  replicas: PLACEHOLDER_NODES
+      # Field mapping: specify where to inject the node count
+      node_count_path: 'spec.topology.workers.machineDeployments[0].replicas'
