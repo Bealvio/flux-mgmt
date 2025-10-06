@@ -342,7 +342,7 @@ metadata:
 data:
   namespace.yaml: |
     {{ $cluster := .Cluster }}
-    {{ $htmlContent := (getResource "ReadmeHTML").data }}
+    {{ $htmlContent := index (getResource "ReadmeHTML").data "index.html" }}
     {{- range $resource := .Resources }}
     ---
     apiVersion: v1
@@ -364,7 +364,7 @@ data:
       namespace: {{ $resource.metadata.name }}-default
     data:
       index.html: |
-        {{ $htmlContent.index.html | replace "CLUSTER_NAME" $cluster.metadata.name }}
+{{ $htmlContent | replace "CLUSTER_NAME" $cluster.metadata.name | nindent 8 }}
     ---
     apiVersion: apps/v1
     kind: Deployment
