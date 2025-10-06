@@ -169,20 +169,15 @@ data:
           kubernetes.io/metadata.name: "{{ .Cluster.metadata.name }}-kube-user"
       resyncPeriod: 60s
       resources:
-        - rawItems:
-          - apiVersion: v1
-            kind: Namespace
-            metadata:
-              labels:
-                capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
-                kubernetes.io/metadata.name: "{{ .Cluster.metadata.name }}-kube-user-default"
-                pod-security.kubernetes.io/enforce: restricted
-              name: {{ .Cluster.metadata.name }}-kube-user-default
-            spec:
         - namespaceSelector:
             matchLabels:
               capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
           rawItems:
+          - apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: {{ .Cluster.metadata.name }}-kube-user-default
+            spec:
           - apiVersion: networking.k8s.io/v1
             kind: NetworkPolicy
             metadata:
