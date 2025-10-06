@@ -270,7 +270,7 @@ data:
     apiVersion: v1
     kind: Namespace
     metadata:
-      name: {{ $resource.metadata.name }}
+      name: {{ $resource.metadata.name }}-default
       ownerReferences:
         - apiVersion: {{ $resource.apiVersion }}
           kind: {{ $resource.kind }}
