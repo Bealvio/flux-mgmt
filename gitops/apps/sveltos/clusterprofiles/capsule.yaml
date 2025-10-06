@@ -169,7 +169,7 @@ data:
           kubernetes.io/metadata.name: "{{ .Cluster.metadata.name }}-kube-user"
       resyncPeriod: 60s
       resources:
-        - namespacedItems:
+        - rawItems:
           - apiVersion: v1
             kind: Namespace
             metadata:
