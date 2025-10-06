@@ -169,6 +169,16 @@ data:
           kubernetes.io/metadata.name: "{{ .Cluster.metadata.name }}-kube-user"
       resyncPeriod: 60s
       resources:
+        - namespacedItems:
+          - apiVersion: v1
+            kind: Namespace
+            metadata:
+              labels:
+                capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
+                kubernetes.io/metadata.name: "{{ .Cluster.metadata.name }}-kube-user-default"
+                pod-security.kubernetes.io/enforce: restricted
+              name: {{ .Cluster.metadata.name }}-kube-user-default
+            spec:
         - namespaceSelector:
             matchLabels:
               capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
@@ -211,16 +221,6 @@ data:
                         except:
                           - 192.168.0.0/16
                           - 10.0.0.0/8
-  namespace.yaml: |
-    apiVersion: v1
-    kind: Namespace
-    metadata:
-      labels:
-        capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
-        kubernetes.io/metadata.name: "{{ .Cluster.metadata.name }}-kube-user-default"
-        pod-security.kubernetes.io/enforce: restricted
-      name: dev-kube-user-default
-    spec:
   service.yaml: |
     apiVersion: v1
     kind: Service
