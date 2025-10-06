@@ -331,6 +331,32 @@ spec:
     - kind: ConfigMap
       name: tenant-namespace-template
       namespace: projectsveltos
+    - kind: ConfigMap
+      name: tenant-readmehtml-template
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tenant-readmehtml-template
+  namespace: projectsveltos
+  annotations:
+    projectsveltos.io/template: 'true'
+data:
+  readme-configmap.yaml: |
+    {{ $cluster := .Cluster }}
+    {{ $htmlContent := index (getResource "ReadmeHTML").data "index.html" }}
+    {{- range $resource := .Resources }}
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: nginx-readme
+      namespace: {{ $resource.metadata.name }}-default
+    data:
+      index.html: |
+{{ $htmlContent | replace "CLUSTER_NAME" $cluster.metadata.name | nindent 8 }}
+    {{ end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -342,7 +368,6 @@ metadata:
 data:
   namespace.yaml: |
     {{ $cluster := .Cluster }}
-    {{ $htmlContent := index (getResource "ReadmeHTML").data "index.html" }}
     {{- range $resource := .Resources }}
     ---
     apiVersion: v1
@@ -356,15 +381,6 @@ data:
           kind: {{ $resource.kind }}
           name: {{ $resource.metadata.name }}
           uid: {{ $resource.metadata.uid }}
-    ---
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: nginx-readme
-      namespace: {{ $resource.metadata.name }}-default
-    data:
-      index.html: |
-{{ $htmlContent | replace "CLUSTER_NAME" $cluster.metadata.name | nindent 8 }}
     ---
     apiVersion: apps/v1
     kind: Deployment
