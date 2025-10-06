@@ -316,6 +316,7 @@ spec:
       capsule: 'true'
   eventSourceName: tenant-created
   syncMode: ContinuousWithDriftDetection
+  reloader: true
   templateResourceRefs:
     - resource:
         apiVersion: v1
@@ -347,7 +348,7 @@ data:
       namespace: default
     data:
       index.html: |
-        {{ index (getResource "ReadmeHTML").data "index.html" | nindent 8 }}
+        {{ index (getResource "ReadmeHTML").data "index.html"  | replace "CLUSTER_NAME" $cluster.metadata.name | nindent 8 }}
 ---
 apiVersion: v1
 kind: ConfigMap
