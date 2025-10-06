@@ -229,6 +229,72 @@ data:
         app.kubernetes.io/instance: capsule
         app.kubernetes.io/name: proxy
       type: LoadBalancer
+  ingress-validation.yaml: |
+    apiVersion: admissionregistration.k8s.io/v1
+    kind: ValidatingAdmissionPolicy
+    metadata:
+      name: ingress-structure-validation
+    spec:
+      failurePolicy: Fail
+      matchConstraints:
+        resourceRules:
+        - apiGroups: ["networking.k8s.io"]
+          apiVersions: ["v1"]
+          operations: ["CREATE", "UPDATE"]
+          resources: ["ingresses"]
+      paramKind:
+        apiVersion: v1
+        kind: ConfigMap
+      validations:
+      - expression: "object.spec.rules.size() > 0"
+        message: "Ingress must have at least one rule"
+      - expression: "object.spec.rules.all(rule, has(rule.host))"
+        message: "All rules must specify a host"
+      - expression: "object.spec.rules.all(rule, rule.host.endsWith('.' + params.data.clusterName + '.bealv.io'))"
+        message: "All hosts must match the pattern <hostname>.{{ .Cluster.metadata.name }}.bealv.io"
+      - expression: "object.spec.rules.all(rule, has(rule.http) && has(rule.http.paths))"
+        message: "All rules must have http.paths defined"
+      - expression: "object.spec.rules.all(rule, rule.http.paths.size() > 0)"
+        message: "All rules must have at least one path"
+      - expression: "object.spec.rules.all(rule, rule.http.paths.all(path, has(path.backend)))"
+        message: "All paths must have a backend defined"
+      - expression: "object.spec.rules.all(rule, rule.http.paths.all(path, has(path.backend.service)))"
+        message: "All backends must specify a service"
+      - expression: "object.spec.rules.all(rule, rule.http.paths.all(path, has(path.backend.service.name)))"
+        message: "All backend services must have a name"
+      - expression: "object.spec.rules.all(rule, rule.http.paths.all(path, has(path.backend.service.port)))"
+        message: "All backend services must have a port"
+      - expression: "object.spec.rules.all(rule, rule.http.paths.all(path, has(path.backend.service.port.number)))"
+        message: "All backend service ports must have a number"
+      - expression: "object.spec.rules.all(rule, rule.http.paths.all(path, has(path.path)))"
+        message: "All paths must have a path field defined"
+      - expression: "object.spec.rules.all(rule, rule.http.paths.all(path, has(path.pathType)))"
+        message: "All paths must have a pathType defined"
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ingress-validation-params
+      namespace: capsule-system
+    data:
+      clusterName: "{{ .Cluster.metadata.name }}"
+    ---
+    apiVersion: admissionregistration.k8s.io/v1
+    kind: ValidatingAdmissionPolicyBinding
+    metadata:
+      name: ingress-structure-validation-binding
+    spec:
+      policyName: ingress-structure-validation
+      validationActions: [Deny]
+      paramRef:
+        name: ingress-validation-params
+        namespace: capsule-system
+        parameterNotFoundAction: Deny
+      matchResources:
+        namespaceSelector:
+          matchExpressions:
+          - key: capsule.clastix.io/tenant
+            operator: Exists
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventSource
@@ -278,4 +344,220 @@ data:
           kind: {{ $resource.kind }}
           name: {{ $resource.metadata.name }}
           uid: {{ $resource.metadata.uid }}
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: nginx-readme
+      namespace: {{ $resource.metadata.name }}-default
+    data:
+      index.html: |
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Ingress Guide - {{ $resource.metadata.name }}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              min-height: 100vh;
+              padding: 2rem;
+              color: #333;
+            }
+            .container {
+              max-width: 900px;
+              margin: 0 auto;
+              background: white;
+              border-radius: 12px;
+              box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+              padding: 3rem;
+            }
+            h1 {
+              color: #667eea;
+              margin-bottom: 1rem;
+              font-size: 2.5rem;
+            }
+            h2 {
+              color: #764ba2;
+              margin-top: 2rem;
+              margin-bottom: 1rem;
+              font-size: 1.8rem;
+            }
+            p {
+              line-height: 1.6;
+              margin-bottom: 1rem;
+              color: #555;
+            }
+            pre {
+              background: #f5f5f5;
+              border-left: 4px solid #667eea;
+              padding: 1.5rem;
+              border-radius: 8px;
+              overflow-x: auto;
+              margin: 1rem 0;
+              font-size: 0.9rem;
+            }
+            code {
+              font-family: 'Monaco', 'Courier New', monospace;
+              color: #333;
+            }
+            .alert {
+              background: #fff3cd;
+              border-left: 4px solid #ffc107;
+              padding: 1rem;
+              margin: 1rem 0;
+              border-radius: 4px;
+            }
+            .info {
+              background: #d1ecf1;
+              border-left: 4px solid #17a2b8;
+              padding: 1rem;
+              margin: 1rem 0;
+              border-radius: 4px;
+            }
+            ul {
+              margin-left: 2rem;
+              margin-bottom: 1rem;
+              color: #555;
+            }
+            li {
+              margin-bottom: 0.5rem;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>🚀 Ingress Creation Guide</h1>
+            <p>Welcome to tenant <strong>{{ $resource.metadata.name }}</strong>!</p>
+
+            <div class="info">
+              <strong>ℹ️ Info:</strong> This guide will help you create Ingress resources with the correct structure.
+            </div>
+
+            <h2>📋 Required Ingress Structure</h2>
+            <p>Your Ingress must follow this exact structure with one or more backend services:</p>
+
+            <pre><code>apiVersion: networking.k8s.io/v1
+        kind: Ingress
+        metadata:
+          name: your-app-name
+          namespace: your-namespace
+        spec:
+          rules:
+          - host: your-app.{{ .Cluster.metadata.name }}.bealv.io
+            http:
+              paths:
+              - backend:
+                  service:
+                    name: your-service-name
+                    port:
+                      number: 8080
+                path: /api
+                pathType: Prefix
+              - backend:
+                  service:
+                    name: oauth2-proxy
+                    port:
+                      number: 80
+                path: /
+                pathType: Prefix</code></pre>
+
+            <h2>✅ Requirements</h2>
+            <ul>
+              <li>Must use <code>networking.k8s.io/v1</code> API version</li>
+              <li>Must specify at least one rule with a host</li>
+              <li><strong>Host must follow the pattern: <code>&lt;hostname&gt;.{{ .Cluster.metadata.name }}.bealv.io</code></strong></li>
+              <li>Each path must have a backend service with name and port number</li>
+              <li>Path and pathType are required for each backend</li>
+              <li>You can add as many backend paths as needed</li>
+            </ul>
+
+            <h2>🔍 Example with Multiple Backends</h2>
+            <pre><code>apiVersion: networking.k8s.io/v1
+        kind: Ingress
+        metadata:
+          name: my-app
+          namespace: my-app
+        spec:
+          rules:
+          - host: my-app.{{ .Cluster.metadata.name }}.bealv.io
+            http:
+              paths:
+              - backend:
+                  service:
+                    name: my-app
+                    port:
+                      number: 8080
+                path: /api
+                pathType: Prefix
+              - backend:
+                  service:
+                    name: oauth2-proxy
+                    port:
+                      number: 80
+                path: /
+                pathType: Prefix</code></pre>
+
+            <div class="alert">
+              <strong>⚠️ Important:</strong> After creating your Ingress, wait for it to sync. The system will automatically provision the necessary resources.
+            </div>
+
+            <h2>🛡️ Validation Policy</h2>
+            <p>A ValidatingAdmissionPolicy is in place to ensure all Ingresses follow the required structure. Non-compliant Ingresses will be rejected.</p>
+
+            <h2>📝 Steps to Deploy</h2>
+            <ul>
+              <li>1. Create your application deployment and service</li>
+              <li>2. Create an Ingress following the structure above</li>
+              <li>3. Apply the resources: <code>kubectl apply -f your-ingress.yaml</code></li>
+              <li>4. Wait for the Ingress to sync and receive an IP address</li>
+              <li>5. Access your application at the specified host</li>
+            </ul>
+          </div>
+        </body>
+        </html>
+    ---
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: readme-nginx
+      namespace: {{ $resource.metadata.name }}-default
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: readme-nginx
+      template:
+        metadata:
+          labels:
+            app: readme-nginx
+        spec:
+          containers:
+          - name: nginx
+            image: nginx:alpine
+            ports:
+            - containerPort: 80
+            volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+              readOnly: true
+          volumes:
+          - name: html
+            configMap:
+              name: nginx-readme
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: readme-nginx
+      namespace: {{ $resource.metadata.name }}-default
+    spec:
+      selector:
+        app: readme-nginx
+      ports:
+      - port: 80
+        targetPort: 80
     {{ end }}
