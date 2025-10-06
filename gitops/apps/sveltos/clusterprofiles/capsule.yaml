@@ -430,6 +430,8 @@ data:
         targetPort: 80
     {{ end }}
   ingress.yaml: |
+    {{ $cluster := .Cluster }}
+    {{- range $resource := .Resources }}
     ---
     apiVersion: networking.k8s.io/v1
     kind: Ingress
