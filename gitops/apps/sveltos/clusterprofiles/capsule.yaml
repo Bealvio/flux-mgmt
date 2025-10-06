@@ -77,6 +77,11 @@ data:
             capsuleConfiguration: default
             capsuleUserGroups:
               - "{{ .Cluster.metadata.name }}-kube-user"
+              {{- $groups := splitList "," (index (getResource "ClusterAnnotations").metadata.annotations "chihiro.io/groups") }}
+              {{- range $groups }}
+              {{- $group := trim . }}
+              - "{{ $group }}"
+              {{- end }}
               - kube-admin
             forceTenantPrefix: true
             ignoreUserWithGroups:
