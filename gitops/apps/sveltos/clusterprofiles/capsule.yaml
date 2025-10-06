@@ -173,11 +173,6 @@ data:
             matchLabels:
               capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
           rawItems:
-          - apiVersion: v1
-            kind: Namespace
-            metadata:
-              name: {{ .Cluster.metadata.name }}-kube-user-default
-            spec:
           - apiVersion: networking.k8s.io/v1
             kind: NetworkPolicy
             metadata:
