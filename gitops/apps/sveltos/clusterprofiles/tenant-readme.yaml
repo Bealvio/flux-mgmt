@@ -122,16 +122,6 @@ data:
             path: /
             pathType: Prefix</code></pre>
 
-        <h2>✅ Requirements</h2>
-        <ul>
-          <li>Must use <code>networking.k8s.io/v1</code> API version</li>
-          <li>Must specify at least one rule with a host</li>
-          <li><strong>Host must follow the pattern: <code>&lt;hostname&gt;.<span class="cluster-name">CLUSTER_NAME</span>.bealv.io</code></strong></li>
-          <li>Each path must have a backend service with name and port number</li>
-          <li>Path and pathType are required for each backend</li>
-          <li>You can add as many backend paths as needed</li>
-        </ul>
-
         <h2>🔍 Example with Multiple Backends</h2>
         <pre><code>apiVersion: networking.k8s.io/v1
     kind: Ingress
@@ -165,14 +155,11 @@ data:
         <h2>🛡️ Validation Policy</h2>
         <p>A ValidatingAdmissionPolicy is in place to ensure all Ingresses follow the required structure. Non-compliant Ingresses will be rejected.</p>
 
-        <h2>📝 Steps to Deploy</h2>
-        <ul>
-          <li>1. Create your application deployment and service</li>
-          <li>2. Create an Ingress following the structure above</li>
-          <li>3. Apply the resources: <code>kubectl apply -f your-ingress.yaml</code></li>
-          <li>4. Wait for the Ingress to sync and receive an IP address</li>
-          <li>5. Access your application at the specified host</li>
-        </ul>
+        <h2>⚙️ Cluster Configuration</h2>
+        <div class="alert">
+          <strong>Note:</strong> This cluster does not support Service type LoadBalancer as it is fully managed. All external access must be configured through Ingress resources.
+        </div>
+
       </div>
     </body>
     </html>
