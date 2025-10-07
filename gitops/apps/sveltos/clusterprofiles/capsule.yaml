@@ -200,9 +200,6 @@ data:
                 - from:
                     - ipBlock:
                         cidr: 0.0.0.0/0
-                        except:
-                          - 192.168.0.0/16
-                          - 10.0.0.0/8
               egress:
                 - to:
                     - ipBlock:
@@ -317,38 +314,10 @@ spec:
   eventSourceName: tenant-created
   syncMode: ContinuousWithDriftDetection
   reloader: true
-  templateResourceRefs:
-    - resource:
-        apiVersion: v1
-        kind: ConfigMap
-        name: tenant-readme-html
-        namespace: projectsveltos
-      identifier: ReadmeHTML
   policyRefs:
     - kind: ConfigMap
       name: tenant-namespace-template
       namespace: projectsveltos
-    - kind: ConfigMap
-      name: tenant-readmehtml-template
-      namespace: projectsveltos
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: tenant-readmehtml-template
-  namespace: projectsveltos
-  annotations:
-    projectsveltos.io/template: 'true'
-data:
-  readme-configmap.yaml: |
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: nginx-readme
-      namespace: default
-    data:
-      index.html: |
-        {{ index (getResource "ReadmeHTML").data "index.html"  | replace "CLUSTER_NAME" $cluster.metadata.name | nindent 8 }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -374,62 +343,3 @@ data:
           name: {{ $resource.metadata.name }}
           uid: {{ $resource.metadata.uid }}
     {{ end }}
-  deploy.yaml: |
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: readme-nginx
-      namespace: default
-    spec:
-      replicas: 1
-      selector:
-        matchLabels:
-          app: readme-nginx
-      template:
-        metadata:
-          labels:
-            app: readme-nginx
-        spec:
-          containers:
-          - name: nginx
-            image: nginx:alpine
-            ports:
-            - containerPort: 80
-            volumeMounts:
-            - name: html
-              mountPath: /usr/share/nginx/html
-              readOnly: true
-          volumes:
-          - name: html
-            configMap:
-              name: nginx-readme
-  svc.yaml: |
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: readme-nginx
-      namespace: default
-    spec:
-      selector:
-        app: readme-nginx
-      ports:
-      - port: 80
-        targetPort: 80
-  ingress.yaml: |
-    apiVersion: networking.k8s.io/v1
-    kind: Ingress
-    metadata:
-      name: readme
-      namespace: default
-    spec:
-      rules:
-      - host: 'documentation.{{ .Cluster.metadata.name }}.bealv.io'
-        http:
-          paths:
-          - backend:
-              service:
-                name: readme-nginx
-                port:
-                  number: 80
-            path: /
-            pathType: Prefix

@@ -15,7 +15,6 @@ resources:
   - external-snapshotter.yaml
   - monitoring.yaml
   - capsule.yaml
-  - tenant-readme.yaml
   - capsule-bealv-services.yaml
   - ingress-replication.yaml
   - bealv-ingress-template.yaml
