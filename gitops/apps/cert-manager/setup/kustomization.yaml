@@ -1,0 +1,4 @@
+resources:
+  - ../upstream
+patches:
+  - path: patch-gateway-api.yaml
