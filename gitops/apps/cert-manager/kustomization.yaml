@@ -1,6 +1,3 @@
 resources:
-  - upstream/
+  - setup/
   - secrets.yaml
-
-patches:
-  - path: patch-gateway-api.yaml
