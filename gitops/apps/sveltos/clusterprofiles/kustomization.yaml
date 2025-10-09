@@ -17,4 +17,3 @@ resources:
   - capsule.yaml
   - capsule-bealv-services.yaml
   - ingress-replication.yaml
-  - bealv-ingress-template.yaml

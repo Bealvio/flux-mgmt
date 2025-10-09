@@ -5,11 +5,13 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'apps'
-      version: 'v1'
-      kind: 'Deployment'
-      name: 'cert-manager'
-      namespace: 'cert-manager'
+    - group: 'cluster.x-k8s.io'
+      kind: 'Cluster'
+      version: 'v1beta2'
+      labelFilters:
+        - key: cert-manager
+          value: 'true'
+          operation: Equal
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventTrigger
@@ -17,6 +19,9 @@ metadata:
   name: certvault-cluster-eventtrigger
 spec:
   sourceClusterSelector:
+    matchLabels:
+      type: mgmt
+  destinationClusterSelector:
     matchLabels:
       type: mgmt
   eventSourceName: certvault-cluster-eventsource
@@ -35,62 +40,65 @@ metadata:
     projectsveltos.io/instantiate: 'true'
 data:
   certmanager-roleid: |
+    {{- $cluster := .Cluster }}
+    {{- range $resource := .Resources }}
+    ---
     apiVersion: approle.vault.upbound.io/v1alpha1
     kind: AuthBackendRole
     metadata:
-      name: cert-manager-{{ .Resource.metadata.name }}
+      name: cert-manager-{{ $resource.metadata.name }}
     spec:
       forProvider:
-        roleName: cert-manager-{{ .Resource.metadata.name }}
+        roleName: cert-manager-{{ $resource.metadata.name }}
         tokenPolicies:
-          - cert-manager-{{ .Resource.metadata.name }}
+          - cert-manager-{{ $resource.metadata.name }}
       providerConfigRef:
         name: default
-  certmanager-role-secretid: |
+    ---
     apiVersion: approle.vault.upbound.io/v1alpha1
     kind: AuthBackendRoleSecretID
     metadata:
-      name: cert-manager-{{ .Resource.metadata.name }}
+      name: cert-manager-{{ $resource.metadata.name }}
     spec:
       forProvider:
-        roleName: cert-manager-{{ .Resource.metadata.name }}
+        roleName: cert-manager-{{ $resource.metadata.name }}
       writeConnectionSecretToRef:
-        name: cert-manager-approle-{{ .Resource.metadata.name }}
+        name: cert-manager-approle-{{ $resource.metadata.name }}
         namespace: crossplane-system
       providerConfigRef:
         name: default
-  policy.yaml: |
+    ---
     apiVersion: vault.vault.upbound.io/v1alpha1
     kind: Policy
     metadata:
-      name: cert-manager-{{ .Resource.metadata.name }}
+      name: cert-manager-{{ $resource.metadata.name }}
     spec:
       forProvider:
-        name: cert-manager-{{ .Resource.metadata.name }}
+        name: cert-manager-{{ $resource.metadata.name }}
         policy: |
-          path "pki-int/sign/{{ .Resource.metadata.name }}-dot-lan" {
+          path "pki-int/sign/{{ $resource.metadata.name }}-dot-lan" {
             capabilities = ["create", "update"]
           }
-          path "pki-int/issue/{{ .Resource.metadata.name }}-dot-lan" {
+          path "pki-int/issue/{{ $resource.metadata.name }}-dot-lan" {
             capabilities = ["create", "update"]
           }
       providerConfigRef:
         name: default
-  backend.yaml: |
+    ---
     apiVersion: pki.vault.upbound.io/v1alpha1
     kind: SecretBackendRole
     metadata:
-      name: {{ .Resource.metadata.name }}
+      name: {{ $resource.metadata.name }}
     spec:
       forProvider:
-        name: {{ .Resource.metadata.name }}-dot-lan
+        name: {{ $resource.metadata.name }}-dot-lan
         backend: pki-int
         ttl: '2592000'
         allowIpSans: true
         keyType: rsa
         keyBits: 2048
         allowedDomains:
-          - '{{ .Resource.metadata.name }}.lan'
+          - '{{ $resource.metadata.name }}.lan'
         allowSubdomains: true
         organization:
           - 'Bealv'
@@ -105,3 +113,92 @@ data:
         requireCn: false
       providerConfigRef:
         name: default
+    ---
+    apiVersion: config.projectsveltos.io/v1beta1
+    kind: ClusterProfile
+    metadata:
+      name: cert-manager-configs
+    spec:
+      syncMode: ContinuousWithDriftDetection
+      reloader: true
+      clusterSelector:
+        matchLabels:
+          cert-manager: 'true'
+      policyRefs:
+        - kind: Secret
+          name: cacert-clusterprofile
+          namespace: projectsveltos
+        - name: clusterissuer-clusterprofile
+          namespace: projectsveltos
+          kind: ConfigMap
+      templateResourceRefs:
+        - resource:
+            apiVersion: v1
+            kind: Secret
+            name: bealv-mgmt-bundle
+            namespace: cert-manager
+          identifier: caSecrets
+        - resource:
+            apiVersion: approle.vault.upbound.io/v1alpha1
+            kind: AuthBackendRole
+            name: cert-manager-{{ $resource.metadata.name }}
+          identifier: AuthBackendRoleCert
+        - resource:
+            apiVersion: v1
+            kind: Secret
+            name: cert-manager-approle-{{ $resource.metadata.name }}
+            namespace: crossplane-system
+          identifier: certManagerApproleSecretId
+    {{ end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clusterissuer-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+data:
+  clusterissuer.yaml: |
+    apiVersion: cert-manager.io/v1
+    kind: ClusterIssuer
+    metadata:
+      name: {{ .Cluster.metadata.name }}
+    spec:
+      vault:
+        path: pki-int/sign/{{ .Cluster.metadata.name }}-dot-lan
+        server: https://vault.bealv-mgmt.lan
+        caBundleSecretRef:
+          name: bealv-mgmt-bundle
+          key: ca.crt
+        auth:
+          appRole:
+            roleId: '{{ index (getResource "AuthBackendRoleCert").status.atProvider "roleId" }}'
+            path: approle
+            secretRef:
+              name: cert-manager-approle-{{ .Cluster.metadata.name }}
+              key: 'attribute.secret_id'
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cacert-clusterprofile
+  annotations:
+    projectsveltos.io/template: 'true'
+type: addons.projectsveltos.io/cluster-profile
+stringData:
+  secret.yaml: |
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: root-ca
+      namespace: {{ (getResource "caSecrets").metadata.namespace }}
+    data:
+      ca.crt: {{ index (getResource "caSecrets").data "ca.crt" }}
+  token.yaml: |
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: cert-manager-approle-{{ .Cluster.metadata.name }}
+      namespace: cert-manager
+    data:
+      attribute.secret_id: '{{ index (getResource "certManagerApproleSecretId").data "attribute.secret_id" }}'

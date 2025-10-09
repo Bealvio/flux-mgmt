@@ -21,7 +21,7 @@ data:
             external-secret: "false"
             external-snapshotter: "true"
             fluxcd: "true"
-            ingress-controller: "false"
+            ingress-controller: "true"
             ingress-replication: "true"
             monitoring: "false"
             proxmox-csi: "true"

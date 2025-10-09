@@ -1,4 +1,8 @@
 resources:
   - ../upstream
-patches:
-  - path: patch-gateway-api.yaml
+patchesJson6902:
+  - target:
+      version: v1
+      kind: Deployment
+      name: cert-manager
+    path: patch-gateway-api.yaml

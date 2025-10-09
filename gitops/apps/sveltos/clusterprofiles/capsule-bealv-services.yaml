@@ -48,63 +48,43 @@ metadata:
   annotations:
     projectsveltos.io/instantiate: 'true'
 data:
-  service.yaml: |
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: capsule-proxy-{{ .Cluster.metadata.name }}
-      namespace: kube-system
-    spec:
-      internalTrafficPolicy: Cluster
-      ipFamilies:
-      - IPv4
-      ipFamilyPolicy: SingleStack
-      ports:
-      - port: 8080
-  endpointslice.yaml: |
+  httproute.yaml: |
     {{ $cluster := .Cluster }}
     {{- range $resource := .Resources }}
-    addressType: IPv4
-    apiVersion: discovery.k8s.io/v1
-    kind: EndpointSlice
+    {{ $loadBalancerIP := (index $resource.status.loadBalancer.ingress 0).ip }}
+    ---
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: Backend
     metadata:
+      name: capsule-proxy-{{ $cluster.metadata.name }}
+      namespace: kube-system
       labels:
-        kubernetes.io/service-name: "capsule-proxy-{{ $cluster.metadata.name }}"
-      name: "capsule-proxy-{{ $cluster.metadata.name }}"
-      namespace: kube-system
-    endpoints:
-    - addresses:
-      - {{ (index $resource.status.loadBalancer.ingress 0).ip }}
-      conditions:
-        ready: true
-    ports:
-    - name: ""
-      port: 9001
-      protocol: TCP
-    {{ end }}
-  ingress.yaml: |
-    apiVersion: networking.k8s.io/v1
-    kind: Ingress
-    metadata:
-      annotations:
-        cert-manager.io/cluster-issuer: bealvio
-        external-dns.alpha.kubernetes.io/target: bealv.io
-      name: "{{ .Cluster.metadata.name  }}"
-      namespace: kube-system
+        generated-by: sveltos
+        cluster: {{ $cluster.metadata.name }}
     spec:
-      ingressClassName: external
+      type: Static
+      static:
+        hosts:
+          - host: {{ $loadBalancerIP }}
+            port: 9001
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: capsule-proxy-{{ $cluster.metadata.name }}
+      namespace: kube-system
+      labels:
+        generated-by: sveltos
+        cluster: {{ $cluster.metadata.name }}
+    spec:
+      parentRefs:
+        - name: https
+          namespace: kgateway-system
+      hostnames:
+        - "kube.{{ $cluster.metadata.name }}.bealv.io"
       rules:
-      - host: "kube.{{ .Cluster.metadata.name }}.bealv.io"
-        http:
-          paths:
-          - backend:
-              service:
-                name: "capsule-proxy-{{ .Cluster.metadata.name }}"
-                port:
-                  number: 8080
-            path: /
-            pathType: Prefix
-      tls:
-      - hosts:
-        - "kube.{{ .Cluster.metadata.name }}.bealv.io"
-        secretName: "kube.{{ .Cluster.metadata.name }}-tls"
+        - backendRefs:
+            - group: gateway.kgateway.dev
+              kind: Backend
+              name: capsule-proxy-{{ $cluster.metadata.name }}
+    {{ end }}
