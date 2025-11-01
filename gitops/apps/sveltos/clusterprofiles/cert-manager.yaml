@@ -7,9 +7,25 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      cert-manager: 'true'
+      cert-manager-setup: 'gatewayapi'
   kustomizationRefs:
     - kind: GitRepository
       name: infra
       namespace: flux-system
       path: ./gitops/apps/cert-manager/setup
+---
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: cert-manager-generic
+spec:
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  clusterSelector:
+    matchLabels:
+      cert-manager-setup: 'generic'
+  kustomizationRefs:
+    - kind: GitRepository
+      name: infra
+      namespace: flux-system
+      path: ./gitops/apps/cert-manager/upstream

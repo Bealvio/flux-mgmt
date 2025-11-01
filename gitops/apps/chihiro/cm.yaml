@@ -8,7 +8,7 @@ data:
     # See deployment.yaml for CHIHIRO_* environment variables
     cluster:
       template: |
-        apiVersion: cluster.x-k8s.io/v1beta1
+        apiVersion: cluster.x-k8s.io/v1beta2
         kind: Cluster
         metadata:
           name: PLACEHOLDER_NAME
@@ -16,6 +16,7 @@ data:
           labels:
             capsule: "true"
             cert-manager: "true"
+            cert-manager-setup: 'generic'
             cni: cilium
             external-dns: "false"
             external-secret: "false"

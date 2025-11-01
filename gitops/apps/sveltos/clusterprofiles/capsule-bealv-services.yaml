@@ -53,11 +53,57 @@ data:
     {{- range $resource := .Resources }}
     {{ $loadBalancerIP := (index $resource.status.loadBalancer.ingress 0).ip }}
     ---
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: sveltos-{{ $cluster.metadata.name }}
+    spec:
+    ---
+    apiVersion: gateway.networking.x-k8s.io/v1alpha1
+    kind: XListenerSet
+    metadata:
+      name: {{ $cluster.metadata.name }}-apiserver
+      namespace: sveltos-{{ $cluster.metadata.name }}
+    spec:
+      parentRef:
+        name: https
+        namespace: kgateway-system
+        kind: Gateway
+        group: gateway.networking.k8s.io
+      listeners:
+      - name: apiserver-{{ $cluster.metadata.name }}
+        hostname: kube.{{ $cluster.metadata.name }}.bealv.io
+        protocol: HTTPS
+        port: 443
+        tls:
+          mode: Terminate
+          certificateRefs:
+          - kind: Secret
+            group: ""
+            name: {{ $cluster.metadata.name }}-apiserver-tls
+    ---
+    apiVersion: cert-manager.io/v1
+    kind: Certificate
+    metadata:
+      name: {{ $cluster.metadata.name }}-apiserver-tls
+      namespace: kgateway-system
+    spec:
+      dnsNames:
+      - 'kube.{{ $cluster.metadata.name }}.bealv.io'
+      issuerRef:
+        group: cert-manager.io
+        kind: ClusterIssuer
+        name: bealvio
+      secretName: {{ $cluster.metadata.name }}-apiserver-tls
+      usages:
+      - digital signature
+      - key encipherment
+    ---
     apiVersion: gateway.kgateway.dev/v1alpha1
     kind: Backend
     metadata:
       name: capsule-proxy-{{ $cluster.metadata.name }}
-      namespace: kube-system
+      namespace: sveltos-{{ $cluster.metadata.name }}
       labels:
         generated-by: sveltos
         cluster: {{ $cluster.metadata.name }}
@@ -68,18 +114,30 @@ data:
           - host: {{ $loadBalancerIP }}
             port: 9001
     ---
+    kind: Service
+    apiVersion: v1
+    metadata:
+      name: dns-record-{{ $cluster.metadata.name }}-apiserver
+      namespace: sveltos-{{ $cluster.metadata.name }}
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: kube.{{ $cluster.metadata.name }}.bealv.io
+    spec:
+      type: ExternalName
+      externalName: bealv.io
+    ---
     apiVersion: gateway.networking.k8s.io/v1
     kind: HTTPRoute
     metadata:
       name: capsule-proxy-{{ $cluster.metadata.name }}
-      namespace: kube-system
+      namespace: sveltos-{{ $cluster.metadata.name }}
       labels:
         generated-by: sveltos
         cluster: {{ $cluster.metadata.name }}
     spec:
       parentRefs:
-        - name: https
-          namespace: kgateway-system
+        - name: {{ $cluster.metadata.name }}-apiserver
+          kind: XListenerSet
+          namespace: sveltos-{{ $cluster.metadata.name }}
       hostnames:
         - "kube.{{ $cluster.metadata.name }}.bealv.io"
       rules:
