@@ -11,10 +11,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v1.18.2",
-      "revision": "26a1a523c786e9657c433e765d1c854f2ab19765",
-      "url": "https://api.github.com/repos/cert-manager/cert-manager/tarball/v1.18.2",
-      "hash": "02rrj866jm5kvkx59makmqyvxakxw84m1q0lhjzhq4ib7ysi4r84"
+      "version": "v1.19.1",
+      "revision": "3b43a94ce6db81711ccff6a9789dd312b2e9502e",
+      "url": "https://api.github.com/repos/cert-manager/cert-manager/tarball/v1.19.1",
+      "hash": "011hfihw7pj1d4y3c9v825y6m5lrqlf0c39p0r5qjqhi0bsr9biq"
     },
     "cluster-api-operator": {
       "type": "GitRelease",
@@ -59,10 +59,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v8.3.0",
-      "revision": "6b2feaaf7fc3d6d0fe21029d1032ea0eee2081e9",
-      "url": "https://api.github.com/repos/kubernetes-csi/external-snapshotter/tarball/v8.3.0",
-      "hash": "0jk3xvbnv1sb5wdli37k8wrnmr5318r4wwajqk6z6d95hkyksmm5"
+      "version": "v8.4.0",
+      "revision": "f21cb02763e7cd6a7fc84846f106b83119b5371d",
+      "url": "https://api.github.com/repos/kubernetes-csi/external-snapshotter/tarball/v8.4.0",
+      "hash": "1hil72parh14j5sx2kgl4j87xfnjl8p2jj54v39bi35b9rvik83d"
     },
     "flux-operator": {
       "type": "GitRelease",
@@ -75,10 +75,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v0.30.0",
-      "revision": "52ec5a3b6f570d6efefa981ae3d0fe6f68d2a57c",
-      "url": "https://api.github.com/repos/controlplaneio-fluxcd/flux-operator/tarball/v0.30.0",
-      "hash": "14kd8anmmad1flgjwd9c1k2a40d0k0flv1byn8i3p36aqiq7y6vx"
+      "version": "v0.33.0",
+      "revision": "a04d0dd61781eb3f1e2ccaa1c2b637d2ed4cea07",
+      "url": "https://api.github.com/repos/controlplaneio-fluxcd/flux-operator/tarball/v0.33.0",
+      "hash": "0q9kvzyvgh70mgrbw5cm3gdjsr127w94prywkc03x80sp4hd56yq"
     },
     "grafana-operator": {
       "type": "GitRelease",
@@ -91,10 +91,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v5.19.4",
-      "revision": "60b98bb9c7a6c4d734ace12fcdfffe4b39052e60",
-      "url": "https://api.github.com/repos/grafana-operator/grafana-operator/tarball/v5.19.4",
-      "hash": "1qr8skl1wxbag4lxvb47cgs9iv3ir5v3c1dp599xvarsmqgd81dp"
+      "version": "v5.20.0",
+      "revision": "3e68ec4c3c706d5d3ca45c7f2d141a5336f243e4",
+      "url": "https://api.github.com/repos/grafana-operator/grafana-operator/tarball/v5.20.0",
+      "hash": "07rswzh8s3cqlg9i7ndn6xcr1inlvy412cb39pjj7w7212msb7h9"
     },
     "kamaji": {
       "type": "GitRelease",
@@ -107,10 +107,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "edge-25.9.5",
-      "revision": "464dc7ef49e1b2b03d0332f82241aed504a47179",
-      "url": "https://api.github.com/repos/clastix/kamaji/tarball/edge-25.9.5",
-      "hash": "19mbjkskayvns5if1sgyck7qli75nb3jj7zcdxq4z900nrpraxd7"
+      "version": "edge-25.10.5",
+      "revision": "f29a10ba5f5fc2f7765b4bf9affc08a2079920ba",
+      "url": "https://api.github.com/repos/clastix/kamaji/tarball/edge-25.10.5",
+      "hash": "17py3r168mwzbhm060v8xkbc3f7m561pbf5m5a775vvrrqn2pyjr"
     },
     "kube-prometheus": {
       "type": "Git",
@@ -121,9 +121,9 @@
       },
       "branch": "main",
       "submodules": false,
-      "revision": "d98c08e752f6ff143ee3a9491b774f55e572a83b",
-      "url": "https://github.com/prometheus-operator/kube-prometheus/archive/d98c08e752f6ff143ee3a9491b774f55e572a83b.tar.gz",
-      "hash": "0i1yhmsahs9006if7mid9y7c6x5ag8zllls4ynv7spanrnzasxzh"
+      "revision": "e5eec3068651b6b5b3a05821b7aa03a0811ef31f",
+      "url": "https://github.com/prometheus-operator/kube-prometheus/archive/e5eec3068651b6b5b3a05821b7aa03a0811ef31f.tar.gz",
+      "hash": "1sk82g3x2bjbqbjc3qsfp5id72frnyd44c5rvzddqjc1dppapjhw"
     },
     "kubevirt-monitoring": {
       "type": "Git",
@@ -134,9 +134,9 @@
       },
       "branch": "main",
       "submodules": false,
-      "revision": "234f65f076465b7f96edd23a028fd943000a3493",
-      "url": "https://github.com/kubevirt/monitoring/archive/234f65f076465b7f96edd23a028fd943000a3493.tar.gz",
-      "hash": "02gjb8a0lwv6kwa95wvg05038vw26hfmzngv8d06nsq73ldh1cf7"
+      "revision": "91178e6e5d6e0d4eb191a442a8006d2fd803a985",
+      "url": "https://github.com/kubevirt/monitoring/archive/91178e6e5d6e0d4eb191a442a8006d2fd803a985.tar.gz",
+      "hash": "0vx6h7ii17hlmhfvd703vic0r9qxbzqvg7rhmvyk45drkx409adj"
     },
     "nixpkgs": {
       "type": "Channel",
