@@ -72,7 +72,6 @@ data:
         name: backend-{{ $resourceId }}
       validation:
         hostname: "{{ $ingressHost }}"
-        wellKnownCACertificates: System
         caCertificateRefs:
           - kind: Secret
             group: ""
