@@ -18,7 +18,7 @@ data:
             cert-manager: "true"
             cert-manager-setup: 'generic'
             cni: cilium
-            external-dns: "false"
+            external-dns: "true"
             external-secret: "false"
             external-snapshotter: "true"
             fluxcd: "true"
