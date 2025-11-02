@@ -48,7 +48,7 @@ data:
     kind: Backend
     metadata:
       name: backend-{{ $resourceId }}
-      namespace: sveltos-{{ $cluster }}
+      namespace: sveltos-{{ $cluster.metadata.name }}
       labels:
         generated-by: sveltosingressreplication
         cluster: {{ $cluster.metadata.name }}
@@ -64,7 +64,7 @@ data:
     kind: HTTPRoute
     metadata:
       name: httproute-{{ $resourceId }}
-      namespace: sveltos-{{ $cluster }}
+      namespace: sveltos-{{ $cluster.metadata.name }}
       labels:
         generated-by: sveltosingressreplication
         cluster: {{ $cluster.metadata.name }}
