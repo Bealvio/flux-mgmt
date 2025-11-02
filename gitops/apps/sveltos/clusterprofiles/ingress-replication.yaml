@@ -83,7 +83,7 @@ data:
           filters:
           - type: URLRewrite
             urlRewrite:
-              hostname: $ingressHost
+              hostname: {{ $ingressHost }}
     {{ end }}
     {{ end }}
     {{ end }}
