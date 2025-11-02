@@ -18,7 +18,7 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      external-dns: true
+      external-dns: 'true'
   eventSourceName: pdns-cluster-eventsource
   syncMode: ContinuousWithDriftDetection
   reloader: true
