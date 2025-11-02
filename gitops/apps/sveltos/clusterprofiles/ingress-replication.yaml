@@ -80,6 +80,10 @@ data:
             - group: gateway.kgateway.dev
               kind: Backend
               name: backend-{{ $resourceId }}
+          filters:
+          - type: URLRewrite
+            urlRewrite:
+              hostname: $ingressHost
     {{ end }}
     {{ end }}
     {{ end }}
