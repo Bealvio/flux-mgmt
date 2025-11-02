@@ -136,6 +136,7 @@ data:
     spec:
       parentRefs:
         - name: {{ $cluster.metadata.name }}-apiserver
+          group: gateway.networking.x-k8s.io
           kind: XListenerSet
           namespace: sveltos-{{ $cluster.metadata.name }}
       hostnames:
