@@ -71,8 +71,10 @@ data:
         service: {{ $path.backend.service.name }}
     spec:
       parentRefs:
-        - name: https
-          namespace: kgateway-system
+        - name: {{ $cluster.metadata.name }}-ingress
+          group: gateway.networking.x-k8s.io
+          kind: XListenerSet
+          namespace: sveltos-{{ $cluster.metadata.name }}
       hostnames:
         - {{ $routeHost }}
       rules:
