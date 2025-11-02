@@ -57,7 +57,6 @@ data:
     kind: Namespace
     metadata:
       name: sveltos-{{ $cluster.metadata.name }}
-    spec:
     ---
     apiVersion: gateway.networking.x-k8s.io/v1alpha1
     kind: XListenerSet
@@ -89,12 +88,12 @@ data:
       namespace: kgateway-system
     spec:
       dnsNames:
-      - 'kube.{{ $cluster.metadata.name }}.bealv.io'
+      - '*.{{ $cluster.metadata.name }}.bealv.io'
       issuerRef:
         group: cert-manager.io
         kind: ClusterIssuer
         name: bealvio
-      secretName: {{ $cluster.metadata.name }}-apiserver-tls
+      secretName: {{ $cluster.metadata.name }}-ingress-tls
       usages:
       - digital signature
       - key encipherment
@@ -160,7 +159,7 @@ data:
       name: dns-record-{{ $cluster.metadata.name }}-apiserver
       namespace: sveltos-{{ $cluster.metadata.name }}
       annotations:
-        external-dns.alpha.kubernetes.io/hostname: kube.{{ $cluster.metadata.name }}.bealv.io
+        external-dns.alpha.kubernetes.io/hostname: *.{{ $cluster.metadata.name }}.bealv.io
     spec:
       type: ExternalName
       externalName: bealv.io
