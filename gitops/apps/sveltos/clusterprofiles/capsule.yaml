@@ -246,7 +246,7 @@ data:
         message: "Ingress must have at least one rule"
       - expression: "object.spec.rules.all(rule, has(rule.host))"
         message: "All rules must specify a host"
-      - expression: "object.spec.rules.all(rule, rule.host.endsWith('.' + params.data.clusterName + '.{{ .Cluster.metadata.name }}.lan'))"
+      - expression: "object.spec.rules.all(rule, rule.host.endsWith('.' + params.data.clusterName + '.lan'))"
         message: "All hosts must match the pattern <hostname>.{{ .Cluster.metadata.name }}.lan"
       - expression: "object.spec.rules.all(rule, has(rule.http) && has(rule.http.paths))"
         message: "All rules must have http.paths defined"
