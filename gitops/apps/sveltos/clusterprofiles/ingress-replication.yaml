@@ -64,6 +64,7 @@ data:
     kind: BackendTLSPolicy
     metadata:
       name: static-tls-policy-{{ $resourceId }}
+      namespace: sveltos-{{ $cluster.metadata.name }}
     spec:
       targetRefs:
       - group: gateway.kgateway.dev
