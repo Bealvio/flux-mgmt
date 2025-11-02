@@ -71,7 +71,7 @@ data:
         group: gateway.networking.k8s.io
       listeners:
       - name: ingress-{{ $cluster.metadata.name }}
-        hostname: *.{{ $cluster.metadata.name }}.bealv.io
+        hostname: "*.{{ $cluster.metadata.name }}.bealv.io"
         protocol: HTTPS
         port: 443
         tls:
@@ -159,7 +159,7 @@ data:
       name: dns-record-{{ $cluster.metadata.name }}-apiserver
       namespace: sveltos-{{ $cluster.metadata.name }}
       annotations:
-        external-dns.alpha.kubernetes.io/hostname: *.{{ $cluster.metadata.name }}.bealv.io
+        external-dns.alpha.kubernetes.io/hostname: "*.{{ $cluster.metadata.name }}.bealv.io"
     spec:
       type: ExternalName
       externalName: bealv.io
