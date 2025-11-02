@@ -19,6 +19,9 @@ spec:
   sourceClusterSelector:
     matchLabels:
       external-dns: 'true'
+  destinationClusterSelector:
+    matchLabels:
+      type: 'mgmt'
   eventSourceName: pdns-cluster-eventsource
   syncMode: ContinuousWithDriftDetection
   reloader: true
