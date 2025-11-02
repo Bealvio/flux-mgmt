@@ -73,6 +73,10 @@ data:
       validation:
         hostname: "{{ $ingressHost }}"
         wellKnownCACertificates: System
+        caCertificateRefs:
+          - kind: Secret
+            group: ""
+            name: bealv-mgmt-bundle
     ---
     apiVersion: gateway.networking.k8s.io/v1
     kind: HTTPRoute
