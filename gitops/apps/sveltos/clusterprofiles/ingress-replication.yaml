@@ -41,12 +41,7 @@ data:
     {{ range $rule := $resource.spec.rules }}
     {{ range $path := $rule.http.paths }}
     {{ $ingressHost := $rule.host }}
-    {{/* Construct the old and new suffix strings using the $cluster variable */}}
-    {{ $oldSuffix := printf "%s.lan" $cluster }}
-    {{ $newSuffix := printf "%s.bealv.io" $cluster }}
-    {{/* Use the variables in the replace function */}}
-    {{ $routeHost := $ingressHost | replace $oldSuffix $newSuffix }}
-
+    {{ $routeHost := $ingressHost | replace ".lan" ".bealv.io" }}
     {{ $resourceId := printf "%s%s%s%s" $ingressHost $path.backend.service.name $resource.metadata.namespace $cluster.metadata.name | sha256sum | trunc 8 }}
     ---
     apiVersion: gateway.kgateway.dev/v1alpha1
