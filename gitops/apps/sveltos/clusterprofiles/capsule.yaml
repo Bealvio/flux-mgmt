@@ -172,41 +172,41 @@ data:
             matchLabels:
               capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
           rawItems:
-          - apiVersion: networking.k8s.io/v1
-            kind: NetworkPolicy
-            metadata:
-              labels:
-                capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
-              name: netpol-lock
-            spec:
-              ingress:
-              - from:
-                - namespaceSelector:
-                    matchLabels:
-                      capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
-              policyTypes:
-              - Ingress
-          - apiVersion: networking.k8s.io/v1
-            kind: NetworkPolicy
-            metadata:
-              name: allow-all-except-local
-              namespace: default
-            spec:
-              podSelector: {} # Applies to all pods in the namespace
-              policyTypes:
-                - Ingress
-                - Egress
-              ingress:
-                - from:
-                    - ipBlock:
-                        cidr: 0.0.0.0/0
-              egress:
-                - to:
-                    - ipBlock:
-                        cidr: 0.0.0.0/0
-                        except:
-                          - 192.168.0.0/16
-                          - 10.0.0.0/8
+          # - apiVersion: networking.k8s.io/v1
+          #   kind: NetworkPolicy
+          #   metadata:
+          #     labels:
+          #       capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
+          #     name: netpol-lock
+          #   spec:
+          #     ingress:
+          #     - from:
+          #       - namespaceSelector:
+          #           matchLabels:
+          #             capsule.clastix.io/tenant: "{{ .Cluster.metadata.name }}-kube-user"
+          #     policyTypes:
+          #     - Ingress
+          # - apiVersion: networking.k8s.io/v1
+          #   kind: NetworkPolicy
+          #   metadata:
+          #     name: allow-all-except-local
+          #     namespace: default
+          #   spec:
+          #     podSelector: {} # Applies to all pods in the namespace
+          #     policyTypes:
+          #       - Ingress
+          #       - Egress
+          #     ingress:
+          #       - from:
+          #           - ipBlock:
+          #               cidr: 0.0.0.0/0
+          #     egress:
+          #       - to:
+          #           - ipBlock:
+          #               cidr: 0.0.0.0/0
+          #               except:
+          #                 - 192.168.0.0/16
+          #                 - 10.0.0.0/8
   service.yaml: |
     apiVersion: v1
     kind: Service
