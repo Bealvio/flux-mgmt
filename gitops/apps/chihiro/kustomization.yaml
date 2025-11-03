@@ -7,3 +7,4 @@ resources:
   - rbacs.yaml
   - svc.yaml
   - secrets.yaml
+  - ing.yaml

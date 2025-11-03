@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: chihiro
+  annotations:
+    cert-manager.io/cluster-issuer: bealv-mgmt
+  labels:
+    probe: enabled
+spec:
+  rules:
+    - host: 'chihiro.bealv-mgmt.lan'
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chihiro-service
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - 'chihiro.bealv-mgmt.lan'
+      secretName: chihiro-tls
