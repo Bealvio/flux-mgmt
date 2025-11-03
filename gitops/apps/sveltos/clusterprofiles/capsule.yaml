@@ -223,7 +223,7 @@ data:
       - expression: "object.spec.rules.all(rule, rule.http.paths.all(path, has(path.pathType)))"
         message: "All paths must have a pathType defined"
       - expression: "has(object.metadata.annotations) && 'cert-manager.io/cluster-issuer' in object.metadata.annotations && object.metadata.annotations['cert-manager.io/cluster-issuer'] == '{{ .Cluster.metadata.name }}'"
-          message: "Ingress must have annotation 'cert-manager.io/cluster-issuer' set to '{{ .Cluster.metadata.name }}'"
+        message: "Ingress must have annotation 'cert-manager.io/cluster-issuer' set to '{{ .Cluster.metadata.name }}'"
     ---
     apiVersion: v1
     kind: ConfigMap
