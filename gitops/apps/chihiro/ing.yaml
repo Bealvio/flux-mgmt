@@ -4,6 +4,7 @@ metadata:
   name: chihiro
   annotations:
     cert-manager.io/cluster-issuer: bealv-mgmt
+    projectcontour.io/websocket-routes: /ws
   labels:
     probe: enabled
 spec:
@@ -11,6 +12,13 @@ spec:
     - host: 'chihiro.bealv-mgmt.lan'
       http:
         paths:
+          - path: /ws
+            pathType: Prefix
+            backend:
+              service:
+                name: chihiro-service
+                port:
+                  number: 8080
           - path: /
             pathType: Prefix
             backend:
