@@ -157,24 +157,30 @@ data:
       preventDeletion: false
       resourceQuotas:
         scope: Tenant
-  service.yaml: |
-    apiVersion: v1
-    kind: Service
+  ing.yaml: |
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
     metadata:
-      name: capsule-proxy-lb
+      annotations:
+        cert-manager.io/cluster-issuer: {{ .Cluster.metadata.name }}
+      name: capsule-proxy
       namespace: capsule-system
     spec:
-      internalTrafficPolicy: Cluster
-      ipFamilies:
-      - IPv4
-      ipFamilyPolicy: SingleStack
-      ports:
-      - name: proxy
-        port: 9001
-      selector:
-        app.kubernetes.io/instance: capsule
-        app.kubernetes.io/name: proxy
-      type: LoadBalancer
+      rules:
+      - host: kube.{{ .Cluster.metadata.name }}.lan
+        http:
+          paths:
+          - backend:
+              service:
+                name: capsule-proxy
+                port:
+                  number: 9001
+            path: /
+            pathType: Prefix
+      tls:
+      - hosts:
+        - kube.{{ .Cluster.metadata.name }}.lan
+        secretName: kube-{{ .Cluster.metadata.name }}-tls
   ingress-validation.yaml: |
     apiVersion: admissionregistration.k8s.io/v1
     kind: ValidatingAdmissionPolicy

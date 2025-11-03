@@ -5,21 +5,11 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: ''
+    - group: 'networking.k8s.io'
       version: 'v1'
-      kind: 'Service'
-      name: capsule-proxy-lb
+      kind: 'Ingress'
+      name: capsule-proxy
       namespace: capsule-system
-      evaluate: |
-        function evaluate()
-          hs = {}
-          hs.matching = false
-          hs.message = ""
-          if obj.status.loadBalancer.ingress ~= nil then
-            hs.matching = true
-          end
-          return hs
-        end
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventTrigger
@@ -51,7 +41,6 @@ data:
   httproute.yaml: |
     {{ $cluster := .Cluster }}
     {{- range $resource := .Resources }}
-    {{ $loadBalancerIP := (index $resource.status.loadBalancer.ingress 0).ip }}
     ---
     apiVersion: v1
     kind: Namespace
@@ -98,61 +87,6 @@ data:
       - digital signature
       - key encipherment
     ---
-    apiVersion: gateway.networking.x-k8s.io/v1alpha1
-    kind: XListenerSet
-    metadata:
-      name: {{ $cluster.metadata.name }}-apiserver
-      namespace: sveltos-{{ $cluster.metadata.name }}
-    spec:
-      parentRef:
-        name: https
-        namespace: kgateway-system
-        kind: Gateway
-        group: gateway.networking.k8s.io
-      listeners:
-      - name: apiserver-{{ $cluster.metadata.name }}
-        hostname: kube.{{ $cluster.metadata.name }}.bealv.io
-        protocol: HTTPS
-        port: 443
-        tls:
-          mode: Terminate
-          certificateRefs:
-          - kind: Secret
-            group: ""
-            name: {{ $cluster.metadata.name }}-apiserver-tls
-    ---
-    apiVersion: cert-manager.io/v1
-    kind: Certificate
-    metadata:
-      name: {{ $cluster.metadata.name }}-apiserver-tls
-      namespace: kgateway-system
-    spec:
-      dnsNames:
-      - 'kube.{{ $cluster.metadata.name }}.bealv.io'
-      issuerRef:
-        group: cert-manager.io
-        kind: ClusterIssuer
-        name: bealvio
-      secretName: {{ $cluster.metadata.name }}-apiserver-tls
-      usages:
-      - digital signature
-      - key encipherment
-    ---
-    apiVersion: gateway.kgateway.dev/v1alpha1
-    kind: Backend
-    metadata:
-      name: capsule-proxy-{{ $cluster.metadata.name }}
-      namespace: sveltos-{{ $cluster.metadata.name }}
-      labels:
-        generated-by: sveltos
-        cluster: {{ $cluster.metadata.name }}
-    spec:
-      type: Static
-      static:
-        hosts:
-          - host: {{ $loadBalancerIP }}
-            port: 9001
-    ---
     kind: Service
     apiVersion: v1
     metadata:
@@ -164,25 +98,4 @@ data:
       type: ExternalName
       externalName: bealv.io
     ---
-    apiVersion: gateway.networking.k8s.io/v1
-    kind: HTTPRoute
-    metadata:
-      name: capsule-proxy-{{ $cluster.metadata.name }}
-      namespace: sveltos-{{ $cluster.metadata.name }}
-      labels:
-        generated-by: sveltos
-        cluster: {{ $cluster.metadata.name }}
-    spec:
-      parentRefs:
-        - name: {{ $cluster.metadata.name }}-apiserver
-          group: gateway.networking.x-k8s.io
-          kind: XListenerSet
-          namespace: sveltos-{{ $cluster.metadata.name }}
-      hostnames:
-        - "kube.{{ $cluster.metadata.name }}.bealv.io"
-      rules:
-        - backendRefs:
-            - group: gateway.kgateway.dev
-              kind: Backend
-              name: capsule-proxy-{{ $cluster.metadata.name }}
     {{ end }}
