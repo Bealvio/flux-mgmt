@@ -5,9 +5,9 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'apps'
+    - kind: 'Deployment'
       version: 'v1'
-      kind: 'Deployment'
+      group: 'apps'
       name: 'cert-manager'
       namespace: 'cert-manager'
 ---
@@ -39,29 +39,28 @@ metadata:
 data:
   certmanager-roleid: |
     {{- $cluster := .Cluster }}
-    {{- range $resource := .Resources }}
     ---
     apiVersion: approle.vault.upbound.io/v1alpha1
     kind: AuthBackendRole
     metadata:
-      name: cert-manager-{{ $resource.metadata.name }}
+      name: cert-manager-{{ $cluster.metadata.name }}
     spec:
       forProvider:
-        roleName: cert-manager-{{ $resource.metadata.name }}
+        roleName: cert-manager-{{ $cluster.metadata.name }}
         tokenPolicies:
-          - cert-manager-{{ $resource.metadata.name }}
+          - cert-manager-{{ $cluster.metadata.name }}
       providerConfigRef:
         name: default
     ---
     apiVersion: approle.vault.upbound.io/v1alpha1
     kind: AuthBackendRoleSecretID
     metadata:
-      name: cert-manager-{{ $resource.metadata.name }}
+      name: cert-manager-{{ $cluster.metadata.name }}
     spec:
       forProvider:
-        roleName: cert-manager-{{ $resource.metadata.name }}
+        roleName: cert-manager-{{ $cluster.metadata.name }}
       writeConnectionSecretToRef:
-        name: cert-manager-approle-{{ $resource.metadata.name }}
+        name: cert-manager-approle-{{ $cluster.metadata.name }}
         namespace: crossplane-system
       providerConfigRef:
         name: default
@@ -69,15 +68,15 @@ data:
     apiVersion: vault.vault.upbound.io/v1alpha1
     kind: Policy
     metadata:
-      name: cert-manager-{{ $resource.metadata.name }}
+      name: cert-manager-{{ $cluster.metadata.name }}
     spec:
       forProvider:
-        name: cert-manager-{{ $resource.metadata.name }}
+        name: cert-manager-{{ $cluster.metadata.name }}
         policy: |
-          path "pki-int/sign/{{ $resource.metadata.name }}-dot-lan" {
+          path "pki-int/sign/{{ $cluster.metadata.name }}-dot-lan" {
             capabilities = ["create", "update"]
           }
-          path "pki-int/issue/{{ $resource.metadata.name }}-dot-lan" {
+          path "pki-int/issue/{{ $cluster.metadata.name }}-dot-lan" {
             capabilities = ["create", "update"]
           }
       providerConfigRef:
@@ -86,17 +85,17 @@ data:
     apiVersion: pki.vault.upbound.io/v1alpha1
     kind: SecretBackendRole
     metadata:
-      name: {{ $resource.metadata.name }}
+      name: {{ $cluster.metadata.name }}
     spec:
       forProvider:
-        name: {{ $resource.metadata.name }}-dot-lan
+        name: {{ $cluster.metadata.name }}-dot-lan
         backend: pki-int
         ttl: '2592000'
         allowIpSans: true
         keyType: rsa
         keyBits: 2048
         allowedDomains:
-          - '{{ $resource.metadata.name }}.lan'
+          - '{{ $cluster.metadata.name }}.lan'
         allowSubdomains: true
         organization:
           - 'Bealv'
@@ -115,13 +114,14 @@ data:
     apiVersion: config.projectsveltos.io/v1beta1
     kind: ClusterProfile
     metadata:
-      name: cert-manager-configs
+      name: cert-manager-configs-{{ $cluster.metadata.name }}
     spec:
       syncMode: ContinuousWithDriftDetection
       reloader: true
       clusterSelector:
         matchLabels:
           cert-manager: 'true'
+          cluster.x-k8s.io/cluster-name: {{ $cluster.metadata.name }}
       policyRefs:
         - kind: Secret
           name: cacert-clusterprofile
@@ -139,15 +139,14 @@ data:
         - resource:
             apiVersion: approle.vault.upbound.io/v1alpha1
             kind: AuthBackendRole
-            name: cert-manager-{{ $resource.metadata.name }}
+            name: cert-manager-{{ $cluster.metadata.name }}
           identifier: AuthBackendRoleCert
         - resource:
             apiVersion: v1
             kind: Secret
-            name: cert-manager-approle-{{ $resource.metadata.name }}
+            name: cert-manager-approle-{{ $cluster.metadata.name }}
             namespace: crossplane-system
           identifier: certManagerApproleSecretId
-    {{ end }}
 ---
 apiVersion: v1
 kind: ConfigMap
