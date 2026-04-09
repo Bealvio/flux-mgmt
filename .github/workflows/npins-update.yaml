@@ -112,6 +112,8 @@ jobs:
           VERSION="${VERSION#v}"
           yq e -i '.spec.version = "'"$VERSION"'"' \
             gitops/apps/monitoring/grafana-patch.yaml
+      - name: Format generated files
+        run: devenv shell treefmt
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v6
