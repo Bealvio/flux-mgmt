@@ -107,10 +107,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v5.20.0",
-      "revision": "3e68ec4c3c706d5d3ca45c7f2d141a5336f243e4",
-      "url": "https://api.github.com/repos/grafana-operator/grafana-operator/tarball/v5.20.0",
-      "hash": "sha256-CZ6lqwji8CPlTWMxEYjf1MaQWTe22RPTo5gNjeDnOh8="
+      "version": "v5.22.2",
+      "revision": "084476ecc85b5227330a22b2b971ef0d6c8582ca",
+      "url": "https://api.github.com/repos/grafana-operator/grafana-operator/tarball/refs/tags/v5.22.2",
+      "hash": "sha256-F6tYidgpBy301t4ds6VyBizdKRc9TbixuMD8kz4IsgU="
     },
     "kamaji": {
       "type": "GitRelease",
