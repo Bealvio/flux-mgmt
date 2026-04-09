@@ -157,8 +157,8 @@
     "nixpkgs": {
       "type": "Channel",
       "name": "nixos-24.11",
-      "url": "https://releases.nixos.org/nixos/24.11/nixos-24.11.716389.c570c1f53044/nixexprs.tar.xz",
-      "hash": "sha256-p/6XUl6vRrwzEPSkcpWbrWO+sSKP48KR7PSqoVeuFpQ="
+      "url": "https://releases.nixos.org/nixos/24.11/nixos-24.11.719113.50ab793786d9/nixexprs.tar.xz",
+      "hash": "sha256-EjLqzTANsT+CbWv85OOvz6B6C/B/Oj2tS3WBQNHmNKE="
     }
   },
   "version": 7
