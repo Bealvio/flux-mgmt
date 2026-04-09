@@ -18,4 +18,3 @@
     ports:
       - protocol: TCP
         port: 9090
-
