@@ -6,19 +6,19 @@ spec:
   template:
     spec:
       containers:
-      - name: manager
-        imagePullPolicy: IfNotPresent
-        args:
-          - -listen=:8081
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8081
-          initialDelaySeconds: 5
-          periodSeconds: 60
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8081
-          initialDelaySeconds: 5
-          periodSeconds: 60
+        - name: manager
+          imagePullPolicy: IfNotPresent
+          args:
+            - -listen=:8081
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 60
