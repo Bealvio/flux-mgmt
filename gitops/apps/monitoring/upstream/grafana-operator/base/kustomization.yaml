@@ -6,6 +6,8 @@ resources:
   - deployment.yaml
   - rolebinding.yaml
   - role.yaml
+  - leader_election_role.yaml
+  - leader_election_role_binding.yaml
 patches:
   - target:
       kind: ClusterRole
@@ -15,4 +17,4 @@ patches:
         value: grafana-operator-permissions
 images:
   - name: ghcr.io/grafana/grafana-operator
-    newTag: v5.20.0
+    newTag: v5.22.2
