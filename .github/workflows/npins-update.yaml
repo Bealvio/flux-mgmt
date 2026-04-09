@@ -1,0 +1,131 @@
+name: npins update
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
+permissions:
+  contents: "write"
+  pull-requests: "write"
+jobs:
+  get-pins:
+    runs-on: ubuntu-latest
+    outputs:
+      pins: ${{ steps.set-pins.outputs.pins }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - id: set-pins
+        run: |
+          PINS=$(jq -c '[.pins | to_entries[] | select(.value.frozen != true) | .key]' npins/sources.json)
+          echo "pins=$PINS" >> "$GITHUB_OUTPUT"
+  npins-update:
+    needs: get-pins
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pin: ${{ fromJson(needs.get-pins.outputs.pins) }}
+      fail-fast: false
+      max-parallel: 10
+    steps:
+      - name: Free Disk Space
+        uses: endersonmenezes/free-disk-space@v2
+        with:
+          remove_android: true
+          remove_dotnet: true
+          remove_haskell: true
+          remove_tool_cache: true
+          remove_swap: true
+          remove_packages: "azure-cli google-cloud-cli microsoft-edge-stable google-chrome-stable firefox postgresql* temurin-* *llvm* mysql* dotnet-sdk-*"
+          remove_packages_one_command: true
+          remove_folders: "/usr/share/swift /usr/share/miniconda /usr/share/az* /usr/local/lib/node_modules /usr/local/share/chromium /usr/local/share/powershell /usr/local/julia /usr/local/aws-cli /usr/local/aws-sam-cli /usr/share/gradle"
+          testing: false
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+      - name: Get Nixpkgs revision
+        run: |
+          url=$(jq -r .pins.nixpkgs.url npins/sources.json)
+          echo "url=$url" >> "$GITHUB_ENV"
+      - uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=${{ env.url }}
+          extra_nix_config: |
+            fallback = true
+            trusted-public-keys = didactiklabs-nixcache:PxLKN0+ZkP07M8g8/B6xbP6A4MYpqQg6LH7V3muiy/0= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+            substituters = https://s3.didactiklabs.io/nix-cache https://cache.nixos.org/
+      - name: Update npins
+        run: nix run nixpkgs#npins -- update ${{ matrix.pin }}
+      - name: Get updated version
+        id: version
+        run: |
+          VERSION=$(jq -r '.pins["${{ matrix.pin }}"].version // empty' npins/sources.json)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Run post-update build for cert-manager
+        if: matrix.pin == 'cert-manager'
+        run: nix-shell shell.nix --run "buildCertManager '${{ steps.version.outputs.version }}'"
+      - name: Run post-update build for cluster-api-operator
+        if: matrix.pin == 'cluster-api-operator'
+        run: nix-shell shell.nix --run "buildCapi '${{ steps.version.outputs.version }}'"
+      - name: Run post-update build for contour
+        if: matrix.pin == 'contour'
+        run: nix-shell shell.nix --run "buildIngressContour"
+      - name: Run post-update build for external-snapshotter
+        if: matrix.pin == 'external-snapshotter'
+        run: nix-shell shell.nix --run "buildSnapshotter"
+      - name: Run post-update build for flux-operator
+        if: matrix.pin == 'flux-operator'
+        run: nix-shell shell.nix --run "buildFlux '${{ steps.version.outputs.version }}'"
+      - name: Run post-update build for grafana-operator
+        if: matrix.pin == 'grafana-operator'
+        run: |
+          nix-shell shell.nix --run "buildKubeProm"
+          VERSION="${{ steps.version.outputs.version }}"
+          yq e -i '.images[] |= select(.name == "ghcr.io/grafana/grafana-operator").newTag = "'"$VERSION"'"' \
+            gitops/apps/monitoring/kustomization.yaml
+      - name: Run post-update build for kamaji
+        if: matrix.pin == 'kamaji'
+        run: |
+          nix-shell shell.nix --run "buildKamaji"
+          VERSION="${{ steps.version.outputs.version }}"
+          yq e -i '.spec.ref.tag = "'"$VERSION"'"' \
+            gitops/apps/kamaji/setup/gitrepo.yaml
+          yq e -i '.spec.values.image.tag = "'"$VERSION"'"' \
+            gitops/apps/kamaji/setup/helmrelease.yaml
+      - name: Run post-update build for kube-prometheus
+        if: matrix.pin == 'kube-prometheus'
+        run: nix-shell shell.nix --run "buildKubeProm"
+      - name: Update grafana version
+        if: matrix.pin == 'grafana'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${VERSION#v}"
+          yq e -i '.spec.version = "'"$VERSION"'"' \
+            gitops/apps/monitoring/grafana-patch.yaml
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: "chore(deps): update ${{ matrix.pin }}"
+          title: "chore(deps): update ${{ matrix.pin }}"
+          body: "This PR updates the pinned source `${{ matrix.pin }}` using `npins update ${{ matrix.pin }}`."
+          branch: "npins-update-${{ matrix.pin }}"
+          delete-branch: true
+      - name: Assign all org members as reviewers
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        run: |
+          MEMBERS=$(gh api orgs/Bealvio/members --jq '[.[].login]' --paginate)
+          if [ "$MEMBERS" = "[]" ] || [ -z "$MEMBERS" ]; then
+            echo "No org members found, skipping reviewer assignment"
+            exit 0
+          fi
+          jq -n --argjson members "$MEMBERS" '{"reviewers": $members}' | \
+            gh api "repos/${{ github.repository }}/pulls/${{ steps.cpr.outputs.pull-request-number }}/requested_reviewers" \
+              --method POST \
+              --input -
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}

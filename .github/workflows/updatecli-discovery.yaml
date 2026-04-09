@@ -1,0 +1,26 @@
+name: Updatecli Discovery
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
+permissions:
+  contents: "write"
+  pull-requests: "write"
+jobs:
+  updatecli:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Updatecli in the runner
+        uses: updatecli/updatecli-action@v2
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+      - name: Run Updatecli in apply mode
+        run: "updatecli apply --config ./updatecli/updatecli.d --values updatecli/values.yaml"
+        env:
+          UPDATECLI_GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
+          UPDATECLI_GITHUB_TOKEN_USER: "${{ steps.app-token.outputs.app-slug }}"

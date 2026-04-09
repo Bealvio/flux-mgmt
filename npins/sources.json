@@ -14,7 +14,7 @@
       "version": "v1.19.1",
       "revision": "3b43a94ce6db81711ccff6a9789dd312b2e9502e",
       "url": "https://api.github.com/repos/cert-manager/cert-manager/tarball/v1.19.1",
-      "hash": "011hfihw7pj1d4y3c9v825y6m5lrqlf0c39p0r5qjqhi0bsr9biq"
+      "hash": "sha256-OK6U9QIRYolLBjcNBhzFmZZqfBFoJzY8aUHew2F0MAQ="
     },
     "cluster-api-operator": {
       "type": "GitRelease",
@@ -30,7 +30,7 @@
       "version": "v0.24.0",
       "revision": "c0299e9e10f95b9dea4d8bd37e15ed3e4bdc94b9",
       "url": "https://api.github.com/repos/kubernetes-sigs/cluster-api-operator/tarball/v0.24.0",
-      "hash": "13ph726asimkiy5g1szbk3yrwxk4xm4xidrjxsvy35abj0ad5hr6"
+      "hash": "sha256-JsPSFJBLleG37jK32EntZHae/Zjr6/CKj7NGrYw48I4="
     },
     "contour": {
       "type": "GitRelease",
@@ -46,7 +46,7 @@
       "version": "v1.33.0",
       "revision": "408056e8b27795d5d2d3fdeabf4edf635673368e",
       "url": "https://api.github.com/repos/projectcontour/contour/tarball/v1.33.0",
-      "hash": "0bzyjip64silhigq69b40iplsqhmnn81ghhilzq255xh5kpxlvj8"
+      "hash": "sha256-SG7a7yywlyLwpxHCF5C1FWJNbwRkJYNfhDRqYm6U/i8="
     },
     "external-snapshotter": {
       "type": "GitRelease",
@@ -62,7 +62,7 @@
       "version": "v8.4.0",
       "revision": "f21cb02763e7cd6a7fc84846f106b83119b5371d",
       "url": "https://api.github.com/repos/kubernetes-csi/external-snapshotter/tarball/v8.4.0",
-      "hash": "1hil72parh14j5sx2kgl4j87xfnjl8p2jj54v39bi35b9rvik83d"
+      "hash": "sha256-baAZd06rjLjS2KRIKS6i0rp+kCT0TdF1kSTArK44NMI="
     },
     "flux-operator": {
       "type": "GitRelease",
@@ -78,7 +78,23 @@
       "version": "v0.33.0",
       "revision": "a04d0dd61781eb3f1e2ccaa1c2b637d2ed4cea07",
       "url": "https://api.github.com/repos/controlplaneio-fluxcd/flux-operator/tarball/v0.33.0",
-      "hash": "0q9kvzyvgh70mgrbw5cm3gdjsr127w94prywkc03x80sp4hd56yq"
+      "hash": "sha256-2JvSILkaoD4Am9znSxI/ImQt2xuVFb7yq+DAt/3fM2E="
+    },
+    "grafana": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "grafana",
+        "repo": "grafana"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "release_prefix": null,
+      "submodules": false,
+      "version": "v12.4.2",
+      "revision": "e1a388acfcca72251174028e8b89efa0c149fea8",
+      "url": "https://api.github.com/repos/grafana/grafana/tarball/refs/tags/v12.4.2",
+      "hash": "sha256-cA+SLXry+aomj3O7ShiVOCkZVMk0XLq6EmYuOfi+hyk="
     },
     "grafana-operator": {
       "type": "GitRelease",
@@ -94,7 +110,7 @@
       "version": "v5.20.0",
       "revision": "3e68ec4c3c706d5d3ca45c7f2d141a5336f243e4",
       "url": "https://api.github.com/repos/grafana-operator/grafana-operator/tarball/v5.20.0",
-      "hash": "07rswzh8s3cqlg9i7ndn6xcr1inlvy412cb39pjj7w7212msb7h9"
+      "hash": "sha256-CZ6lqwji8CPlTWMxEYjf1MaQWTe22RPTo5gNjeDnOh8="
     },
     "kamaji": {
       "type": "GitRelease",
@@ -110,7 +126,7 @@
       "version": "edge-25.11.2",
       "revision": "081b4c72b307129a0f4483a883df6a625405b9c2",
       "url": "https://api.github.com/repos/clastix/kamaji/tarball/edge-25.11.2",
-      "hash": "08k10ghq1z8s6w750azhrypav84vdv3j2ay964lhx0r668mxri1c"
+      "hash": "sha256-LMTcKzImgw4pMckrIcdum6Ctrs/wK1AONxr9gOEDYSI="
     },
     "kube-prometheus": {
       "type": "Git",
@@ -123,7 +139,7 @@
       "submodules": false,
       "revision": "e5eec3068651b6b5b3a05821b7aa03a0811ef31f",
       "url": "https://github.com/prometheus-operator/kube-prometheus/archive/e5eec3068651b6b5b3a05821b7aa03a0811ef31f.tar.gz",
-      "hash": "1sk82g3x2bjbqbjc3qsfp5id72frnyd44c5rvzddqjc1dppapjhw"
+      "hash": "sha256-HMqr7m2BSdza37kwQpq32YnTYrlO48Hkwksu0ccTaOo="
     },
     "kubevirt-monitoring": {
       "type": "Git",
@@ -136,14 +152,14 @@
       "submodules": false,
       "revision": "91178e6e5d6e0d4eb191a442a8006d2fd803a985",
       "url": "https://github.com/kubevirt/monitoring/archive/91178e6e5d6e0d4eb191a442a8006d2fd803a985.tar.gz",
-      "hash": "0vx6h7ii17hlmhfvd703vic0r9qxbzqvg7rhmvyk45drkx409adj"
+      "hash": "sha256-sqkESJ+5FTL9rjCft/FfHacMWNwDnLYdrBSeEOOBpm8="
     },
     "nixpkgs": {
       "type": "Channel",
       "name": "nixos-24.11",
       "url": "https://releases.nixos.org/nixos/24.11/nixos-24.11.716389.c570c1f53044/nixexprs.tar.xz",
-      "hash": "150nmrbs3aplxj8w5qwg4aqvwqxdkfap597l20rvqimgbr99gzm7"
+      "hash": "sha256-p/6XUl6vRrwzEPSkcpWbrWO+sSKP48KR7PSqoVeuFpQ="
     }
   },
-  "version": 5
+  "version": 7
 }
