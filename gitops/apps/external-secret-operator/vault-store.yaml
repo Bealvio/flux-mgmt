@@ -5,13 +5,13 @@ metadata:
 spec:
   provider:
     vault:
-      server: 'http://vault.vault.svc:8200'
-      path: 'secrets'
-      version: 'v2'
+      server: "http://vault.vault.svc:8200"
+      path: "secrets"
+      version: "v2"
       auth:
         kubernetes:
-          mountPath: 'kubernetes'
-          role: 'external-secrets'
+          mountPath: "kubernetes"
+          role: "external-secrets"
           serviceAccountRef:
-            name: 'vault-auth'
-            namespace: 'external-secrets'
+            name: "vault-auth"
+            namespace: "external-secrets"

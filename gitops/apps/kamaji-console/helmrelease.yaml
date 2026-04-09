@@ -17,17 +17,17 @@ spec:
     image:
       repository: ghcr.io/clastix/kamaji-console
       pullPolicy: IfNotPresent
-      tag: ''
+      tag: ""
     sveltos:
-      url: ''
+      url: ""
       namespace: null # -- Secret containing the access token, required for the Application Delivery
       secretName: null
     credentialsSecret:
       generate: false
-      name: 'kamaji-console-secrets'
+      name: "kamaji-console-secrets"
     ingress:
       enabled: true
-      className: ''
+      className: ""
       annotations:
         cert-manager.io/cluster-issuer: bealv-mgmt
       hosts:

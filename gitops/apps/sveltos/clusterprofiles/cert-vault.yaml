@@ -5,11 +5,11 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - kind: 'Deployment'
-      version: 'v1'
-      group: 'apps'
-      name: 'cert-manager'
-      namespace: 'cert-manager'
+    - kind: "Deployment"
+      version: "v1"
+      group: "apps"
+      name: "cert-manager"
+      namespace: "cert-manager"
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventTrigger
@@ -18,7 +18,7 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      cert-manager: 'true'
+      cert-manager: "true"
   destinationClusterSelector:
     matchLabels:
       type: mgmt
@@ -35,7 +35,7 @@ kind: ConfigMap
 metadata:
   name: certvault-vault
   annotations:
-    projectsveltos.io/instantiate: 'true'
+    projectsveltos.io/instantiate: "true"
 data:
   certmanager-roleid: |
     {{- $cluster := .Cluster }}
@@ -153,7 +153,7 @@ kind: ConfigMap
 metadata:
   name: clusterissuer-clusterprofile
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 data:
   clusterissuer.yaml: |
     apiVersion: cert-manager.io/v1
@@ -180,7 +180,7 @@ kind: Secret
 metadata:
   name: cacert-clusterprofile
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 type: addons.projectsveltos.io/cluster-profile
 stringData:
   secret.yaml: |

@@ -16,8 +16,8 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: 'Contour ingress is unavailable ({{ $labels.envoy_cluster_name }})'
-            description: 'Contour ingress ({{ $labels.envoy_cluster_name }}) is experiencing 503 errors for the last 5 minutes.'
+            summary: "Contour ingress is unavailable ({{ $labels.envoy_cluster_name }})"
+            description: "Contour ingress ({{ $labels.envoy_cluster_name }}) is experiencing 503 errors for the last 5 minutes."
         - alert: ContourIngressErrorRateHigh
           expr: |
             sum by (envoy_cluster_name) (
@@ -31,7 +31,7 @@ spec:
           labels:
             severity: critical
           annotations:
-            summary: 'High error rate for Contour ingress ({{ $labels.envoy_cluster_name }})'
+            summary: "High error rate for Contour ingress ({{ $labels.envoy_cluster_name }})"
             description: |
               Contour ingress ({{ $labels.envoy_cluster_name }}) has a high error rate (5xx responses) for the last 10 minutes.
               Current error rate: {{ $value | printf "%.2f" }}.
@@ -44,7 +44,7 @@ spec:
           labels:
             severity: info
           annotations:
-            summary: 'High latency detected for Contour ingress ({{ $labels.envoy_cluster_name }})'
+            summary: "High latency detected for Contour ingress ({{ $labels.envoy_cluster_name }})"
             description: |
               Contour ingress ({{ $labels.envoy_cluster_name }}) is experiencing high latency (90th percentile > 1000ms) over the last 5 minutes.
         - alert: ContourIngressLatencyVeryHigh
@@ -56,6 +56,6 @@ spec:
           labels:
             severity: critical
           annotations:
-            summary: 'High latency detected for Contour ingress ({{ $labels.envoy_cluster_name }})'
+            summary: "High latency detected for Contour ingress ({{ $labels.envoy_cluster_name }})"
             description: |
               Contour ingress ({{ $labels.envoy_cluster_name }}) is experiencing high latency (50th percentile > 1000ms) over the last 5 minutes.

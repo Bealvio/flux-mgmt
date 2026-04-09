@@ -5,11 +5,11 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'apps'
-      version: 'v1'
-      kind: 'Deployment'
-      name: 'external-dns-internal'
-      namespace: 'external-dns'
+    - group: "apps"
+      version: "v1"
+      kind: "Deployment"
+      name: "external-dns-internal"
+      namespace: "external-dns"
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventTrigger
@@ -18,10 +18,10 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      external-dns: 'true'
+      external-dns: "true"
   destinationClusterSelector:
     matchLabels:
-      type: 'mgmt'
+      type: "mgmt"
   eventSourceName: pdns-cluster-eventsource
   syncMode: ContinuousWithDriftDetection
   reloader: true
@@ -36,7 +36,7 @@ kind: ConfigMap
 metadata:
   name: pdns-zone
   annotations:
-    projectsveltos.io/instantiate: 'true'
+    projectsveltos.io/instantiate: "true"
 data:
   zone.yaml: |
     apiVersion: dns.cav.enablers.ob/v1alpha1
@@ -48,3 +48,4 @@ data:
         - dummy.{{ .Cluster.metadata.name }}.lan
       kind: Native
 ---
+

@@ -6,15 +6,15 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      external-dns: 'true'
-      cert-manager: 'true'
+      external-dns: "true"
+      cert-manager: "true"
   kustomizationRefs:
     - kind: GitRepository
       name: infra
       namespace: flux-system
       path: ./gitops/apps/sveltos/clusterprofiles/templates/external-dns
       values:
-        ClusterName: '{{ .Cluster.metadata.name }}'
+        ClusterName: "{{ .Cluster.metadata.name }}"
   policyRefs:
     - kind: Secret
       name: dnsapi-clusterprofile
@@ -32,7 +32,7 @@ kind: Secret
 metadata:
   name: dnsapi-clusterprofile
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 type: addons.projectsveltos.io/cluster-profile
 stringData:
   secret.yaml: |

@@ -18,7 +18,7 @@ spec:
             - server
             - /storage
             - --console-address
-            - ':9001'
+            - ":9001"
           env:
             - name: MINIO_ROOT_USER
               valueFrom:
@@ -37,7 +37,7 @@ spec:
               containerPort: 9001
           volumeMounts:
             - name: storage
-              mountPath: '/storage'
+              mountPath: "/storage"
       volumes:
         - name: storage
           persistentVolumeClaim:

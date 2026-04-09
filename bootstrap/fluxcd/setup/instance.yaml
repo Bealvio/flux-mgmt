@@ -4,13 +4,13 @@ metadata:
   name: flux
   namespace: flux-system
   annotations:
-    fluxcd.controlplane.io/reconcileEvery: '1h'
-    fluxcd.controlplane.io/reconcileTimeout: '5m'
+    fluxcd.controlplane.io/reconcileEvery: "1h"
+    fluxcd.controlplane.io/reconcileTimeout: "5m"
 spec:
   distribution:
-    version: '2.x'
-    registry: 'ghcr.io/fluxcd'
-    artifact: 'oci://ghcr.io/controlplaneio-fluxcd/flux-operator-manifests'
+    version: "2.x"
+    registry: "ghcr.io/fluxcd"
+    artifact: "oci://ghcr.io/controlplaneio-fluxcd/flux-operator-manifests"
   cluster:
     type: kubernetes
     domain: bealv-mgmt.local
@@ -24,7 +24,7 @@ spec:
     patches:
       - target:
           kind: Deployment
-          name: '(kustomize-controller|helm-controller)'
+          name: "(kustomize-controller|helm-controller)"
         patch: |
           - op: add
             path: /spec/template/spec/containers/0/args/-

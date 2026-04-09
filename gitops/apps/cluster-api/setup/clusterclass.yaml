@@ -81,7 +81,7 @@ spec:
         template:
           metadata:
             labels:
-              node-role.kubernetes.io/slave: ''
+              node-role.kubernetes.io/slave: ""
           bootstrap:
             ref:
               apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
@@ -98,7 +98,7 @@ spec:
         template:
           metadata:
             labels:
-              node-role.kubernetes.io/slave-hddb: ''
+              node-role.kubernetes.io/slave-hddb: ""
           bootstrap:
             ref:
               apiVersion: bootstrap.cluster.x-k8s.io/v1beta1

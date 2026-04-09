@@ -28,7 +28,7 @@ spec:
             - --txt-owner-id=bealv-mgmt
           env:
             - name: EXTERNAL_DNS_PDNS_SERVER
-              value: 'http://powerdns-api.powerdns.svc'
+              value: "http://powerdns-api.powerdns.svc"
             - name: EXTERNAL_DNS_PDNS_API_KEY
               valueFrom:
                 secretKeyRef:

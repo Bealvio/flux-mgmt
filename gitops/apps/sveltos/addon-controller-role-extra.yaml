@@ -4,12 +4,12 @@ metadata:
   name: addon-controller-role-extra
 rules:
   - apiGroups:
-      - ''
+      - ""
     resources:
       - configmaps
       - secrets
     verbs:
-      - '*'
+      - "*"
   - apiGroups:
       - config.projectsveltos.io
     resources:
@@ -22,11 +22,11 @@ rules:
     resources:
       - ipclaims
     verbs:
-      - '*'
+      - "*"
   - apiGroups:
       - kubernetes.vault.upbound.io
     resources:
       - authbackendconfigs
       - authbackendroles
     verbs:
-      - '*'
+      - "*"

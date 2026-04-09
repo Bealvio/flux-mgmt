@@ -1,6 +1,6 @@
 - op: add
   path: /spec/template/spec/containers/0/args/-
-  value: '--custom-resource-state-config-file=/etc/custom-metrics/custom-metrics.yaml'
+  value: "--custom-resource-state-config-file=/etc/custom-metrics/custom-metrics.yaml"
 - op: add
   path: /spec/template/spec/containers/0/volumeMounts
   value:

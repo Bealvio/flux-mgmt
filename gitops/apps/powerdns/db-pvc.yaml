@@ -4,7 +4,7 @@ metadata:
   name: powerdns-db
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 6Gi

@@ -21,7 +21,7 @@ spec:
               containerPort: 3306
           env:
             - name: MYSQL_RANDOM_ROOT_PASSWORD
-              value: '1'
+              value: "1"
             - name: MYSQL_DATABASE
               valueFrom:
                 secretKeyRef:
@@ -38,10 +38,11 @@ spec:
                   name: pdns-mariadb
                   key: password
           volumeMounts:
-            - mountPath: '/var/lib/mysql'
+            - mountPath: "/var/lib/mysql"
               name: data
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: powerdns-db
 ---
+

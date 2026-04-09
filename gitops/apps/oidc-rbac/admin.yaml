@@ -3,8 +3,8 @@ kind: ClusterRoleBinding
 metadata:
   name: oidc-cluster-admin
 subjects:
-- kind: Group
-  name: oidc-k8s-admin
+  - kind: Group
+    name: oidc-k8s-admin
 roleRef:
   kind: ClusterRole
   name: cluster-admin

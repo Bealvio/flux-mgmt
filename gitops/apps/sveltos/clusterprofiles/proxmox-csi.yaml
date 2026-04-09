@@ -7,7 +7,7 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      proxmox-csi: 'true'
+      proxmox-csi: "true"
   kustomizationRefs:
     - kind: GitRepository
       name: infra
@@ -30,7 +30,7 @@ kind: Secret
 metadata:
   name: proxmox-csi-secrets-clusterprofile
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 type: addons.projectsveltos.io/cluster-profile
 stringData:
   secret.yaml: |

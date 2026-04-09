@@ -14,8 +14,8 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: 'The certificate for the Kube API server is about to expire in less than 30 days.'
-            description: 'The certificate for the Kubernetes API server (https://kubernetes.default.svc/readyz) is expiring within the next 30 days.'
+            summary: "The certificate for the Kube API server is about to expire in less than 30 days."
+            description: "The certificate for the Kubernetes API server (https://kubernetes.default.svc/readyz) is expiring within the next 30 days."
     - name: apiserver-week-certificate-expiry
       rules:
         - alert: KubeAPIServerWeekCertExpiry
@@ -25,5 +25,5 @@ spec:
           labels:
             severity: critical
           annotations:
-            summary: 'The certificate for the Kube API server is about to expire in less than 7 days.'
-            description: 'The certificate for the Kubernetes API server (https://kubernetes.default.svc/readyz) is expiring within the next 7 days.'
+            summary: "The certificate for the Kube API server is about to expire in less than 7 days."
+            description: "The certificate for the Kubernetes API server (https://kubernetes.default.svc/readyz) is expiring within the next 7 days."

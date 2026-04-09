@@ -3,15 +3,15 @@ kind: Grafana
 metadata:
   name: grafana
   labels:
-    dashboards: 'grafana'
-    alertmanager-default: 'true'
+    dashboards: "grafana"
+    alertmanager-default: "true"
 spec:
   version: 12.4.2
   config:
     log:
-      mode: 'console'
+      mode: "console"
     auth:
-      disable_login_form: 'false'
+      disable_login_form: "false"
     security:
       admin_user: admin
       admin_password: admin

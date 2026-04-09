@@ -6,9 +6,9 @@ spec:
   sources:
     - secret:
         name: root-ca
-        key: 'ca.crt'
+        key: "ca.crt"
   target:
     secret:
-      key: 'ca.crt'
+      key: "ca.crt"
     configMap:
-      key: 'ca.crt'
+      key: "ca.crt"

@@ -7,7 +7,7 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      ingress-controller: 'true'
+      ingress-controller: "true"
   kustomizationRefs:
     - kind: GitRepository
       name: infra

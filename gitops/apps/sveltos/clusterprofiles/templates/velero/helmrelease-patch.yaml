@@ -7,12 +7,12 @@ spec:
   values:
     configuration:
       backupStorageLocation:
-        - bucket: 'velero-{{ .ClusterName }}'
+        - bucket: "velero-{{ .ClusterName }}"
           name: default
           provider: aws
           prefix: fsb
           default: true
-          caCert: '{{ .CaCert }}'
+          caCert: "{{ .CaCert }}"
           config:
             region: minio
             s3ForcePathStyle: true

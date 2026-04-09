@@ -7,7 +7,7 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      cert-manager: 'true'
+      cert-manager: "true"
   kustomizationRefs:
     - kind: GitRepository
       name: infra

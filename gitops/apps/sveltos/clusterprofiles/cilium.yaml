@@ -48,7 +48,7 @@ kind: ConfigMap
 metadata:
   name: cilium-conf-clusterprofile
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 data:
   cilium-conf.yaml: |
     apiVersion: 'cilium.io/v2alpha1'

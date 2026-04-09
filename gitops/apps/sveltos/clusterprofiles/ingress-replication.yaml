@@ -5,9 +5,9 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'networking.k8s.io'
-      version: 'v1'
-      kind: 'Ingress'
+    - group: "networking.k8s.io"
+      version: "v1"
+      kind: "Ingress"
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventTrigger
@@ -16,7 +16,7 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      ingress-replication: 'true'
+      ingress-replication: "true"
   destinationClusterSelector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: bealv
@@ -33,7 +33,7 @@ metadata:
   name: httproute-template
   namespace: projectsveltos
   annotations:
-    projectsveltos.io/instantiate: 'true'
+    projectsveltos.io/instantiate: "true"
 data:
   httproute.yaml: |
     {{ $cluster := .Cluster }}

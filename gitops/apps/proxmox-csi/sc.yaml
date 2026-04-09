@@ -8,7 +8,7 @@ parameters:
   csi.storage.k8s.io/fstype: ext4
   ## Proxmox storage ID
   storage: disk
-  ssd: 'true'
+  ssd: "true"
 mountOptions:
   # Common for ssd
   - noatime
@@ -33,7 +33,7 @@ parameters:
   csi.storage.k8s.io/fstype: ext4
   ## Proxmox storage ID
   storage: disk_hdd
-  ssd: 'false'
+  ssd: "false"
 allowedTopologies:
   - matchLabelExpressions:
       - key: topology.kubernetes.io/region
@@ -55,7 +55,7 @@ parameters:
   csi.storage.k8s.io/fstype: ext4
   ## Proxmox storage ID
   storage: disk_hddb
-  ssd: 'false'
+  ssd: "false"
 allowedTopologies:
   - matchLabelExpressions:
       - key: topology.kubernetes.io/region

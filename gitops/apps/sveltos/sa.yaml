@@ -21,5 +21,5 @@ kind: Secret
 metadata:
   name: dashboard-sa-token
   annotations:
-    kubernetes.io/service-account.name: 'dashboard-sa'
+    kubernetes.io/service-account.name: "dashboard-sa"
 type: kubernetes.io/service-account-token

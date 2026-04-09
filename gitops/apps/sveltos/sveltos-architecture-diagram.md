@@ -1,6 +1,7 @@
 # Sveltos Multi-Cluster Architecture
 
 ## Overview
+
 This diagram represents the Sveltos-managed multi-cluster architecture with a main management cluster and multiple child clusters.
 
 ```mermaid
@@ -107,37 +108,42 @@ graph TB
 
 ### Child Clusters are categorized by labels:
 
-| Component | Label Selector | Deployed To |
-|-----------|---------------|-------------|
-| **Cilium CNI** | `cni: cilium` | All clusters with Cilium |
-| **FluxCD** | `fluxcd: 'true'` | All GitOps-enabled clusters |
-| **Cert-Manager** | `cert-manager: 'true'` | Clusters needing TLS certificates |
-| **Capsule** | `capsule: 'true'` | Multi-tenant clusters |
-| **Monitoring** | `monitoring: 'true' AND fluxcd: 'true'` | Monitored clusters |
-| **Ingress Controller** | `ingress-controller: 'true'` | Clusters with ingress |
+| Component              | Label Selector                          | Deployed To                       |
+| ---------------------- | --------------------------------------- | --------------------------------- |
+| **Cilium CNI**         | `cni: cilium`                           | All clusters with Cilium          |
+| **FluxCD**             | `fluxcd: 'true'`                        | All GitOps-enabled clusters       |
+| **Cert-Manager**       | `cert-manager: 'true'`                  | Clusters needing TLS certificates |
+| **Capsule**            | `capsule: 'true'`                       | Multi-tenant clusters             |
+| **Monitoring**         | `monitoring: 'true' AND fluxcd: 'true'` | Monitored clusters                |
+| **Ingress Controller** | `ingress-controller: 'true'`            | Clusters with ingress             |
 
 ## Component Deployment Flow
 
 ### 1. **Base Infrastructure** (Applied to all clusters)
+
 - **Cilium**: CNI with L2 announcements for LoadBalancer IPs
 - **FluxCD**: GitOps engine with cluster-specific configurations
 - **Proxmox CSI**: Storage for Proxmox-based clusters
 
 ### 2. **Security & Certificates**
+
 - **cert-manager**: Integrates with HashiCorp Vault using AppRole authentication
 - **trust-manager**: Certificate distribution
 - **External Secrets**: Secret management from external sources
 
 ### 3. **Networking & Ingress**
+
 - **Ingress Controller**: NGINX-based ingress with external load balancer
 - **External DNS**: Automatic DNS record creation in PowerDNS
 - **Cilium Load Balancing**: L2 announcements for service exposure
 
 ### 4. **Multi-tenancy & Monitoring**
+
 - **Capsule**: Namespace-as-a-Service multi-tenancy
 - **Monitoring Stack**: Prometheus, Grafana, Alertmanager with cluster-specific labels
 
 ### 5. **Event-Driven Services** (Capsule Integration)
+
 - **EventSource**: Monitors `capsule-proxy-lb` service for LoadBalancer IP assignment
 - **EventTrigger**: Automatically creates services, endpoints, and ingress in management cluster
 - **Dynamic Ingress**: Creates `kube.{cluster}.bealv.io` endpoints for Capsule proxy access

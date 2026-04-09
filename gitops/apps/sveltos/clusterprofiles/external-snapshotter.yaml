@@ -7,7 +7,7 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      external-snapshotter: 'true'
+      external-snapshotter: "true"
   kustomizationRefs:
     - kind: GitRepository
       name: infra

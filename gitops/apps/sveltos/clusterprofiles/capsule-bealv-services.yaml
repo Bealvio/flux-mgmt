@@ -5,9 +5,9 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'networking.k8s.io'
-      version: 'v1'
-      kind: 'Ingress'
+    - group: "networking.k8s.io"
+      version: "v1"
+      kind: "Ingress"
       name: capsule-proxy
       namespace: capsule-system
 ---
@@ -18,7 +18,7 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      capsule: 'true'
+      capsule: "true"
   destinationClusterSelector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: bealv
@@ -36,7 +36,7 @@ metadata:
   name: capsule-bealv-services
   namespace: projectsveltos
   annotations:
-    projectsveltos.io/instantiate: 'true'
+    projectsveltos.io/instantiate: "true"
 data:
   httproute.yaml: |
     {{ $cluster := .Cluster }}

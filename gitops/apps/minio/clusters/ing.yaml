@@ -9,7 +9,7 @@ metadata:
     probe: enabled
 spec:
   rules:
-    - host: 'minio-clusters.bealv-mgmt.lan'
+    - host: "minio-clusters.bealv-mgmt.lan"
       http:
         paths:
           - path: /
@@ -28,7 +28,7 @@ spec:
                   number: 9001
   tls:
     - hosts:
-        - 'minio-clusters.bealv-mgmt.lan'
+        - "minio-clusters.bealv-mgmt.lan"
       secretName: minio-clusters-tls
 ---
 apiVersion: networking.k8s.io/v1
@@ -41,7 +41,7 @@ metadata:
     probe: enabled
 spec:
   rules:
-    - host: 's3-clusters.bealv-mgmt.lan'
+    - host: "s3-clusters.bealv-mgmt.lan"
       http:
         paths:
           - path: /
@@ -53,5 +53,5 @@ spec:
                   number: 9000
   tls:
     - hosts:
-        - 's3-clusters.bealv-mgmt.lan'
+        - "s3-clusters.bealv-mgmt.lan"
       secretName: s3-clusters-tls

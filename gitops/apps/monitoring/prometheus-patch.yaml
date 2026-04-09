@@ -17,7 +17,7 @@ spec:
   storage:
     volumeClaimTemplate:
       spec:
-        storageClassName: 'disk-hdd'
+        storageClassName: "disk-hdd"
         resources:
           requests:
             storage: 20Gi

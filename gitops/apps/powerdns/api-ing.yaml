@@ -8,7 +8,7 @@ metadata:
     probe: enabled
 spec:
   rules:
-    - host: 'dns-api.bealv-mgmt.lan'
+    - host: "dns-api.bealv-mgmt.lan"
       http:
         paths:
           - path: /
@@ -20,5 +20,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - 'dns-api.bealv-mgmt.lan'
+        - "dns-api.bealv-mgmt.lan"
       secretName: pdns-api-tls

@@ -7,7 +7,7 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      cert-manager-setup: 'gatewayapi'
+      cert-manager-setup: "gatewayapi"
   kustomizationRefs:
     - kind: GitRepository
       name: infra
@@ -23,7 +23,7 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      cert-manager-setup: 'generic'
+      cert-manager-setup: "generic"
   kustomizationRefs:
     - kind: GitRepository
       name: infra

@@ -5,8 +5,8 @@ metadata:
 spec:
   clusterSelector:
     matchLabels:
-      monitoring: 'true'
-      fluxcd: 'true'
+      monitoring: "true"
+      fluxcd: "true"
   syncMode: ContinuousWithDriftDetection
   reloader: true
   policyRefs:
@@ -19,7 +19,7 @@ kind: ConfigMap
 metadata:
   name: monitoring-clusterprofile
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 data:
   crds.yaml: |
     apiVersion: kustomize.toolkit.fluxcd.io/v1

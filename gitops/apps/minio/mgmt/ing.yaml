@@ -9,7 +9,7 @@ metadata:
     probe: enabled
 spec:
   rules:
-    - host: 'minio.bealv-mgmt.lan'
+    - host: "minio.bealv-mgmt.lan"
       http:
         paths:
           - path: /
@@ -28,5 +28,5 @@ spec:
                   number: 9001
   tls:
     - hosts:
-        - 'minio.bealv-mgmt.lan'
+        - "minio.bealv-mgmt.lan"
       secretName: minio-mgmt-tls

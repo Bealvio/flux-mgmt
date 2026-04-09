@@ -261,7 +261,7 @@ metadata:
   namespace: powerdns-operator-system
 rules:
   - apiGroups:
-      - ''
+      - ""
     resources:
       - configmaps
     verbs:
@@ -285,7 +285,7 @@ rules:
       - patch
       - delete
   - apiGroups:
-      - ''
+      - ""
     resources:
       - events
     verbs:
@@ -333,8 +333,8 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: powerdns-operator
-    rbac.authorization.k8s.io/aggregate-to-admin: 'true'
-    rbac.authorization.k8s.io/aggregate-to-edit: 'true'
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
   name: powerdns-operator-rrset-editor-role
 rules:
   - apiGroups:
@@ -362,9 +362,9 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: powerdns-operator
-    rbac.authorization.k8s.io/aggregate-to-admin: 'true'
-    rbac.authorization.k8s.io/aggregate-to-edit: 'true'
-    rbac.authorization.k8s.io/aggregate-to-view: 'true'
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
   name: powerdns-operator-rrset-viewer-role
 rules:
   - apiGroups:
@@ -545,3 +545,4 @@ spec:
       serviceAccountName: powerdns-operator-controller-manager
       terminationGracePeriodSeconds: 10
 ---
+

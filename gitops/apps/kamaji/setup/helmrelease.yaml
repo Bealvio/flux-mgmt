@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: charts/kamaji
-      version: '*'
+      version: "*"
       sourceRef:
         kind: GitRepository
         name: kamaji

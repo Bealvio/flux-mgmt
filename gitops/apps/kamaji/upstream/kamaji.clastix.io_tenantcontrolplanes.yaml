@@ -121,7 +121,7 @@ spec:
                               type: string
                             mode:
                               default: DaemonSet
-                              description: 'Mode allows specifying the Agent deployment mode: Deployment, or DaemonSet (default).'
+                              description: "Mode allows specifying the Agent deployment mode: Deployment, or DaemonSet (default)."
                               enum:
                                 - DaemonSet
                                 - Deployment
@@ -186,7 +186,7 @@ spec:
                           type: object
                           x-kubernetes-validations:
                             - message: replicas must be 0 when mode is DaemonSet, and greater than 0 when mode is Deployment
-                              rule: '!(self.mode == ''DaemonSet'' && has(self.replicas) && self.replicas != 0) && !(self.mode == ''Deployment'' && self.replicas == 0)'
+                              rule: "!(self.mode == 'DaemonSet' && has(self.replicas) && self.replicas != 0) && !(self.mode == 'Deployment' && self.replicas == 0)"
                         server:
                           default:
                             image: registry.k8s.io/kas-network-proxy/proxy-server
@@ -443,7 +443,7 @@ spec:
                                             (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.
                                           properties:
                                             containerName:
-                                              description: 'Container name: required for volumes, optional for env vars'
+                                              description: "Container name: required for volumes, optional for env vars"
                                               type: string
                                             divisor:
                                               anyOf:
@@ -453,7 +453,7 @@ spec:
                                               pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                                               x-kubernetes-int-or-string: true
                                             resource:
-                                              description: 'Required: resource to select'
+                                              description: "Required: resource to select"
                                               type: string
                                           required:
                                             - resource
@@ -648,7 +648,7 @@ spec:
                                           lifecycle hooks will fail at runtime when it is specified.
                                         properties:
                                           host:
-                                            description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                            description: "Optional: Host name to connect to, defaults to the pod IP."
                                             type: string
                                           port:
                                             anyOf:
@@ -754,7 +754,7 @@ spec:
                                           lifecycle hooks will fail at runtime when it is specified.
                                         properties:
                                           host:
-                                            description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                            description: "Optional: Host name to connect to, defaults to the pod IP."
                                             type: string
                                           port:
                                             anyOf:
@@ -891,7 +891,7 @@ spec:
                                     description: TCPSocket specifies a connection to a TCP port.
                                     properties:
                                       host:
-                                        description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                        description: "Optional: Host name to connect to, defaults to the pod IP."
                                         type: string
                                       port:
                                         anyOf:
@@ -1097,7 +1097,7 @@ spec:
                                     description: TCPSocket specifies a connection to a TCP port.
                                     properties:
                                       host:
-                                        description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                        description: "Optional: Host name to connect to, defaults to the pod IP."
                                         type: string
                                       port:
                                         anyOf:
@@ -1591,7 +1591,7 @@ spec:
                                     description: TCPSocket specifies a connection to a TCP port.
                                     properties:
                                       host:
-                                        description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                        description: "Optional: Host name to connect to, defaults to the pod IP."
                                         type: string
                                       port:
                                         anyOf:
@@ -1905,7 +1905,7 @@ spec:
                                             (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.
                                           properties:
                                             containerName:
-                                              description: 'Container name: required for volumes, optional for env vars'
+                                              description: "Container name: required for volumes, optional for env vars"
                                               type: string
                                             divisor:
                                               anyOf:
@@ -1915,7 +1915,7 @@ spec:
                                               pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                                               x-kubernetes-int-or-string: true
                                             resource:
-                                              description: 'Required: resource to select'
+                                              description: "Required: resource to select"
                                               type: string
                                           required:
                                             - resource
@@ -2110,7 +2110,7 @@ spec:
                                           lifecycle hooks will fail at runtime when it is specified.
                                         properties:
                                           host:
-                                            description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                            description: "Optional: Host name to connect to, defaults to the pod IP."
                                             type: string
                                           port:
                                             anyOf:
@@ -2216,7 +2216,7 @@ spec:
                                           lifecycle hooks will fail at runtime when it is specified.
                                         properties:
                                           host:
-                                            description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                            description: "Optional: Host name to connect to, defaults to the pod IP."
                                             type: string
                                           port:
                                             anyOf:
@@ -2353,7 +2353,7 @@ spec:
                                     description: TCPSocket specifies a connection to a TCP port.
                                     properties:
                                       host:
-                                        description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                        description: "Optional: Host name to connect to, defaults to the pod IP."
                                         type: string
                                       port:
                                         anyOf:
@@ -2559,7 +2559,7 @@ spec:
                                     description: TCPSocket specifies a connection to a TCP port.
                                     properties:
                                       host:
-                                        description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                        description: "Optional: Host name to connect to, defaults to the pod IP."
                                         type: string
                                       port:
                                         anyOf:
@@ -3053,7 +3053,7 @@ spec:
                                     description: TCPSocket specifies a connection to a TCP port.
                                     properties:
                                       host:
-                                        description: 'Optional: Host name to connect to, defaults to the pod IP.'
+                                        description: "Optional: Host name to connect to, defaults to the pod IP."
                                         type: string
                                       port:
                                         anyOf:
@@ -3480,7 +3480,7 @@ spec:
                                   are redirected to the disk.csi.azure.com CSI driver.
                                 properties:
                                   cachingMode:
-                                    description: 'cachingMode is the Host Caching mode: None, Read Only, Read Write.'
+                                    description: "cachingMode is the Host Caching mode: None, Read Only, Read Write."
                                     type: string
                                   diskName:
                                     description: diskName is the Name of the data disk in the blob storage
@@ -3496,7 +3496,7 @@ spec:
                                       Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
                                     type: string
                                   kind:
-                                    description: 'kind expected values are Shared: multiple blob disks per storage account  Dedicated: single blob disk per storage account  Managed: azure managed data disk (only in managed availability set). defaults to shared'
+                                    description: "kind expected values are Shared: multiple blob disks per storage account  Dedicated: single blob disk per storage account  Managed: azure managed data disk (only in managed availability set). defaults to shared"
                                     type: string
                                   readOnly:
                                     default: false
@@ -3543,7 +3543,7 @@ spec:
                                     type: array
                                     x-kubernetes-list-type: atomic
                                   path:
-                                    description: 'path is Optional: Used as the mounted root, rather than the full Ceph tree, default is /'
+                                    description: "path is Optional: Used as the mounted root, rather than the full Ceph tree, default is /"
                                     type: string
                                   readOnly:
                                     description: |-
@@ -3759,7 +3759,7 @@ spec:
                                       description: DownwardAPIVolumeFile represents information to create the file containing the pod field
                                       properties:
                                         fieldRef:
-                                          description: 'Required: Selects a field of the pod: only annotations, labels, name, namespace and uid are supported.'
+                                          description: "Required: Selects a field of the pod: only annotations, labels, name, namespace and uid are supported."
                                           properties:
                                             apiVersion:
                                               description: Version of the schema the FieldPath is written in terms of, defaults to "v1".
@@ -3782,7 +3782,7 @@ spec:
                                           format: int32
                                           type: integer
                                         path:
-                                          description: 'Required: Path is  the relative path name of the file to be created. Must not be absolute or contain the ''..'' path. Must be utf-8 encoded. The first item of the relative path must not start with ''..'''
+                                          description: "Required: Path is  the relative path name of the file to be created. Must not be absolute or contain the '..' path. Must be utf-8 encoded. The first item of the relative path must not start with '..'"
                                           type: string
                                         resourceFieldRef:
                                           description: |-
@@ -3790,7 +3790,7 @@ spec:
                                             (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.
                                           properties:
                                             containerName:
-                                              description: 'Container name: required for volumes, optional for env vars'
+                                              description: "Container name: required for volumes, optional for env vars"
                                               type: string
                                             divisor:
                                               anyOf:
@@ -3800,7 +3800,7 @@ spec:
                                               pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                                               x-kubernetes-int-or-string: true
                                             resource:
-                                              description: 'Required: resource to select'
+                                              description: "Required: resource to select"
                                               type: string
                                           required:
                                             - resource
@@ -4104,7 +4104,7 @@ spec:
                                       Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
                                     type: string
                                   lun:
-                                    description: 'lun is Optional: FC target lun number'
+                                    description: "lun is Optional: FC target lun number"
                                     format: int32
                                     type: integer
                                   readOnly:
@@ -4113,7 +4113,7 @@ spec:
                                       the ReadOnly setting in VolumeMounts.
                                     type: boolean
                                   targetWWNs:
-                                    description: 'targetWWNs is Optional: FC target worldwide names (WWNs)'
+                                    description: "targetWWNs is Optional: FC target worldwide names (WWNs)"
                                     items:
                                       type: string
                                     type: array
@@ -4145,7 +4145,7 @@ spec:
                                   options:
                                     additionalProperties:
                                       type: string
-                                    description: 'options is Optional: this field holds extra command options if any.'
+                                    description: "options is Optional: this field holds extra command options if any."
                                     type: object
                                   readOnly:
                                     description: |-
@@ -4671,7 +4671,7 @@ spec:
                                                 description: DownwardAPIVolumeFile represents information to create the file containing the pod field
                                                 properties:
                                                   fieldRef:
-                                                    description: 'Required: Selects a field of the pod: only annotations, labels, name, namespace and uid are supported.'
+                                                    description: "Required: Selects a field of the pod: only annotations, labels, name, namespace and uid are supported."
                                                     properties:
                                                       apiVersion:
                                                         description: Version of the schema the FieldPath is written in terms of, defaults to "v1".
@@ -4694,7 +4694,7 @@ spec:
                                                     format: int32
                                                     type: integer
                                                   path:
-                                                    description: 'Required: Path is  the relative path name of the file to be created. Must not be absolute or contain the ''..'' path. Must be utf-8 encoded. The first item of the relative path must not start with ''..'''
+                                                    description: "Required: Path is  the relative path name of the file to be created. Must not be absolute or contain the '..' path. Must be utf-8 encoded. The first item of the relative path must not start with '..'"
                                                     type: string
                                                   resourceFieldRef:
                                                     description: |-
@@ -4702,7 +4702,7 @@ spec:
                                                       (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.
                                                     properties:
                                                       containerName:
-                                                        description: 'Container name: required for volumes, optional for env vars'
+                                                        description: "Container name: required for volumes, optional for env vars"
                                                         type: string
                                                       divisor:
                                                         anyOf:
@@ -4712,7 +4712,7 @@ spec:
                                                         pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                                                         x-kubernetes-int-or-string: true
                                                       resource:
-                                                        description: 'Required: resource to select'
+                                                        description: "Required: resource to select"
                                                         type: string
                                                     required:
                                                       - resource
@@ -7001,7 +7001,7 @@ spec:
                       type: array
                     podCidr:
                       default: 10.244.0.0/16
-                      description: 'CIDR for Kubernetes Pods: if empty, defaulted to 10.244.0.0/16.'
+                      description: "CIDR for Kubernetes Pods: if empty, defaulted to 10.244.0.0/16."
                       type: string
                     port:
                       default: 6443
@@ -7010,7 +7010,7 @@ spec:
                       type: integer
                     serviceCidr:
                       default: 10.96.0.0/16
-                      description: 'CIDR for Kubernetes Services: if empty, defaulted to 10.96.0.0/16.'
+                      description: "CIDR for Kubernetes Services: if empty, defaulted to 10.96.0.0/16."
                       type: string
                   type: object
                 writePermissions:
@@ -7035,15 +7035,15 @@ spec:
               type: object
               x-kubernetes-validations:
                 - message: unsetting the dataStore is not supported
-                  rule: '!has(oldSelf.dataStore) || has(self.dataStore)'
+                  rule: "!has(oldSelf.dataStore) || has(self.dataStore)"
                 - message: unsetting the dataStoreSchema is not supported
-                  rule: '!has(oldSelf.dataStoreSchema) || has(self.dataStoreSchema)'
+                  rule: "!has(oldSelf.dataStoreSchema) || has(self.dataStoreSchema)"
                 - message: unsetting the dataStoreUsername is not supported
-                  rule: '!has(oldSelf.dataStoreUsername) || has(self.dataStoreUsername)'
+                  rule: "!has(oldSelf.dataStoreUsername) || has(self.dataStoreUsername)"
                 - message: LoadBalancer source ranges are supported only with LoadBalancer service type
-                  rule: '!has(self.networkProfile.loadBalancerSourceRanges) || (size(self.networkProfile.loadBalancerSourceRanges) == 0 || self.controlPlane.service.serviceType == ''LoadBalancer'')'
+                  rule: "!has(self.networkProfile.loadBalancerSourceRanges) || (size(self.networkProfile.loadBalancerSourceRanges) == 0 || self.controlPlane.service.serviceType == 'LoadBalancer')"
                 - message: LoadBalancerClass is supported only with LoadBalancer service type
-                  rule: '!has(self.networkProfile.loadBalancerClass) || self.controlPlane.service.serviceType == ''LoadBalancer'''
+                  rule: "!has(self.networkProfile.loadBalancerClass) || self.controlPlane.service.serviceType == 'LoadBalancer'"
                 - message: LoadBalancerClass cannot be set or unset at runtime
                   rule: self.controlPlane.service.serviceType != 'LoadBalancer' || (oldSelf.controlPlane.service.serviceType != 'LoadBalancer' && self.controlPlane.service.serviceType == 'LoadBalancer') || has(self.networkProfile.loadBalancerClass) == has(oldSelf.networkProfile.loadBalancerClass)
             status:

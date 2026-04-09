@@ -6,5 +6,5 @@ spec:
   selector:
     app: pdns-mariadb
   ports:
-  - port: 3306
-    targetPort: mysql
+    - port: 3306
+      targetPort: mysql

@@ -29,16 +29,16 @@ spec:
           env:
             # Server Configuration
             - name: CHIHIRO_HOST
-              value: '0.0.0.0'
+              value: "0.0.0.0"
             - name: CHIHIRO_PORT
-              value: '8080'
+              value: "8080"
             - name: CHIHIRO_DOCS_URL
-              value: 'https://doc.bealv.io/doc/kubernetes-as-a-service-yfQ5uMwDio'
+              value: "https://doc.bealv.io/doc/kubernetes-as-a-service-yfQ5uMwDio"
             # OIDC Configuration
             - name: CHIHIRO_OIDC_ISSUER_URL
-              value: 'https://zitadel.bealv.io'
+              value: "https://zitadel.bealv.io"
             - name: CHIHIRO_OIDC_CLIENT_ID
-              value: '340870417071737185'
+              value: "340870417071737185"
             # - name: CHIHIRO_OIDC_REDIRECT_URL
             # value: 'https://chihiro.bealv.io/auth/callback'
             - name: CHIHIRO_OIDC_CLIENT_SECRET
@@ -53,25 +53,25 @@ spec:
                   name: chihiro-secrets
                   key: session_key
             - name: CHIHIRO_SESSION_TTL
-              value: '7200'
+              value: "7200"
             # Redis Configuration
             - name: CHIHIRO_REDIS_ADDR
-              value: 'chihiro-dragonfly:6379'
+              value: "chihiro-dragonfly:6379"
             # Cluster Configuration
             - name: CHIHIRO_CLUSTER_DOMAIN
-              value: 'bealv.io'
+              value: "bealv.io"
             - name: CHIHIRO_CLUSTER_PORT
-              value: '443'
+              value: "443"
             - name: CHIHIRO_ADMIN_GROUPS
-              value: 'kube-admin'
+              value: "kube-admin"
             - name: CHIHIRO_CREATOR_GROUPS
-              value: 'kube-admin'
+              value: "kube-admin"
             - name: CHIHIRO_AVAILABLE_VERSIONS
-              value: 'v1.34.0'
+              value: "v1.34.0"
             - name: CHIHIRO_MAX_CLUSTERS
-              value: '2'
+              value: "2"
             - name: CHIHIRO_MAX_TOTAL_NODES
-              value: '2'
+              value: "2"
           volumeMounts:
             - name: config
               mountPath: /config.yaml

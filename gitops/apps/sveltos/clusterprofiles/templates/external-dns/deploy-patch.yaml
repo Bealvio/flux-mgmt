@@ -18,12 +18,12 @@ spec:
             - --interval=30s
           env:
             - name: EXTERNAL_DNS_PDNS_SERVER
-              value: 'https://dns-api.bealv-mgmt.lan'
+              value: "https://dns-api.bealv-mgmt.lan"
             - name: EXTERNAL_DNS_TLS_CA
-              value: '/etc/secrets/ca.crt'
+              value: "/etc/secrets/ca.crt"
           volumeMounts:
             - name: tls-secret
-              mountPath: '/etc/secrets'
+              mountPath: "/etc/secrets"
               readOnly: true
       volumes:
         - name: tls-secret

@@ -9,7 +9,7 @@ metadata:
     probe: enabled
 spec:
   rules:
-    - host: 'chihiro.bealv-mgmt.lan'
+    - host: "chihiro.bealv-mgmt.lan"
       http:
         paths:
           - path: /ws
@@ -28,5 +28,5 @@ spec:
                   number: 8080
   tls:
     - hosts:
-        - 'chihiro.bealv-mgmt.lan'
+        - "chihiro.bealv-mgmt.lan"
       secretName: chihiro-tls

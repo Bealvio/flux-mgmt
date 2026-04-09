@@ -20,10 +20,10 @@ spec:
       dataStorage:
         enabled: true
         size: 10Gi
-        mountPath: '/vault/data'
+        mountPath: "/vault/data"
         accessMode: ReadWriteOnce
       standalone:
-        enabled: '-'
+        enabled: "-"
         config: |
           ui = true
           listener "tcp" {
@@ -56,7 +56,7 @@ spec:
       enabled: true
       publishNotReadyAddresses: true
       activeVaultPodOnly: false
-      serviceType: 'ClusterIP'
+      serviceType: "ClusterIP"
       externalPort: 443
       targetPort: 8200
     injector:

@@ -46,19 +46,19 @@ jobs:
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}
-      - name: Get Nixpkgs revision
-        run: |
-          url=$(jq -r .pins.nixpkgs.url npins/sources.json)
-          echo "url=$url" >> "$GITHUB_ENV"
-      - uses: cachix/install-nix-action@v27
+      - uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=${{ env.url }}
           extra_nix_config: |
             fallback = true
-            trusted-public-keys = didactiklabs-nixcache:PxLKN0+ZkP07M8g8/B6xbP6A4MYpqQg6LH7V3muiy/0= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
-            substituters = https://s3.didactiklabs.io/nix-cache https://cache.nixos.org/
+            trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= didactiklabs-nixcache:PxLKN0+ZkP07M8g8/B6xbP6A4MYpqQg6LH7V3muiy/0= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+            substituters = https://devenv.cachix.org https://s3.didactiklabs.io/nix-cache https://cache.nixos.org/
+      - uses: cachix/cachix-action@v16
+        with:
+          name: devenv
+      - name: Install devenv
+        run: nix profile add nixpkgs#devenv
       - name: Update npins
-        run: nix run nixpkgs#npins -- update ${{ matrix.pin }}
+        run: devenv shell npins -- update ${{ matrix.pin }}
       - name: Get updated version
         id: version
         run: |
@@ -66,30 +66,32 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - name: Run post-update build for cert-manager
         if: matrix.pin == 'cert-manager'
-        run: nix-shell shell.nix --run "buildCertManager '${{ steps.version.outputs.version }}'"
+        run: devenv shell buildCertManager -- '${{ steps.version.outputs.version }}'
       - name: Run post-update build for cluster-api-operator
         if: matrix.pin == 'cluster-api-operator'
-        run: nix-shell shell.nix --run "buildCapi '${{ steps.version.outputs.version }}'"
+        run: devenv shell buildCapi -- '${{ steps.version.outputs.version }}'
       - name: Run post-update build for contour
         if: matrix.pin == 'contour'
-        run: nix-shell shell.nix --run "buildIngressContour"
+        run: devenv shell buildIngressContour
       - name: Run post-update build for external-snapshotter
         if: matrix.pin == 'external-snapshotter'
-        run: nix-shell shell.nix --run "buildSnapshotter"
+        run: devenv shell buildSnapshotter
       - name: Run post-update build for flux-operator
         if: matrix.pin == 'flux-operator'
-        run: nix-shell shell.nix --run "buildFlux '${{ steps.version.outputs.version }}'"
+        run: devenv shell buildFlux -- '${{ steps.version.outputs.version }}'
       - name: Run post-update build for grafana-operator
         if: matrix.pin == 'grafana-operator'
+        shell: devenv shell bash -- -e {0}
         run: |
-          nix-shell shell.nix --run "buildKubeProm"
+          buildKubeProm
           VERSION="${{ steps.version.outputs.version }}"
           yq e -i '.images[] |= select(.name == "ghcr.io/grafana/grafana-operator").newTag = "'"$VERSION"'"' \
             gitops/apps/monitoring/kustomization.yaml
       - name: Run post-update build for kamaji
         if: matrix.pin == 'kamaji'
+        shell: devenv shell bash -- -e {0}
         run: |
-          nix-shell shell.nix --run "buildKamaji"
+          buildKamaji
           VERSION="${{ steps.version.outputs.version }}"
           yq e -i '.spec.ref.tag = "'"$VERSION"'"' \
             gitops/apps/kamaji/setup/gitrepo.yaml
@@ -97,7 +99,7 @@ jobs:
             gitops/apps/kamaji/setup/helmrelease.yaml
       - name: Run post-update build for kube-prometheus
         if: matrix.pin == 'kube-prometheus'
-        run: nix-shell shell.nix --run "buildKubeProm"
+        run: devenv shell buildKubeProm
       - name: Update grafana version
         if: matrix.pin == 'grafana'
         run: |

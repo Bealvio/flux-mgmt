@@ -9,8 +9,8 @@ metadata:
   name: capi-vars
   namespace: capi-system
 stringData:
-  CLUSTER_TOPOLOGY: 'true'
-  EXP_CLUSTER_RESOURCE_SET: 'true'
+  CLUSTER_TOPOLOGY: "true"
+  EXP_CLUSTER_RESOURCE_SET: "true"
 ---
 apiVersion: operator.cluster.x-k8s.io/v1alpha2
 kind: CoreProvider

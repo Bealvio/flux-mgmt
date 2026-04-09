@@ -7,14 +7,14 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      capsule: 'true'
+      capsule: "true"
   templateResourceRefs:
     - identifier: ClusterAnnotations
       resource:
         apiVersion: cluster.x-k8s.io/v1beta1
         kind: Cluster
-        name: '{{ .Cluster.metadata.name }}'
-        namespace: '{{ .Cluster.metadata.namespace }}'
+        name: "{{ .Cluster.metadata.name }}"
+        namespace: "{{ .Cluster.metadata.namespace }}"
   policyRefs:
     - kind: ConfigMap
       name: capsule-helm-resources
@@ -26,7 +26,7 @@ metadata:
   name: capsule-helm-resources
   namespace: projectsveltos
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 data:
   helmrepository.yaml: |
     apiVersion: source.toolkit.fluxcd.io/v1
@@ -257,9 +257,9 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'capsule.clastix.io'
-      version: 'v1beta2'
-      kind: 'Tenant'
+    - group: "capsule.clastix.io"
+      version: "v1beta2"
+      kind: "Tenant"
 ---
 apiVersion: lib.projectsveltos.io/v1beta1
 kind: EventTrigger
@@ -268,7 +268,7 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      capsule: 'true'
+      capsule: "true"
   eventSourceName: tenant-created
   syncMode: ContinuousWithDriftDetection
   reloader: true
@@ -283,7 +283,7 @@ metadata:
   name: tenant-namespace-template
   namespace: projectsveltos
   annotations:
-    projectsveltos.io/instantiate: 'true'
+    projectsveltos.io/instantiate: "true"
 data:
   namespace.yaml: |
     {{- $cluster := .Cluster }}

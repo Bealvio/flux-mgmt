@@ -5,9 +5,9 @@ metadata:
 spec:
   collectResources: true
   resourceSelectors:
-    - group: 'cluster.x-k8s.io'
-      version: 'v1beta1'
-      kind: 'Cluster'
+    - group: "cluster.x-k8s.io"
+      version: "v1beta1"
+      kind: "Cluster"
       labelFilters:
         - key: cni
           value: cilium
@@ -38,7 +38,7 @@ kind: ConfigMap
 metadata:
   name: cilium-lb-ipclaim
   annotations:
-    projectsveltos.io/instantiate: 'true'
+    projectsveltos.io/instantiate: "true"
 data:
   ipclaim.yaml: |
     apiVersion: ipam.didactiklabs.io/v1alpha1
@@ -56,7 +56,7 @@ kind: ConfigMap
 metadata:
   name: cilium-lb-cp
   annotations:
-    projectsveltos.io/instantiate: 'true'
+    projectsveltos.io/instantiate: "true"
 data:
   cp.yaml: |
     apiVersion: config.projectsveltos.io/v1beta1
@@ -88,7 +88,7 @@ kind: ConfigMap
 metadata:
   name: cilium-lbpool
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 data:
   cilium-lbpool.yaml: |
     apiVersion: 'cilium.io/v2'

@@ -6,7 +6,7 @@ spec:
   folder: administration
   instanceSelector:
     matchLabels:
-      dashboards: 'grafana'
+      dashboards: "grafana"
   grafanaCom:
     id: 1860
     revision: 37
@@ -19,7 +19,7 @@ spec:
   folder: administration
   instanceSelector:
     matchLabels:
-      dashboards: 'grafana'
+      dashboards: "grafana"
   grafanaCom:
     id: 21410
     revision: 3
@@ -32,7 +32,7 @@ spec:
   folder: administration
   instanceSelector:
     matchLabels:
-      dashboards: 'grafana'
+      dashboards: "grafana"
   url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/refs/heads/main/monitoring/configs/dashboards/cluster.json
 ---
 apiVersion: grafana.integreatly.org/v1beta1
@@ -43,13 +43,13 @@ spec:
   folder: administration
   instanceSelector:
     matchLabels:
-      dashboards: 'grafana'
+      dashboards: "grafana"
   grafanaCom:
     id: 21396
     revision: 2
   datasources:
     - datasourceName: prometheus
-      inputName: 'DS_DEVELOPERS'
+      inputName: "DS_DEVELOPERS"
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
@@ -59,7 +59,7 @@ spec:
   folder: administration
   instanceSelector:
     matchLabels:
-      dashboards: 'grafana'
+      dashboards: "grafana"
   grafanaCom:
     id: 20842
     revision: 3
@@ -72,7 +72,7 @@ spec:
   folder: administration
   instanceSelector:
     matchLabels:
-      dashboards: 'grafana'
+      dashboards: "grafana"
   url: https://raw.githubusercontent.com/monitoring-mixins/website/refs/heads/master/assets/coredns/dashboards/coredns.json
 ---
 apiVersion: grafana.integreatly.org/v1beta1
@@ -83,10 +83,10 @@ spec:
   folder: administration
   instanceSelector:
     matchLabels:
-      dashboards: 'grafana'
+      dashboards: "grafana"
   grafanaCom:
     id: 13659
     revision: 1
   datasources:
     - datasourceName: prometheus
-      inputName: 'DS_PROMETHEUS'
+      inputName: "DS_PROMETHEUS"

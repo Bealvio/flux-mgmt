@@ -7,7 +7,7 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      fluxcd: 'true'
+      fluxcd: "true"
   kustomizationRefs:
     - kind: GitRepository
       name: infra
@@ -23,7 +23,7 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      fluxcd: 'true'
+      fluxcd: "true"
   policyRefs:
     - name: fluxinstance-clusterprofile
       namespace: projectsveltos
@@ -34,7 +34,7 @@ kind: ConfigMap
 metadata:
   name: fluxinstance-clusterprofile
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 data:
   fluxinstance.yaml: |
     apiVersion: fluxcd.controlplane.io/v1
@@ -78,13 +78,13 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      fluxcd: 'true'
+      fluxcd: "true"
   templateResourceRefs:
     - resource:
         apiVersion: v1
         kind: Secret
-        name: 'github-fluxcd-chan'
-        namespace: 'flux-system'
+        name: "github-fluxcd-chan"
+        namespace: "flux-system"
       identifier: fluxcdChan
   policyRefs:
     - name: fluxresources-clusterprofile
@@ -99,7 +99,7 @@ kind: ConfigMap
 metadata:
   name: fluxresources-clusterprofile
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 data:
   gitrepo-mgmt.yaml: |
     apiVersion: source.toolkit.fluxcd.io/v1
@@ -154,7 +154,7 @@ kind: Secret
 metadata:
   name: fluxcdchan-secrets
   annotations:
-    projectsveltos.io/template: 'true'
+    projectsveltos.io/template: "true"
 type: addons.projectsveltos.io/cluster-profile
 stringData:
   secret.yaml: |

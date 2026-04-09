@@ -6,4 +6,4 @@ metadata:
 spec:
   alertmanagerConfiguration:
     name: main
-  externalUrl: 'https://alertmanager.bealv-mgmt.lan'
+  externalUrl: "https://alertmanager.bealv-mgmt.lan"
