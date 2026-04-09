@@ -11,11 +11,7 @@ resources:
   - grafana-netpol.yaml
 images:
   - name: ghcr.io/grafana/grafana-operator
-<<<<<<< HEAD
-    newTag: 'v5.22.2'
-=======
-    newTag: "v5.19.4"
->>>>>>> 98b4320 (feat ✨: update changes)
+    newTag: "v5.22.2"
 patches:
   - path: prometheus-operator-patch.yaml
     target:

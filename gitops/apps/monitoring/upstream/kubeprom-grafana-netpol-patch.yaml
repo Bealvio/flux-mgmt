@@ -1,6 +1,6 @@
 - op: replace
   path: /spec/podSelector/matchLabels
-  value: {app: grafana}
+  value: { app: grafana }
 - op: add
   path: /spec/ingress/-
   value:
@@ -21,4 +21,3 @@
     ports:
       - protocol: TCP
         port: 9090
-

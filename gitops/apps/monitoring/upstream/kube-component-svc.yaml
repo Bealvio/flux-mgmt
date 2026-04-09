@@ -30,4 +30,3 @@ spec:
       targetPort: 10259 # Typically, the kube-scheduler listens on 10259 for HTTPS metrics
   selector:
     component: kube-scheduler
-
