@@ -12,8 +12,6 @@ spec:
     name: grafana-dashboard-alertmanager-overview
     key: alertmanager-overview.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -28,8 +26,6 @@ spec:
     name: grafana-dashboard-apiserver
     key: apiserver.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -44,8 +40,6 @@ spec:
     name: grafana-dashboard-cluster-total
     key: cluster-total.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -60,8 +54,6 @@ spec:
     name: grafana-dashboard-controller-manager
     key: controller-manager.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -76,8 +68,6 @@ spec:
     name: grafana-dashboard-grafana-overview
     key: grafana-overview.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -92,8 +82,6 @@ spec:
     name: grafana-dashboard-k8s-resources-cluster
     key: k8s-resources-cluster.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -108,8 +96,6 @@ spec:
     name: grafana-dashboard-k8s-resources-multicluster
     key: k8s-resources-multicluster.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -124,8 +110,6 @@ spec:
     name: grafana-dashboard-k8s-resources-namespace
     key: k8s-resources-namespace.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -140,8 +124,6 @@ spec:
     name: grafana-dashboard-k8s-resources-node
     key: k8s-resources-node.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -156,8 +138,6 @@ spec:
     name: grafana-dashboard-k8s-resources-pod
     key: k8s-resources-pod.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -172,8 +152,6 @@ spec:
     name: grafana-dashboard-k8s-resources-windows-cluster
     key: k8s-resources-windows-cluster.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -188,8 +166,6 @@ spec:
     name: grafana-dashboard-k8s-resources-windows-namespace
     key: k8s-resources-windows-namespace.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -204,8 +180,6 @@ spec:
     name: grafana-dashboard-k8s-resources-windows-pod
     key: k8s-resources-windows-pod.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -220,8 +194,6 @@ spec:
     name: grafana-dashboard-k8s-resources-workload
     key: k8s-resources-workload.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -236,8 +208,6 @@ spec:
     name: grafana-dashboard-k8s-resources-workloads-namespace
     key: k8s-resources-workloads-namespace.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -252,8 +222,6 @@ spec:
     name: grafana-dashboard-k8s-windows-cluster-rsrc-use
     key: k8s-windows-cluster-rsrc-use.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -268,8 +236,6 @@ spec:
     name: grafana-dashboard-k8s-windows-node-rsrc-use
     key: k8s-windows-node-rsrc-use.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -284,8 +250,6 @@ spec:
     name: grafana-dashboard-kubelet
     key: kubelet.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -300,8 +264,6 @@ spec:
     name: grafana-dashboard-namespace-by-pod
     key: namespace-by-pod.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -316,8 +278,6 @@ spec:
     name: grafana-dashboard-namespace-by-workload
     key: namespace-by-workload.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -332,8 +292,6 @@ spec:
     name: grafana-dashboard-node-cluster-rsrc-use
     key: node-cluster-rsrc-use.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -348,8 +306,6 @@ spec:
     name: grafana-dashboard-node-rsrc-use
     key: node-rsrc-use.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -364,8 +320,6 @@ spec:
     name: grafana-dashboard-nodes-aix
     key: nodes-aix.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -380,8 +334,6 @@ spec:
     name: grafana-dashboard-nodes-darwin
     key: nodes-darwin.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -396,8 +348,6 @@ spec:
     name: grafana-dashboard-nodes
     key: nodes.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -412,8 +362,6 @@ spec:
     name: grafana-dashboard-persistentvolumesusage
     key: persistentvolumesusage.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -428,8 +376,6 @@ spec:
     name: grafana-dashboard-pod-total
     key: pod-total.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -444,8 +390,6 @@ spec:
     name: grafana-dashboard-prometheus-remote-write
     key: prometheus-remote-write.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -460,8 +404,6 @@ spec:
     name: grafana-dashboard-prometheus
     key: prometheus.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -476,8 +418,6 @@ spec:
     name: grafana-dashboard-proxy
     key: proxy.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -492,8 +432,6 @@ spec:
     name: grafana-dashboard-scheduler
     key: scheduler.json
 ---
-
-
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -508,5 +446,4 @@ spec:
     name: grafana-dashboard-workload-total
     key: workload-total.json
 ---
-
 

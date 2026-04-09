@@ -5,5 +5,3 @@
 - op: replace
   path: /spec/ports/0/targetPort
   value: grafana-http
-
-

@@ -8,14 +8,14 @@ metadata:
     app.kubernetes.io/version: 0.12.0
   name: prometheus-adapter
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  - namespaces
-  - pods
-  - services
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - namespaces
+      - pods
+      - services
+    verbs:
+      - get
+      - list
+      - watch
