@@ -75,10 +75,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v0.47.0",
-      "revision": "ef1def77c7a831169f40a314094bff14ac6452b4",
-      "url": "https://api.github.com/repos/controlplaneio-fluxcd/flux-operator/tarball/refs/tags/v0.47.0",
-      "hash": "sha256-uzoJyx2Da+d6wXOX6CL8p+CwhGjJYwrdkbMt+Kngp8Y="
+      "version": "v0.48.0",
+      "revision": "a96eb6fb0a5056a156846d5917bb3ece5a51fe08",
+      "url": "https://api.github.com/repos/controlplaneio-fluxcd/flux-operator/tarball/refs/tags/v0.48.0",
+      "hash": "sha256-Ggx38aF9o7dMFcQxYbx5hSXCE2oRRTgvUvXCAJJN6V8="
     },
     "grafana": {
       "type": "GitRelease",
