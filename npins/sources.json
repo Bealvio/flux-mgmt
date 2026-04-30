@@ -150,9 +150,9 @@
       },
       "branch": "main",
       "submodules": false,
-      "revision": "a6b61acb027c8cd05ff44bc64fd2d9747a2de889",
-      "url": "https://github.com/kubevirt/monitoring/archive/a6b61acb027c8cd05ff44bc64fd2d9747a2de889.tar.gz",
-      "hash": "sha256-AeOIuPyPBURuAQb9KZBUx8LAsTKKakn4nmd7qZl7yOs="
+      "revision": "725060d757f434d3e87cecce15e70f4f6691f675",
+      "url": "https://github.com/kubevirt/monitoring/archive/725060d757f434d3e87cecce15e70f4f6691f675.tar.gz",
+      "hash": "sha256-Vf/x3hSrtcLh8guThrzPeffWNSwMN+gpeVt1f2DQFqM="
     },
     "nixbook": {
       "type": "Git",
