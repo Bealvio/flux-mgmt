@@ -27,10 +27,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v0.26.0",
-      "revision": "e901a2e7363391e9ab2770b2e3089b33175a0b7d",
-      "url": "https://api.github.com/repos/kubernetes-sigs/cluster-api-operator/tarball/refs/tags/v0.26.0",
-      "hash": "sha256-IOvrVlZTUGzO1P0u775Oq7HMn0aHAqDaunnoqmiY4jU="
+      "version": "v0.27.0",
+      "revision": "af8036c70e847cb935d982402f46b2dd83197bba",
+      "url": "https://api.github.com/repos/kubernetes-sigs/cluster-api-operator/tarball/refs/tags/v0.27.0",
+      "hash": "sha256-tmdmi23AEc9BsslQSG6N88RpE9qGuy+acIzw/Ni9v5g="
     },
     "contour": {
       "type": "GitRelease",
