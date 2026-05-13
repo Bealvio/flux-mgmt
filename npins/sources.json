@@ -137,9 +137,9 @@
       },
       "branch": "main",
       "submodules": false,
-      "revision": "ac9a50923df1dec1e4357a5d1bbeb4f83750b1ef",
-      "url": "https://github.com/prometheus-operator/kube-prometheus/archive/ac9a50923df1dec1e4357a5d1bbeb4f83750b1ef.tar.gz",
-      "hash": "sha256-b/dqCc+S4yp+m+wUy41HSEoI6JtXjkr11yTIzLyYGdQ="
+      "revision": "a0d4361bf7336609bf3f166db8501a6c3b37c8ce",
+      "url": "https://github.com/prometheus-operator/kube-prometheus/archive/a0d4361bf7336609bf3f166db8501a6c3b37c8ce.tar.gz",
+      "hash": "sha256-YT1tBtehusIxeH1epqaB8Q6/HAopBq/MGPW9YDJ7P2E="
     },
     "kubevirt-monitoring": {
       "type": "Git",
