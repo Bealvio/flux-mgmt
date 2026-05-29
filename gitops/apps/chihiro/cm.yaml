@@ -37,7 +37,8 @@ data:
               cidrBlocks:
                 - 172.17.0.0/16
           topology:
-            class: kamaji-proxmox
+            classRef
+              name: kamaji-proxmox
             variables:
             - name: dnsServers
               value:
