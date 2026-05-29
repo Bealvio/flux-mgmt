@@ -6,7 +6,7 @@ spec:
   sources:
     - secret:
         name: root-ca
-        key: "ca.crt"
+        includeAllKeys: true
   target:
     secret:
       key: "ca.crt"
