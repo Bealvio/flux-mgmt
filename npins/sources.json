@@ -91,10 +91,10 @@
       "version_upper_bound": null,
       "release_prefix": null,
       "submodules": false,
-      "version": "v13.0.1+security-01",
-      "revision": "eee7016a64c6b94873fe43589555fa9e826f4061",
-      "url": "https://api.github.com/repos/grafana/grafana/tarball/refs/tags/v13.0.1+security-01",
-      "hash": "sha256-v/6a0Xlj11nZ0u8xtFzw5i674rB1YV21iLCuLc5af+I="
+      "version": "v13.0.2",
+      "revision": "3fcdbc5a6e5c955bd42bd3715dd03cbad2b078c1",
+      "url": "https://api.github.com/repos/grafana/grafana/tarball/refs/tags/v13.0.2",
+      "hash": "sha256-knalINdJPFrvj6HNxWPV6wu6TSkrRvgkZjOnECOsWwU="
     },
     "grafana-operator": {
       "type": "GitRelease",
