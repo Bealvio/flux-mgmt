@@ -29,3 +29,48 @@ spec:
           - op: add
             path: /spec/template/spec/containers/0/args/-
             value: --concurrent=10
+      # Back the controllers' ephemeral storage with tmpfs (RAM-backed emptyDir,
+      # medium: Memory) instead of the node's disk, to avoid heavy disk I/O from
+      # Git clones, artifact unpacking, and kustomize/helm build scratch.
+      #
+      # IMPORTANT: a Memory emptyDir's usage counts against the container's
+      # memory cgroup limit, so the per-volume sizeLimit AND the container memory
+      # limit are both raised to leave headroom for the controller's own heap on
+      # top of the tmpfs (otherwise a full tmpfs OOM-kills the pod). sizeLimit
+      # caps tmpfs growth so a runaway artifact can't exhaust node memory.
+      #
+      # Volume names differ per controller (upstream manifests):
+      #   source-controller: `data` (/data, artifacts) + `tmp` (/tmp)
+      #   kustomize-controller / helm-controller: `temp` (/tmp)
+      - target:
+          kind: Deployment
+          name: source-controller
+        patch: |
+          - op: replace
+            path: /spec/template/spec/volumes
+            value:
+              - name: data
+                emptyDir:
+                  medium: Memory
+                  sizeLimit: 1Gi
+              - name: tmp
+                emptyDir:
+                  medium: Memory
+                  sizeLimit: 256Mi
+          - op: replace
+            path: /spec/template/spec/containers/0/resources/limits/memory
+            value: 2Gi
+      - target:
+          kind: Deployment
+          name: "(kustomize-controller|helm-controller)"
+        patch: |
+          - op: replace
+            path: /spec/template/spec/volumes
+            value:
+              - name: temp
+                emptyDir:
+                  medium: Memory
+                  sizeLimit: 512Mi
+          - op: replace
+            path: /spec/template/spec/containers/0/resources/limits/memory
+            value: 1536Mi
