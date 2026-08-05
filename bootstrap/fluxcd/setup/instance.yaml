@@ -28,7 +28,7 @@ spec:
         patch: |
           - op: add
             path: /spec/template/spec/containers/0/args/-
-            value: --concurrent=10
+            value: --concurrent=2
       # Back the controllers' ephemeral storage with tmpfs (RAM-backed emptyDir,
       # medium: Memory) instead of the node's disk, to avoid heavy disk I/O from
       # Git clones, artifact unpacking, and kustomize/helm build scratch.
