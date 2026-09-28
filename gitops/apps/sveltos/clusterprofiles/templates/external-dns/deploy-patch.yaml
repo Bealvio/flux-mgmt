@@ -16,6 +16,10 @@ spec:
             - --domain-filter={{ .ClusterName }}.lan
             - --log-level=debug
             - --interval=30s
+            # required since external-dns v0.22 (no default anymore); sync was the previous default
+            - --policy=sync
+            # keep honoring external-dns.alpha.kubernetes.io/* annotations (default prefix is GA since v0.22)
+            - --enable-legacy-annotation-prefix
           env:
             - name: EXTERNAL_DNS_PDNS_SERVER
               value: "https://dns-api.bealv-mgmt.lan"
