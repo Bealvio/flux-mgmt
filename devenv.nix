@@ -12,6 +12,7 @@ in
   packages = with pkgs; [
     kustomize
     npins
+    yq-go
   ];
 
   scripts = {

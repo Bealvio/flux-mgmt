@@ -16,6 +16,7 @@ spec:
     - repositoryURL: https://helm.cilium.io/
       repositoryName: cilium
       chartName: cilium/cilium
+      # renovate: datasource=helm depName=cilium registryUrl=https://helm.cilium.io
       chartVersion: 1.18.2
       releaseName: cilium
       releaseNamespace: kube-system

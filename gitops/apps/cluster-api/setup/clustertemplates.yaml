@@ -45,10 +45,12 @@ spec:
             tolerations:
               - key: CriticalAddonsOnly
                 operator: Exists
+            # renovate: datasource=docker depName=registry.k8s.io/kas-network-proxy/proxy-agent
             version: v0.28.6
           server:
             image: registry.k8s.io/kas-network-proxy/proxy-server
             port: 8132
+            # renovate: datasource=docker depName=registry.k8s.io/kas-network-proxy/proxy-server
             version: v0.28.6
       dataStoreName: default
       kubelet:
