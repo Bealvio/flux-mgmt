@@ -460,4 +460,3 @@ spec:
     name: grafana-dashboard-workload-total
     key: workload-total.json
 ---
-

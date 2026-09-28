@@ -102,4 +102,3 @@ spec:
             provider-id: proxmox://'{{ ds.meta_data.instance_id }}'
             node-labels: "topology.kubernetes.io/region=proxmox-alv,topology.kubernetes.io/zone=proxmox-alv"
 ---
-

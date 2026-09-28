@@ -12,4 +12,3 @@ spec:
     name: grafana-dashboard-kubevirt-control-plane
     key: kubevirt-control-plane.json
 ---
-
