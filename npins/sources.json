@@ -80,22 +80,6 @@
       "url": "https://api.github.com/repos/controlplaneio-fluxcd/flux-operator/tarball/refs/tags/v0.60.0",
       "hash": "sha256-2CCaCBHutlXvELSgd08Z9aaX037K7RUvEbp8dELqslg="
     },
-    "grafana": {
-      "type": "GitRelease",
-      "repository": {
-        "type": "GitHub",
-        "owner": "grafana",
-        "repo": "grafana"
-      },
-      "pre_releases": false,
-      "version_upper_bound": null,
-      "release_prefix": null,
-      "submodules": false,
-      "version": "v13.2.1",
-      "revision": "485de74e78aafbf8c6606bace37a2eb101a853be",
-      "url": "https://api.github.com/repos/grafana/grafana/tarball/refs/tags/v13.2.1",
-      "hash": "sha256-SGJjymkwXnpfpAHZUA16/cbXt1JHGXIB5PmrAwVm9tY="
-    },
     "grafana-operator": {
       "type": "GitRelease",
       "repository": {
@@ -170,9 +154,10 @@
     "nixpkgs": {
       "type": "Channel",
       "name": "nixos-24.11",
+      "artifact": "nixexprs.tar.xz",
       "url": "https://releases.nixos.org/nixos/24.11/nixos-24.11.719113.50ab793786d9/nixexprs.tar.xz",
       "hash": "sha256-EjLqzTANsT+CbWv85OOvz6B6C/B/Oj2tS3WBQNHmNKE="
     }
   },
-  "version": 7
+  "version": 8
 }

@@ -52,6 +52,7 @@ data:
       chart:
         spec:
           chart: capsule
+          # renovate: datasource=docker depName=ghcr.io/projectcapsule/charts/capsule
           version: '0.10.9'
           sourceRef:
             kind: HelmRepository

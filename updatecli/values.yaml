@@ -1,5 +1,0 @@
-github:
-  email: "bots@bealv.io"
-  username: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN_USER" }}'
-  user: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN_USER" }}'
-  token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'

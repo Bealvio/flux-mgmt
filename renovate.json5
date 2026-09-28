@@ -1,0 +1,187 @@
+{
+  // Renovate runs self-hosted from .github/workflows/renovate.yaml (GitHub App "update-chan").
+  // Dependency Dashboard: the "Renovate Dashboard" issue of this repo.
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(chore)",
+    ":semanticCommitScope(deps)",
+    ":disableRateLimiting",
+  ],
+  labels: ["dependencies"],
+  // No automerge: every update is reviewed (and Flux deploys main right away).
+  automerge: false,
+  // Let fresh releases settle before proposing them.
+  minimumReleaseAge: "2 days",
+  // Only the managers this repo actually uses.
+  // (flux also covers images in HelmRelease `spec.values`)
+  enabledManagers: [
+    "kubernetes",
+    "flux",
+    "kustomize",
+    "terraform",
+    "github-actions",
+    "custom.regex",
+  ],
+  // Generated bundles are never bumped image-by-image: they are regenerated as a
+  // whole from npins/sources.json (see scripts/renovate-post-upgrade.sh).
+  // Hand-vendored bundles (dragonfly, powerdns-operator, kubipam) are only watched
+  // through the "vendored operator" custom manager below.
+  ignorePaths: [
+    "bootstrap/cilium/**",
+    "bootstrap/kubernetes/**",
+    "bootstrap/fluxcd/upstream/**",
+    "gitops/apps/cert-manager/upstream/**",
+    "gitops/apps/cluster-api/upstream/**",
+    "gitops/apps/external-snapshotter/upstream/**",
+    "gitops/apps/ingress-controller/upstream/**",
+    "gitops/apps/kamaji/upstream/**",
+    "gitops/apps/monitoring/upstream/**",
+  ],
+  kubernetes: {
+    managerFilePatterns: ["/^gitops/.+\\.ya?ml$/"],
+  },
+  flux: {
+    managerFilePatterns: ["/^gitops/.+\\.ya?ml$/"],
+  },
+  customManagers: [
+    {
+      customType: "regex",
+      description: "npins release pins (GitRelease) — version bump, then scripts/renovate-post-upgrade.sh regenerates",
+      managerFilePatterns: ["/^npins/sources\\.json$/"],
+      matchStrings: [
+        '"(?<depName>[^"]+)": \\{\\s*"type": "GitRelease",\\s*"repository": \\{\\s*"type": "GitHub",\\s*"owner": "(?<owner>[^"]+)",\\s*"repo": "(?<repo>[^"]+)"\\s*\\},[^}]*?"version": "(?<currentValue>[^"]+)"',
+      ],
+      packageNameTemplate: "{{{owner}}}/{{{repo}}}",
+      datasourceTemplate: "github-releases",
+    },
+    {
+      customType: "regex",
+      description: "npins branch pins (Git) — revision bump, then scripts/renovate-post-upgrade.sh regenerates",
+      managerFilePatterns: ["/^npins/sources\\.json$/"],
+      matchStrings: [
+        '"(?<depName>[^"]+)": \\{\\s*"type": "Git",\\s*"repository": \\{\\s*"type": "GitHub",\\s*"owner": "(?<owner>[^"]+)",\\s*"repo": "(?<repo>[^"]+)"\\s*\\},\\s*"branch": "(?<currentValue>[^"]+)",[^}]*?"revision": "(?<currentDigest>[a-f0-9]{40})"',
+      ],
+      packageNameTemplate: "https://github.com/{{{owner}}}/{{{repo}}}",
+      datasourceTemplate: "git-refs",
+    },
+    {
+      customType: "regex",
+      description: "Any value (or GitHub release download URL) preceded by a `# renovate: datasource=… depName=…` comment",
+      managerFilePatterns: [
+        "/^gitops/.+\\.ya?ml$/",
+        "/^\\.github/workflows/.+\\.ya?ml$/",
+      ],
+      matchStrings: [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+registryUrl=(?<registryUrl>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?\\s*\\n\\s*[\\w.-]+:\\s*[\"']?(?:\\S*?/releases/download/)?(?<currentValue>[^\\s\"'/]+)",
+      ],
+    },
+    {
+      customType: "regex",
+      description: "Operator images inside hand-vendored bundles that have no generator yet",
+      managerFilePatterns: [
+        "/^gitops/apps/dragonfly/upstream/dragonfly-operator\\.yaml$/",
+        "/^gitops/apps/powerdns-operator/upstream/bundle\\.yaml$/",
+        "/^gitops/apps/kubipam/upstream/bundle\\.yaml$/",
+      ],
+      matchStrings: [
+        "image: (?<depName>docker\\.dragonflydb\\.io/dragonflydb/operator|ghcr\\.io/orange-opensource/powerdns-operator|gcr\\.io/aamoyel/kubipam):(?<currentValue>\\S+)",
+      ],
+      datasourceTemplate: "docker",
+    },
+  ],
+  packageRules: [
+    {
+      description: "npins pins: refresh the pin and regenerate the upstream bundle in the same PR",
+      matchFileNames: ["npins/sources.json"],
+      addLabels: ["npins"],
+      postUpgradeTasks: {
+        commands: [
+          "devenv shell -- ./scripts/renovate-post-upgrade.sh {{{depName}}} {{{newValue}}}",
+        ],
+        fileFilters: ["**/*"],
+        executionMode: "update",
+      },
+    },
+    {
+      description: "Branch-tracking pins move every commit: batch them weekly",
+      matchFileNames: ["npins/sources.json"],
+      matchDatasources: ["git-refs"],
+      schedule: ["before 6am on monday"],
+    },
+    {
+      description: "kamaji only publishes edge-YY.M.P releases",
+      matchDepNames: ["kamaji"],
+      versioning: "regex:^edge-(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+    },
+    {
+      description: "kamaji git source + image tag are set by the npins post-upgrade step",
+      matchManagers: ["flux"],
+      matchDepNames: ["kamaji", "clastix/kamaji"],
+      enabled: false,
+    },
+    {
+      description: "HelmRelease values are handled by the flux manager",
+      matchManagers: ["kubernetes"],
+      matchFileNames: ["**/*helm*.{yaml,yml}"],
+      enabled: false,
+    },
+    {
+      description: "The vendored-bundle regexes must still see these files",
+      matchManagers: ["kubernetes"],
+      matchFileNames: [
+        "gitops/apps/{dragonfly,powerdns-operator,kubipam}/upstream/**",
+      ],
+      enabled: false,
+    },
+    {
+      description: "grafana-operator image tag is set by the npins post-upgrade step, not by the kustomize manager",
+      matchManagers: ["kustomize"],
+      matchPackageNames: ["ghcr.io/grafana/grafana-operator"],
+      enabled: false,
+    },
+    {
+      description: "Vendored operator bundles: image-only bumps leave CRDs/RBAC behind — only on explicit request from the dashboard",
+      matchPackageNames: [
+        "docker.dragonflydb.io/dragonflydb/operator",
+        "ghcr.io/orange-opensource/powerdns-operator",
+        "gcr.io/aamoyel/kubipam",
+      ],
+      dependencyDashboardApproval: true,
+      prBodyNotes: [
+        "⚠️ This operator is vendored as a static bundle. Regenerate its CRDs/RBAC from the matching upstream release instead of merging an image-only bump.",
+      ],
+    },
+    {
+      description: "konnectivity agent and server must stay on the same version",
+      matchDepNames: [
+        "registry.k8s.io/kas-network-proxy/proxy-agent",
+        "registry.k8s.io/kas-network-proxy/proxy-server",
+      ],
+      groupName: "konnectivity",
+    },
+    {
+      description: "PowerDNS workloads are pinned on purpose",
+      matchFileNames: ["gitops/apps/powerdns/**"],
+      enabled: false,
+    },
+    {
+      description: "Our own images: no release age wait",
+      matchPackageNames: ["zot.bealv.io/**"],
+      minimumReleaseAge: null,
+    },
+    {
+      description: "Renovate itself releases several times a day",
+      matchDepNames: ["renovate"],
+      schedule: ["before 6am on monday"],
+      minimumReleaseAge: null,
+    },
+    {
+      matchManagers: ["github-actions"],
+      groupName: "github actions",
+      schedule: ["before 6am on monday"],
+    },
+  ],
+}
