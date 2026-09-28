@@ -48,4 +48,3 @@ data:
         - dummy.{{ .Cluster.metadata.name }}.lan
       kind: Native
 ---
-

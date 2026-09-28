@@ -545,4 +545,3 @@ spec:
       serviceAccountName: powerdns-operator-controller-manager
       terminationGracePeriodSeconds: 10
 ---
-

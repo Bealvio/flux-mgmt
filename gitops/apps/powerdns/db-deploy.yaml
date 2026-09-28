@@ -45,4 +45,3 @@ spec:
           persistentVolumeClaim:
             claimName: powerdns-db
 ---
-
