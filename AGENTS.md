@@ -136,6 +136,16 @@ Adopted from RPCU/argus. `gitops/apps/ballast` (operator HelmRelease, webhook po
 - `MutatingAdmissionPolicy` is beta/off in 1.34: `--feature-gates=MutatingAdmissionPolicy=true` + `--runtime-config=admissionregistration.k8s.io/v1beta1=true` are set in the `KamajiControlPlaneTemplate`. Only valid while every cluster of the class is ≥ 1.34; drop them and move the policy to `admissionregistration.k8s.io/v1` at ≥ 1.36.
 - Kill switch: `kubectl -n ballast-system create configmap ballast-kill-switch`.
 
+## Metrics: Mimir
+
+Adapted from RPCU/argus. `gitops/apps/mimir` (Kustomizations `mimir-bucket` then `mimir`) runs `mimir-distributed` on mgmt: 1 replica per component, no Kafka, no ruler or alertmanager. Blocks go to bucket `mimir` on minio-clusters and are kept 15 days.
+
+- The bucket, policy and user are provider-minio MRs (`deletionPolicy: Orphan`). The user's keys are written to Secret `monitoring/mimir-s3`, so nothing is seeded by hand. The bucket and policy sit in a separate Kustomization because the provider's webhook rejects the user until the policy exists in MinIO.
+- Senders: mgmt's Prometheus pushes to `http://mimir-gateway.monitoring.svc/api/v1/push` (patch in `gitops/kustomizations/monitoring.yaml`). Children push to `https://mimir.bealv-mgmt.lan/api/v1/push` (patch in the Sveltos `monitoring` profile). Both drop the raw API server/etcd histogram buckets (about half of mgmt's ~390k series); their recording rules are still sent. The `cluster` external label tells clusters apart.
+- Alerting stays in each cluster's Prometheus/Alertmanager. `PrometheusRemoteStorageFailures` / `PrometheusRemoteWriteBehind` fire if Mimir stops accepting writes.
+- Grafana: datasource `mimir` (mgmt: `monitoring-mgmt/mimir-datasource.yaml`; bealv: in Bealvio/bealv). Pick it in a dashboard's `datasource` dropdown, then choose the `cluster`.
+- Storage must be S3, not filesystem: with separate ingester, compactor and store-gateway pods, the compactor never sees the blocks, so retention never applies.
+
 ## Descheduler
 
 `gitops/apps/descheduler` (kubernetes-sigs descheduler chart, Deployment mode, every 30m) runs on mgmt (Flux Kustomization `descheduler`) and on children labelled `descheduler: "true"` (Sveltos `descheduler` profile). It is there to rebalance after a node reboot/drain and to fix broken affinity/taint/spread placement. The policy is deliberately conservative:

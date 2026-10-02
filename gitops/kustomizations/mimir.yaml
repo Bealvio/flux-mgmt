@@ -1,0 +1,31 @@
+# Bucket + policy first: provider-minio only accepts the user once the policy
+# exists in MinIO.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mimir-bucket
+  namespace: flux-system
+spec:
+  interval: 30m
+  path: ./gitops/apps/mimir/bucket
+  prune: true
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: infra
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mimir
+  namespace: flux-system
+spec:
+  interval: 30m
+  path: ./gitops/apps/mimir
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: infra
+  dependsOn:
+    - name: mimir-bucket

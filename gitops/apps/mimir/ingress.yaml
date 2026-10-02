@@ -1,0 +1,27 @@
+# Entry point for the child clusters' remote_write
+# (https://mimir.bealv-mgmt.lan/api/v1/push) and for Grafanas outside mgmt
+# (https://mimir.bealv-mgmt.lan/prometheus). mgmt itself uses the in-cluster
+# Service mimir-gateway.monitoring.svc.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mimir
+  namespace: monitoring
+  annotations:
+    cert-manager.io/cluster-issuer: bealv-mgmt
+spec:
+  rules:
+    - host: "mimir.bealv-mgmt.lan"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mimir-gateway
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - "mimir.bealv-mgmt.lan"
+      secretName: mimir-tls
