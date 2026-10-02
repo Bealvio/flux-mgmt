@@ -4,7 +4,7 @@ metadata:
   name: kamaji-upstream
   namespace: flux-system
 spec:
-  interval: 5m
+  interval: 30m
   path: ./gitops/apps/kamaji/upstream
   prune: true
   sourceRef:
@@ -17,7 +17,7 @@ metadata:
   name: kamaji-setup
   namespace: flux-system
 spec:
-  interval: 2m
+  interval: 10m
   path: ./gitops/apps/kamaji/setup
   prune: true
   sourceRef:

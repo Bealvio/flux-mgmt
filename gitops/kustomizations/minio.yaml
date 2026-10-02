@@ -4,7 +4,7 @@ metadata:
   name: minio-secrets
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/minio/secrets
   prune: true
   sourceRef:
@@ -19,7 +19,7 @@ metadata:
   name: minio
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/minio
   prune: true
   sourceRef:

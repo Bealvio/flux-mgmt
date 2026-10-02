@@ -4,7 +4,7 @@ metadata:
   name: powerdns-operator-secrets
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/powerdns-operator/secrets
   prune: true
   sourceRef:
@@ -19,7 +19,7 @@ metadata:
   name: powerdns-operator
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/powerdns-operator
   prune: true
   sourceRef:

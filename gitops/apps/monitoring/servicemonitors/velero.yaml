@@ -11,5 +11,5 @@ spec:
       - velero
   endpoints:
     - port: http-monitoring
-      interval: 15s
+      interval: 30s
       path: /metrics

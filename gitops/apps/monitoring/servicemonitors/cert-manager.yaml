@@ -11,5 +11,5 @@ spec:
       - cert-manager
   endpoints:
     - port: http-metrics
-      interval: 15s
+      interval: 30s
       path: /metrics

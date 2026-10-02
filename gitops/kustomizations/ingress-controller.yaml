@@ -4,7 +4,7 @@ metadata:
   name: ingress-controller
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/ingress-controller
   prune: true
   sourceRef:

@@ -159,7 +159,7 @@ let
       instanceSelector:
         matchLabels:
           dashboards: 'grafana'
-      resyncPeriod: 1m
+      resyncPeriod: 10m
       datasource:
         name: prometheus
         type: prometheus
@@ -168,7 +168,7 @@ let
         isDefault: true
         jsonData:
           'tlsSkipVerify': true
-          'timeInterval': '5s'
+          'timeInterval': '30s'
     ---
     apiVersion: grafana.integreatly.org/v1beta1
     kind: GrafanaDatasource
@@ -178,7 +178,7 @@ let
       instanceSelector:
         matchLabels:
           alertmanager-default: 'true'
-      resyncPeriod: 1m
+      resyncPeriod: 10m
       datasource:
         name: alertmanager
         type: alertmanager
@@ -187,7 +187,7 @@ let
         jsonData:
           implementation: prometheus
           tlsSkipVerify: true
-          timeInterval: '5s'
+          timeInterval: '30s'
         isDefault: true
   '';
   # The function to generate the GrafanaDashboard YAML from the configMap name
@@ -201,7 +201,7 @@ let
       instanceSelector:
         matchLabels:
           dashboards: "grafana"
-      resyncPeriod: 1m
+      resyncPeriod: 10m
       configMapRef:
         name: ${configMapName}
         key: ${lib.strings.replaceStrings [ "grafana-dashboard-" ] [ "" ] configMapName}.json

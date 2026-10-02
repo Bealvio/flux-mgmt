@@ -28,7 +28,7 @@ data:
       name: monitoring-crds
       namespace: flux-system
     spec:
-      interval: 1m
+      interval: 30m
       path: ./gitops/apps/monitoring/upstream/kube-prometheus/crds
       prune: true
       sourceRef:
@@ -42,7 +42,7 @@ data:
       name: monitoring
       namespace: flux-system
     spec:
-      interval: 1m
+      interval: 10m
       path: ./gitops/apps/monitoring
       prune: true
       sourceRef:
@@ -82,5 +82,5 @@ data:
             spec:
               alertmanagerConfiguration:
                 name: main
-              replicas: 3
+              replicas: 1
               externalUrl: https://alertmanager.{{ .Cluster.metadata.name }}.lan
