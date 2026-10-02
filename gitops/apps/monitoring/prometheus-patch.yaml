@@ -13,7 +13,9 @@ spec:
       memory: 1500Mi
     limits:
       cpu: 1000m
-      memory: 1500Mi
+      # mgmt runs at ~1.4Gi (390k series, mostly API server histograms) and
+      # remote_write adds its own buffers.
+      memory: 3Gi
   storage:
     volumeClaimTemplate:
       spec:
