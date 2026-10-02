@@ -129,9 +129,9 @@
       schedule: ["before 6am on monday"],
     },
     {
-      description: "Cluster API core: one minor at a time. The Kamaji provider (v0.19, v1beta1 contract) relies on CAPI's temporary v1beta1-contract compatibility, scheduled for removal: check it before each minor bump",
+      description: "Cluster API core: one minor at a time, bealv paused (see AGENTS.md); before each bump check CRD storedVersions vs the new served versions and provider contract labels",
       matchDepNames: ["kubernetes-sigs/cluster-api"],
-      allowedVersions: "<1.13.0",
+      allowedVersions: "<1.14.0",
     },
     {
       description: "kamaji only publishes edge releases: edge-YY.M.P until 2026-03, YY.M.P-edge since",

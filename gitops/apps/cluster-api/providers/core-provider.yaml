@@ -19,6 +19,6 @@ metadata:
   namespace: capi-system
 spec:
   # renovate: datasource=github-releases depName=kubernetes-sigs/cluster-api
-  version: v1.12.11
+  version: v1.13.6
   configSecret:
     name: capi-vars
