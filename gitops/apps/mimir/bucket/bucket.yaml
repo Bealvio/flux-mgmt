@@ -1,0 +1,26 @@
+# Mimir's object store: bucket `mimir` on minio-clusters (the MinIO that also
+# holds the child clusters' Velero backups, ~85Gi free on 2026-10-02).
+# The `mimir` Kustomization (../user.yaml) then creates a user limited to this
+# bucket; provider-minio writes its keys to Secret monitoring/mimir-s3 (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY),
+# which Mimir reads through global.extraEnvFrom. No key is ever written by hand.
+# deletionPolicy Orphan: removing these manifests never deletes the metrics.
+apiVersion: minio.crossplane.io/v1
+kind: Bucket
+metadata:
+  name: mimir
+spec:
+  deletionPolicy: Orphan
+  forProvider: {}
+  providerConfigRef:
+    name: provider-config-clusters
+---
+apiVersion: minio.crossplane.io/v1
+kind: Policy
+metadata:
+  name: mimir
+spec:
+  deletionPolicy: Orphan
+  forProvider:
+    allowBucket: mimir
+  providerConfigRef:
+    name: provider-config-clusters

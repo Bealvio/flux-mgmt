@@ -1,0 +1,186 @@
+# Grafana Mimir: long-term, multi-cluster metrics store (adapted from
+# RPCU/argus infrastructure/mimir). Every cluster's Prometheus keeps alerting
+# locally and remote_writes to it:
+#   - mgmt:  http://mimir-gateway.monitoring.svc/api/v1/push
+#            (gitops/kustomizations/monitoring.yaml patch)
+#   - children: https://mimir.bealv-mgmt.lan/api/v1/push (Sveltos `monitoring`
+#            profile patch), with the `cluster` external label telling them apart.
+# Grafanas query http://mimir-gateway.monitoring.svc/prometheus (mgmt) or
+# https://mimir.bealv-mgmt.lan/prometheus (bealv).
+#
+# Sized for 2 small clusters on 10 GB mgmt nodes: 1 replica per component, no
+# zone awareness, no Kafka ingest path, no ruler/alertmanager (alerting stays in
+# each cluster's Prometheus/Alertmanager). Blocks go to the shared S3 bucket
+# (bucket.yaml); filesystem storage does not work with separate ingester /
+# compactor / store-gateway pods (see argus: the compactor never sees the
+# blocks, so retention never applies and the ingester PVC fills up).
+#
+# Senders drop the raw API server / etcd histogram buckets (half of mgmt's
+# series) before writing; their recording rules still arrive.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mimir
+  namespace: monitoring
+spec:
+  interval: 30m
+  timeout: 15m
+  chart:
+    spec:
+      chart: mimir-distributed
+      version: 6.2.0
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+  install:
+    # The mimir-s3 Secret appears once provider-minio has created the user.
+    remediation:
+      retries: 5
+  values:
+    global:
+      clusterDomain: "bealv-mgmt.local."
+      dnsService: kube-dns
+      dnsNamespace: kube-system
+      extraEnvFrom:
+        - secretRef:
+            name: mimir-s3
+
+    # Chart 6.x enables the experimental Kafka ingest path by default.
+    kafka:
+      enabled: false
+
+    mimir:
+      structuredConfig:
+        multitenancy_enabled: false
+        ingest_storage:
+          enabled: false
+        ingester:
+          # Required with ingest_storage disabled (chart 6.x turns it off).
+          push_grpc_method_enabled: true
+          ring:
+            replication_factor: 1
+            unregister_on_shutdown: true
+        store_gateway:
+          sharding_ring:
+            replication_factor: 1
+        limits:
+          # Guard rail, not a target: ~250k series expected after the
+          # senders' drops. Enforced on the ingester's in-memory series, which
+          # spike while a sender replays its WAL.
+          max_global_series_per_user: 1000000
+          ingestion_rate: 50000
+          ingestion_burst_size: 500000
+          compactor_blocks_retention_period: 15d
+        common:
+          storage:
+            backend: s3
+            s3:
+              endpoint: minio-clusters.minio-clusters.svc:9000
+              bucket_name: mimir
+              access_key_id: ${AWS_ACCESS_KEY_ID}
+              secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+              insecure: true
+              bucket_lookup_type: path
+
+    ingester:
+      replicas: 1
+      zoneAwareReplication:
+        enabled: false
+      persistentVolume:
+        enabled: true
+        # Head + WAL only; blocks are shipped to S3.
+        size: 10Gi
+      resources:
+        requests:
+          cpu: 100m
+          memory: 1536Mi
+        limits:
+          memory: 4Gi
+
+    distributor:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 512Mi
+
+    querier:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 20m
+          memory: 128Mi
+        limits:
+          memory: 1Gi
+
+    query_frontend:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 512Mi
+
+    # Must stay enabled: chart 6.x always points the frontend and queriers at
+    # the scheduler Service, so disabling it hangs every query.
+    query_scheduler:
+      enabled: true
+      replicas: 1
+      resources:
+        requests:
+          cpu: 5m
+          memory: 32Mi
+        limits:
+          memory: 256Mi
+
+    store_gateway:
+      replicas: 1
+      zoneAwareReplication:
+        enabled: false
+      persistentVolume:
+        enabled: true
+        size: 5Gi
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 768Mi
+
+    compactor:
+      replicas: 1
+      persistentVolume:
+        enabled: true
+        # Scratch space to merge blocks downloaded from S3.
+        size: 10Gi
+      resources:
+        requests:
+          cpu: 50m
+          memory: 160Mi
+        limits:
+          memory: 1600Mi
+
+    ruler:
+      enabled: false
+    alertmanager:
+      enabled: false
+    overrides_exporter:
+      enabled: false
+    minio:
+      enabled: false
+    rollout_operator:
+      enabled: false
+
+    # Single entry point for writes (/api/v1/push) and reads (/prometheus).
+    gateway:
+      enabledNonEnterprise: true
+      replicas: 1
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 128Mi

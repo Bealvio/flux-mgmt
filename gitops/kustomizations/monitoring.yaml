@@ -25,6 +25,33 @@ spec:
     name: infra
   dependsOn:
     - name: monitoring-crds
+  patches:
+    # Ship metrics to Mimir (gitops/apps/mimir). Children get the same
+    # remote_write through the Sveltos `monitoring` profile, with their URL.
+    - patch: |-
+        apiVersion: monitoring.coreos.com/v1
+        kind: Prometheus
+        metadata:
+          name: k8s
+        spec:
+          remoteWrite:
+            - url: http://mimir-gateway.monitoring.svc/api/v1/push
+              # Raw API server / etcd histogram buckets are half of mgmt's
+              # series; their recording rules (used by the dashboards and SLO
+              # alerts) are still sent.
+              writeRelabelConfigs:
+                - sourceLabels: [__name__]
+                  regex: (etcd_request_duration_seconds|apiserver_request_duration_seconds|apiserver_request_sli_duration_seconds|apiserver_watch_cache_read_wait_seconds|apiserver_watch_list_duration_seconds|apiserver_watch_events_sizes|apiserver_response_sizes|apiserver_request_body_size_bytes)_bucket|kubernetes_feature_enabled
+                  action: drop
+              # Bounded queues: if Mimir is down, remote_write falls behind
+              # instead of growing Prometheus' memory.
+              queueConfig:
+                capacity: 10000
+                maxShards: 10
+                maxSamplesPerSend: 2000
+      target:
+        kind: Prometheus
+        name: k8s
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization

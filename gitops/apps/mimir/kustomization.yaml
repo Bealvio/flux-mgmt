@@ -1,0 +1,5 @@
+resources:
+  - user.yaml
+  - helmrepo.yaml
+  - helmrelease.yaml
+  - ingress.yaml

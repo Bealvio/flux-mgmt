@@ -1,0 +1,17 @@
+# MinIO user for Mimir, limited to bucket `mimir` (bucket/). Its keys land in
+# Secret monitoring/mimir-s3. The provider's webhook rejects the user until the
+# policy exists in MinIO, hence the separate `mimir-bucket` Kustomization.
+apiVersion: minio.crossplane.io/v1
+kind: User
+metadata:
+  name: mimir
+spec:
+  deletionPolicy: Orphan
+  forProvider:
+    policies:
+      - mimir
+  providerConfigRef:
+    name: provider-config-clusters
+  writeConnectionSecretToRef:
+    name: mimir-s3
+    namespace: monitoring

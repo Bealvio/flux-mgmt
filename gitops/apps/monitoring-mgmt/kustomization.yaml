@@ -2,6 +2,7 @@ resources:
   - alertmanager-config.yaml
   - secrets.yaml
   - ing.yaml
+  - mimir-datasource.yaml
 transformers:
   - |-
     apiVersion: builtin
