@@ -146,7 +146,7 @@ State (2026-10-02): CAPI core + kubeadm bootstrap v1.12.11, CAPMOX v0.9.1 (templ
 - Before a provider bump, compare the live webhook configurations with the _old_ release manifest: Helm can leave stale webhooks behind (Kamaji 26.x upgrade left `vdatastore.kb.io` → DataStore never Ready, tenant control planes unreconciled).
 - CAPI picks up edits of ClusterClass templates only on its periodic resync (up to ~10 min).
 - Renovate caps: Kamaji provider `<0.20` (v0.20+ = CAPI v1beta2 contract, no longer reconciles bealv without CLASTIX's paid conversion), CAPI core one minor at a time (`<1.13`).
-- **Deadline:** CAPI's compatibility for `v1beta1`-contract providers (the Kamaji provider ≤ v0.19) is scheduled for removal (CAPI 1.13/1.14). Plan bealv's Kamaji provider migration to v0.20+ before then.
+- Kamaji provider v0.19 → v0.21 (v1beta2 contract) was done without CLASTIX's paid conversion: KamajiControlPlane(Template) `v1alpha2` spec is a strict superset of `v1alpha1`, so a storage-version migration is enough. With bealv paused: transitional CRDs serving both versions (`v1alpha2` storage, conversion `None`), `kubectl replace` each object as `v1alpha2` (same UID: the TenantControlPlane is owned by the KCP's UID, never delete/recreate it), set CRD `status.storedVersions` to `["v1alpha2"]`, then bump the provider and the git refs. Rehearsed on a local 1.34 apiserver first.
 
 ## Conventions
 
