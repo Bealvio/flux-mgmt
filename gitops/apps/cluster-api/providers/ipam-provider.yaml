@@ -10,7 +10,7 @@ metadata:
   namespace: capi-ipam-in-cluster-system
 spec:
   # renovate: datasource=github-releases depName=kubernetes-sigs/cluster-api-ipam-provider-in-cluster
-  version: v1.0.3
+  version: v1.1.1
   fetchConfig:
     # renovate: datasource=github-releases depName=kubernetes-sigs/cluster-api-ipam-provider-in-cluster
-    url: https://github.com/kubernetes-sigs/cluster-api-ipam-provider-in-cluster/releases/download/v1.0.3/ipam-components.yaml
+    url: https://github.com/kubernetes-sigs/cluster-api-ipam-provider-in-cluster/releases/download/v1.1.1/ipam-components.yaml
