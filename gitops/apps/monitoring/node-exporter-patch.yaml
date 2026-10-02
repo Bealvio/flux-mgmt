@@ -1,0 +1,17 @@
+# kube-rbac-proxy generates a self-signed cert at startup. With the upstream
+# 20m CPU limit it stays throttled for minutes after a node reboot and never
+# listens on :9100, so node metrics (and `kubectl top nodes`) go missing.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  namespace: monitoring
+spec:
+  template:
+    spec:
+      containers:
+        - name: kube-rbac-proxy
+          resources:
+            limits:
+              cpu: 200m
+              memory: 64Mi

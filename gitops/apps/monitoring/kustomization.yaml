@@ -21,6 +21,10 @@ patches:
     target:
       kind: Deployment
       name: blackbox-exporter
+  - path: node-exporter-patch.yaml
+    target:
+      kind: DaemonSet
+      name: node-exporter
   - path: kubestatemetrics-patch.yaml
     target:
       kind: Deployment
