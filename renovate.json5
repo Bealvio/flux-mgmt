@@ -129,6 +129,11 @@
       schedule: ["before 6am on monday"],
     },
     {
+      description: "CAPMOX v0.9 needs Cluster API 1.12 (we run 1.11): stay on v0.8.x until CAPI core is upgraded",
+      matchDepNames: ["ionos-cloud/cluster-api-provider-proxmox"],
+      allowedVersions: "<0.9.0",
+    },
+    {
       description: "Kamaji CAPI provider >= v0.20 moved to the CAPI v1beta2 contract and no longer reconciles clusters created before it (conversion only in CLASTIX's paid stable channel): stay on v0.19.x until bealv's control plane is migrated",
       matchDepNames: ["clastix/cluster-api-control-plane-provider-kamaji"],
       allowedVersions: "<0.20.0",

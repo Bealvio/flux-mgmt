@@ -10,10 +10,10 @@ metadata:
   namespace: capmox-system
 spec:
   # renovate: datasource=github-releases depName=ionos-cloud/cluster-api-provider-proxmox
-  version: v0.7.5
+  version: v0.8.2
   configSecret:
     name: bealv-proxmox
     namespace: capmox-system
   fetchConfig:
     # renovate: datasource=github-releases depName=ionos-cloud/cluster-api-provider-proxmox
-    url: https://github.com/ionos-cloud/cluster-api-provider-proxmox/releases/download/v0.7.5/infrastructure-components.yaml
+    url: https://github.com/ionos-cloud/cluster-api-provider-proxmox/releases/download/v0.8.2/infrastructure-components.yaml
