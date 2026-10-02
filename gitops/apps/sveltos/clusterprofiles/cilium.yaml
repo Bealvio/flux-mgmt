@@ -4,6 +4,7 @@ metadata:
   name: cilium-bootstrap
   namespace: projectsveltos
 spec:
+  stopMatchingBehavior: LeavePolicies
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:

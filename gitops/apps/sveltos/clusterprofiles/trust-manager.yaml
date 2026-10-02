@@ -3,6 +3,7 @@ kind: ClusterProfile
 metadata:
   name: trust-manager
 spec:
+  stopMatchingBehavior: LeavePolicies
   syncMode: ContinuousWithDriftDetection
   reloader: true
   clusterSelector:

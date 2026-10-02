@@ -3,6 +3,7 @@ kind: ClusterProfile
 metadata:
   name: cert-manager
 spec:
+  stopMatchingBehavior: LeavePolicies
   syncMode: ContinuousWithDriftDetection
   reloader: true
   clusterSelector:
@@ -19,6 +20,7 @@ kind: ClusterProfile
 metadata:
   name: cert-manager-generic
 spec:
+  stopMatchingBehavior: LeavePolicies
   syncMode: ContinuousWithDriftDetection
   reloader: true
   clusterSelector:

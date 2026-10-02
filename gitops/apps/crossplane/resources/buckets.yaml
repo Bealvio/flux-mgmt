@@ -3,6 +3,8 @@ kind: Bucket
 metadata:
   name: velero-mgmt
 spec:
+  # Orphan: deleting this object must never delete mgmt's backups.
+  deletionPolicy: Orphan
   forProvider: {}
   providerConfigRef:
     name: provider-config

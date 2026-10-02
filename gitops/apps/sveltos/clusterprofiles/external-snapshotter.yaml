@@ -3,6 +3,7 @@ kind: ClusterProfile
 metadata:
   name: external-snapshotter
 spec:
+  stopMatchingBehavior: LeavePolicies
   syncMode: ContinuousWithDriftDetection
   reloader: true
   clusterSelector:
