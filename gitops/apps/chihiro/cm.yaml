@@ -14,6 +14,7 @@ data:
           name: PLACEHOLDER_NAME
           namespace: capi-system
           labels:
+            ballast: "false"
             capsule: "true"
             cert-manager: "true"
             cert-manager-setup: 'generic'
