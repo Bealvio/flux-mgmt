@@ -72,6 +72,24 @@ data:
               replicas: 1
               externalLabels:
                 cluster: '{{ .Cluster.metadata.name }}'
+              # Ship metrics to Mimir on mgmt (gitops/apps/mimir). The CA
+              # comes from the trust-manager bundle already in this namespace.
+              # Same drop list as mgmt (gitops/kustomizations/monitoring.yaml).
+              remoteWrite:
+                - url: https://mimir.bealv-mgmt.lan/api/v1/push
+                  tlsConfig:
+                    ca:
+                      secret:
+                        name: bealv-mgmt-bundle
+                        key: ca.crt
+                  writeRelabelConfigs:
+                    - sourceLabels: [__name__]
+                      regex: (etcd_request_duration_seconds|apiserver_request_duration_seconds|apiserver_request_sli_duration_seconds|apiserver_watch_cache_read_wait_seconds|apiserver_watch_list_duration_seconds|apiserver_watch_events_sizes|apiserver_response_sizes|apiserver_request_body_size_bytes)_bucket|kubernetes_feature_enabled
+                      action: drop
+                  queueConfig:
+                    capacity: 10000
+                    maxShards: 10
+                    maxSamplesPerSend: 2000
           target:
             kind: Prometheus
             name: k8s
