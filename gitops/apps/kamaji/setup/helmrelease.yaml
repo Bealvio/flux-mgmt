@@ -24,7 +24,7 @@ spec:
     image:
       repository: clastix/kamaji
       pullPolicy: Always
-      tag: edge-25.11.2
+      tag: 26.9.5-edge
     kamaji-etcd:
       deploy: true
       fullnameOverride: kamaji-etcd
@@ -35,3 +35,18 @@ spec:
       datastore:
         enabled: true
         name: default
+        # Keep the per-member endpoints (the etcd server cert predates the
+        # -client Service; selfSigned certs are only generated at install).
+        headless: true
+      # Kamaji >= 26.x flips the bundled kamaji-etcd to cert-manager certs,
+      # a new CA, a ServiceMonitor and a 15s liveness probe. Pin the 0.11
+      # behaviour: a new CA would cut every tenant apiserver off its datastore,
+      # and these values keep the etcd pod template identical (no restart).
+      selfSignedCertificates:
+        enabled: true
+      certManager:
+        enabled: false
+      serviceMonitor:
+        enabled: false
+      livenessProbe: null
+      securityContext: null

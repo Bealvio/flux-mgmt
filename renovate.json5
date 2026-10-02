@@ -129,9 +129,9 @@
       schedule: ["before 6am on monday"],
     },
     {
-      description: "kamaji only publishes edge-YY.M.P releases",
+      description: "kamaji only publishes edge releases: edge-YY.M.P until 2026-03, YY.M.P-edge since",
       matchDepNames: ["kamaji"],
-      versioning: "regex:^edge-(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+      versioning: "regex:^(?:edge-)?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-edge)?$",
     },
     {
       description: "kamaji git source + image tag are set by the npins post-upgrade step",
