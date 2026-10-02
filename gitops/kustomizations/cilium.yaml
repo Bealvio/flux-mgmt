@@ -4,7 +4,7 @@ metadata:
   name: cilium
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/cilium
   prune: true
   sourceRef:

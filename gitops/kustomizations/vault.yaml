@@ -4,7 +4,7 @@ metadata:
   name: vault
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/vault
   prune: false
   sourceRef:

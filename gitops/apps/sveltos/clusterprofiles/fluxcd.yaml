@@ -182,7 +182,7 @@ data:
       name: apps
       namespace: flux-system
     spec:
-      interval: 2m
+      interval: 10m
       path: ./gitops/kustomizations
       prune: true
       sourceRef:

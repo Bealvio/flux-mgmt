@@ -4,7 +4,7 @@ metadata:
   name: proxmox-csi-secrets
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/proxmox-csi/secrets
   prune: false
   sourceRef:
@@ -19,7 +19,7 @@ metadata:
   name: proxmox-csi
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/proxmox-csi
   prune: false
   sourceRef:

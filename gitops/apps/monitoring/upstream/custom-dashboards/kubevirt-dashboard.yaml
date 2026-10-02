@@ -7,7 +7,7 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: grafana
-  resyncPeriod: 1m
+  resyncPeriod: 10m
   configMapRef:
     name: grafana-dashboard-kubevirt-control-plane
     key: kubevirt-control-plane.json

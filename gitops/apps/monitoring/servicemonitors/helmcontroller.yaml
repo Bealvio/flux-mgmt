@@ -4,7 +4,7 @@ metadata:
   name: helmcontroller
 spec:
   endpoints:
-    - interval: 15s
+    - interval: 30s
       port: http-prom
       scrapeTimeout: 10s
       path: /metrics

@@ -4,7 +4,7 @@ metadata:
   name: cluster-api-operator
   namespace: flux-system
 spec:
-  interval: 10m
+  interval: 30m
   path: ./gitops/apps/cluster-api/upstream
   prune: true
   sourceRef:
@@ -17,7 +17,7 @@ metadata:
   name: cluster-api-providers
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/cluster-api/providers
   prune: true
   wait: true
@@ -33,7 +33,7 @@ metadata:
   name: cluster-api-setup
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/cluster-api/setup
   prune: true
   wait: true

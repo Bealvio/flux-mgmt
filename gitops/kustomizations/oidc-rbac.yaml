@@ -4,7 +4,7 @@ metadata:
   name: oidc-rbac
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/oidc-rbac
   prune: true
   sourceRef:

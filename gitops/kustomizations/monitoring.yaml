@@ -4,7 +4,7 @@ metadata:
   name: monitoring-crds
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 30m
   path: ./gitops/apps/monitoring/upstream/kube-prometheus/crds
   prune: true
   sourceRef:
@@ -17,7 +17,7 @@ metadata:
   name: monitoring
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/monitoring
   prune: true
   sourceRef:
@@ -32,7 +32,7 @@ metadata:
   name: monitoring-mgmt
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
   path: ./gitops/apps/monitoring-mgmt
   prune: true
   sourceRef:
