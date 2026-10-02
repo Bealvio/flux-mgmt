@@ -18,7 +18,7 @@ spec:
         prefix: 16
         metric: 100
 ---
-apiVersion: controlplane.cluster.x-k8s.io/v1alpha1
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha2
 kind: KamajiControlPlaneTemplate
 metadata:
   name: kamaji-proxmox
