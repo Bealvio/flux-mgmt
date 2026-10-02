@@ -18,6 +18,7 @@ kind: EventTrigger
 metadata:
   name: cilium-cluster-eventtrigger
 spec:
+  stopMatchingBehavior: LeavePolicies
   sourceClusterSelector:
     matchLabels:
       type: mgmt
@@ -64,6 +65,7 @@ data:
     metadata:
       name: "lb-{{ .Resource.metadata.name }}-{{ .Resource.metadata.namespace }}"
     spec:
+      stopMatchingBehavior: LeavePolicies
       reloader: true
       syncMode: ContinuousWithDriftDetection
       clusterRefs:

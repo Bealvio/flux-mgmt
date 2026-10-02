@@ -3,6 +3,7 @@ kind: ClusterProfile
 metadata:
   name: proxmox-csi
 spec:
+  stopMatchingBehavior: LeavePolicies
   syncMode: ContinuousWithDriftDetection
   reloader: true
   clusterSelector:

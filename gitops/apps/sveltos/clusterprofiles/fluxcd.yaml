@@ -3,6 +3,7 @@ kind: ClusterProfile
 metadata:
   name: fluxcd
 spec:
+  stopMatchingBehavior: LeavePolicies
   reloader: true
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
@@ -19,6 +20,7 @@ kind: ClusterProfile
 metadata:
   name: fluxcd-conf
 spec:
+  stopMatchingBehavior: LeavePolicies
   reloader: true
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
@@ -114,6 +116,7 @@ kind: ClusterProfile
 metadata:
   name: fluxcdresources-conf
 spec:
+  stopMatchingBehavior: LeavePolicies
   reloader: true
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
@@ -182,6 +185,7 @@ data:
       name: apps
       namespace: flux-system
     spec:
+      deletionPolicy: Orphan
       interval: 10m
       path: ./gitops/kustomizations
       prune: true

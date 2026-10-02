@@ -16,6 +16,7 @@ kind: EventTrigger
 metadata:
   name: certvault-cluster-eventtrigger
 spec:
+  stopMatchingBehavior: LeavePolicies
   sourceClusterSelector:
     matchLabels:
       cert-manager: "true"
@@ -45,6 +46,7 @@ data:
     metadata:
       name: cert-manager-{{ $cluster.metadata.name }}
     spec:
+      deletionPolicy: Orphan
       forProvider:
         roleName: cert-manager-{{ $cluster.metadata.name }}
         tokenPolicies:
@@ -57,6 +59,7 @@ data:
     metadata:
       name: cert-manager-{{ $cluster.metadata.name }}
     spec:
+      deletionPolicy: Orphan
       forProvider:
         roleName: cert-manager-{{ $cluster.metadata.name }}
       writeConnectionSecretToRef:
@@ -70,6 +73,7 @@ data:
     metadata:
       name: cert-manager-{{ $cluster.metadata.name }}
     spec:
+      deletionPolicy: Orphan
       forProvider:
         name: cert-manager-{{ $cluster.metadata.name }}
         policy: |
@@ -87,6 +91,7 @@ data:
     metadata:
       name: {{ $cluster.metadata.name }}
     spec:
+      deletionPolicy: Orphan
       forProvider:
         name: {{ $cluster.metadata.name }}-dot-lan
         backend: pki-int
@@ -116,6 +121,7 @@ data:
     metadata:
       name: cert-manager-configs-{{ $cluster.metadata.name }}
     spec:
+      stopMatchingBehavior: LeavePolicies
       syncMode: ContinuousWithDriftDetection
       reloader: true
       clusterSelector:

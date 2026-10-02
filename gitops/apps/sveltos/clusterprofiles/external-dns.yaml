@@ -3,6 +3,7 @@ kind: ClusterProfile
 metadata:
   name: external-dns
 spec:
+  stopMatchingBehavior: LeavePolicies
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:

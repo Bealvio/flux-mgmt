@@ -15,6 +15,7 @@ kind: EventTrigger
 metadata:
   name: cert-manager-mgmt-eventtrigger
 spec:
+  stopMatchingBehavior: LeavePolicies
   sourceClusterSelector:
     matchLabels:
       type: mgmt

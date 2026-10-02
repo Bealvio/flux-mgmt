@@ -16,6 +16,7 @@ kind: EventTrigger
 metadata:
   name: minio-velero-cluster-eventtrigger
 spec:
+  stopMatchingBehavior: LeavePolicies
   sourceClusterSelector:
     matchLabels:
       type: mgmt
@@ -51,6 +52,7 @@ kind: ClusterProfile
 metadata:
   name: velero
 spec:
+  stopMatchingBehavior: LeavePolicies
   clusterSelector:
     matchLabels:
       velero: "true"
@@ -77,6 +79,7 @@ kind: ClusterProfile
 metadata:
   name: velero-secrets
 spec:
+  stopMatchingBehavior: LeavePolicies
   clusterSelector:
     matchLabels:
       velero: "true"

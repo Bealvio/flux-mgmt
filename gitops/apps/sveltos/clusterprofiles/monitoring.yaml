@@ -3,6 +3,7 @@ kind: ClusterProfile
 metadata:
   name: monitoring
 spec:
+  stopMatchingBehavior: LeavePolicies
   clusterSelector:
     matchLabels:
       monitoring: "true"
@@ -28,6 +29,7 @@ data:
       name: monitoring-crds
       namespace: flux-system
     spec:
+      deletionPolicy: Orphan
       interval: 30m
       path: ./gitops/apps/monitoring/upstream/kube-prometheus/crds
       prune: true
@@ -42,6 +44,7 @@ data:
       name: monitoring
       namespace: flux-system
     spec:
+      deletionPolicy: Orphan
       interval: 10m
       path: ./gitops/apps/monitoring
       prune: true
