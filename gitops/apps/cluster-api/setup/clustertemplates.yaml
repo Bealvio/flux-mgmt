@@ -1,4 +1,4 @@
-apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
 kind: ProxmoxClusterTemplate
 metadata:
   name: kamaji-proxmox
@@ -16,6 +16,7 @@ spec:
           - 2.2.2.2-2.2.2.2
         gateway: 1.1.1.1
         prefix: 16
+        metric: 100
 ---
 apiVersion: controlplane.cluster.x-k8s.io/v1alpha1
 kind: KamajiControlPlaneTemplate
@@ -175,7 +176,10 @@ spec:
         serviceType: LoadBalancer
       registry: registry.k8s.io
 ---
-apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+# v1alpha2 (CAPMOX >= v0.8): content is exactly what the v0.8 conversion
+# webhook produced from the former v1alpha1 template, incl. its defaults
+# (full, defaultIPv4/6, metric), so CAPI sees no change and rolls nothing.
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
 kind: ProxmoxMachineTemplate
 metadata:
   name: kamaji-proxmox
@@ -186,14 +190,18 @@ spec:
       checks:
         skipCloudInitStatus: true
       format: qcow2
+      full: true
       network:
-        default:
-          bridge: vmbr2
-          model: virtio
-          ipv4PoolRef:
-            apiGroup: ipam.cluster.x-k8s.io
-            kind: InClusterIPPool
-            name: proxmox-slave-reserved
+        networkDevices:
+          - name: net0
+            bridge: vmbr2
+            model: virtio
+            defaultIPv4: true
+            defaultIPv6: true
+            ipPoolRef:
+              - apiGroup: ipam.cluster.x-k8s.io
+                kind: InClusterIPPool
+                name: proxmox-slave-reserved
       sourceNode: proxmox-alv
       templateID: 102
 ---
