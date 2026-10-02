@@ -135,6 +135,19 @@ Adopted from RPCU/argus. `gitops/apps/ballast` (operator HelmRelease, webhook po
 - `MutatingAdmissionPolicy` is beta/off in 1.34: `--feature-gates=MutatingAdmissionPolicy=true` + `--runtime-config=admissionregistration.k8s.io/v1beta1=true` are set in the `KamajiControlPlaneTemplate`. Only valid while every cluster of the class is ≥ 1.34; drop them and move the policy to `admissionregistration.k8s.io/v1` at ≥ 1.36.
 - Kill switch: `kubectl -n ballast-system create configmap ballast-kill-switch`.
 
+## Upgrading CAPI / providers (bealv workers must not roll)
+
+State (2026-10-02): CAPI core + kubeadm bootstrap v1.12.11, CAPMOX v0.9.1 (templates `v1alpha2`), IPAM in-cluster v1.1.0, Kamaji provider v0.19.0, Kamaji 26.9.5-edge; ClusterClass and KubeadmConfigTemplate are CAPI `v1beta2`.
+
+- **Pause the cluster** for anything that can change how CAPI computes bealv's templates (provider API versions, CAPI core): `kubectl -n capi-system patch cluster bealv --type merge -p '{"spec":{"paused":true}}'`, wait for the `Paused` condition, unpause when verified.
+- **CAPI matches ClusterClass patch selectors on the exact `apiVersion`.** When a provider changes its storage version, move the templates, ClusterClass refs _and_ selectors together. A stale selector silently drops the `templateID` patches (997/996) and rolls the workers onto the base template 102.
+- **Migrate manifests by copying the stored object**, not by hand: read it back in the new version (`kubectl get <kind>.<version>.<group> ...`), then prove with a server-side dry-run (`--server-side --field-manager=kustomize-controller --dry-run=server`) that the result is identical to what is stored, and that base template + patch equals the cluster's current templates (`bealv-worker-*`).
+- Save `{generation, spec}` of bealv's KamajiControlPlane, MachineDeployments and worker templates before, and diff after unpausing; no change means no rollout.
+- Before a provider bump, compare the live webhook configurations with the _old_ release manifest: Helm can leave stale webhooks behind (Kamaji 26.x upgrade left `vdatastore.kb.io` → DataStore never Ready, tenant control planes unreconciled).
+- CAPI picks up edits of ClusterClass templates only on its periodic resync (up to ~10 min).
+- Renovate caps: Kamaji provider `<0.20` (v0.20+ = CAPI v1beta2 contract, no longer reconciles bealv without CLASTIX's paid conversion), CAPI core one minor at a time (`<1.13`).
+- **Deadline:** CAPI's compatibility for `v1beta1`-contract providers (the Kamaji provider ≤ v0.19) is scheduled for removal (CAPI 1.13/1.14). Plan bealv's Kamaji provider migration to v0.20+ before then.
+
 ## Conventions
 
 - GitHub only allows **rebase merges** (`gh pr merge --rebase`); branches are auto-deleted. `main` is unprotected.
