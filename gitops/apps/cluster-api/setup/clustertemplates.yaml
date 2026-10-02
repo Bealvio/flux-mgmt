@@ -62,6 +62,14 @@ spec:
       # matchLabelKeys scopes the spread to this cluster's pods of the same
       # rollout, so a surge rollout (maxSurge 100%) can still schedule.
       deployment:
+        # Replace one pod at a time without surge: a surge rollout starts a
+        # second set of apiservers (~1.85Gi each) next to the old ones, more
+        # than the 10 GB mgmt nodes have free. 2 of 3 replicas keep serving.
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxSurge: 0
+            maxUnavailable: 1
         topologySpreadConstraints:
           - maxSkew: 1
             topologyKey: kubernetes.io/hostname
