@@ -12,7 +12,17 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: velero
+  # CRDs come from the chart's crds/ directory, applied by Flux. The chart's
+  # own upgradeCRDs pre-upgrade Job is off: its ServiceAccount hook went
+  # missing and the Job blocked every upgrade (mgmt), and where it was off the
+  # CRDs were never upgraded at all (bealv: BackupRepository still required
+  # resticIdentifier, so every Velero 1.17 kopia file-system backup failed).
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
   values:
+    upgradeCRDs: false
     snapshotsEnabled: false
     deployNodeAgent: true
     nodeAgent:
