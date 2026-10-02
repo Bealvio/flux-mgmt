@@ -6,10 +6,7 @@ metadata:
 spec:
   interval: 30m
   path: ./gitops/apps/unsealer-operator
-  # Prune-safe handoff (one commit): the inventory still lists the Unseal of
-  # the old unsealer.amoyel.fr CRD, which no longer exists; pruning it fails
-  # with "no matches for kind". Re-enable once this revision is applied.
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: infra
