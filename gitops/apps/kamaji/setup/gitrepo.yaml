@@ -3,10 +3,10 @@ kind: GitRepository
 metadata:
   name: kamaji
 spec:
-  interval: 1m
+  interval: 1h
   url: https://github.com/clastix/kamaji.git
   ref:
-    tag: edge-25.9.5
+    tag: edge-25.11.2
   ignore: |
     # exclude all
     /*
