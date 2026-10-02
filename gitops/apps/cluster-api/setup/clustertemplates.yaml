@@ -37,16 +37,52 @@ spec:
           # clusters are >= 1.36, where the API is GA as admissionregistration/v1.
           - --feature-gates=MutatingAdmissionPolicy=true
           - --runtime-config=admissionregistration.k8s.io/v1beta1=true
+        # Requests so tenant control planes are not BestEffort (first evicted
+        # under node memory pressure). Sized from bealv (apiserver ~1.6Gi).
+        resources:
+          requests:
+            cpu: 250m
+            memory: 1536Mi
       scheduler:
         extraArgs:
           - --bind-address=0.0.0.0
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
       controllerManager:
         extraArgs:
           - --bind-address=0.0.0.0
+        resources:
+          requests:
+            cpu: 50m
+            memory: 192Mi
+      # One replica per mgmt node: with replicas > 1 a single node failure
+      # must not take a tenant API down (megumin incident, 2026-10-02).
+      # matchLabelKeys scopes the spread to this cluster's pods of the same
+      # rollout, so a surge rollout (maxSurge 100%) can still schedule.
+      deployment:
+        topologySpreadConstraints:
+          - maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: DoNotSchedule
+            labelSelector:
+              matchExpressions:
+                - key: kamaji.clastix.io/name
+                  operator: Exists
+            matchLabelKeys:
+              - kamaji.clastix.io/name
+              - pod-template-hash
       addons:
         coreDNS: {}
         konnectivity:
           agent:
+            # Detect a dead tunnel in ~80s instead of 1h (default): when the
+            # tenant LB IP moves between mgmt nodes, the agents' connections
+            # die silently and logs/metrics/webhooks time out until restarted.
+            # >= 30s: the server rejects more frequent pings (EnforcementPolicy).
+            extraArgs:
+              - --keepalive-time=60s
             image: registry.k8s.io/kas-network-proxy/proxy-agent
             tolerations:
               - key: CriticalAddonsOnly
@@ -56,6 +92,12 @@ spec:
           server:
             image: registry.k8s.io/kas-network-proxy/proxy-server
             port: 8132
+            extraArgs:
+              - --keepalive-time=60s
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
             # renovate: datasource=docker depName=registry.k8s.io/kas-network-proxy/proxy-server
             version: v0.28.6
       dataStoreName: default
