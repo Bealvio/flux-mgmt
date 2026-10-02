@@ -45,6 +45,60 @@ patches:
     target:
       kind: ConfigMap
       name: blackbox-exporter-configuration
+  # kube-prometheus dashboards that hid or lacked the `cluster` variable:
+  # use the multi-cluster copies from grafana-dashboards/generated (-mc).
+  - target:
+      kind: GrafanaDashboard
+      name: grafanadashboard-from-configmap-grafana-dashboard-nodes
+    patch: |-
+      - op: replace
+        path: /spec/configMapRef/name
+        value: grafana-dashboard-nodes-mc
+  - target:
+      kind: GrafanaDashboard
+      name: grafanadashboard-from-configmap-grafana-dashboard-node-cluster-rsrc-use
+    patch: |-
+      - op: replace
+        path: /spec/configMapRef/name
+        value: grafana-dashboard-node-cluster-rsrc-use-mc
+  - target:
+      kind: GrafanaDashboard
+      name: grafanadashboard-from-configmap-grafana-dashboard-node-rsrc-use
+    patch: |-
+      - op: replace
+        path: /spec/configMapRef/name
+        value: grafana-dashboard-node-rsrc-use-mc
+  - target:
+      kind: GrafanaDashboard
+      name: grafanadashboard-from-configmap-grafana-dashboard-alertmanager-overview
+    patch: |-
+      - op: replace
+        path: /spec/configMapRef/name
+        value: grafana-dashboard-alertmanager-overview-mc
+  - target:
+      kind: GrafanaDashboard
+      name: grafanadashboard-from-configmap-grafana-dashboard-grafana-overview
+    patch: |-
+      - op: replace
+        path: /spec/configMapRef/name
+        value: grafana-dashboard-grafana-overview-mc
+  # Mimir (all clusters) is the default datasource where it is defined
+  # (mgmt: monitoring-mgmt; bealv: Bealvio/bealv). The local Prometheus stays
+  # selectable in every dashboard's `datasource` dropdown.
+  - target:
+      kind: GrafanaDatasource
+      name: kube-prometheus
+    patch: |-
+      - op: replace
+        path: /spec/datasource/isDefault
+        value: false
+  - target:
+      kind: GrafanaDatasource
+      name: alertmanager
+    patch: |-
+      - op: replace
+        path: /spec/datasource/isDefault
+        value: false
 transformers:
   - |-
     apiVersion: builtin

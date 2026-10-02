@@ -1,6 +1,6 @@
-# Mimir (gitops/apps/mimir): every cluster's metrics, 15 days. Pick it in the
-# `datasource` dropdown of the kube-prometheus dashboards, then the `cluster`.
-# The local Prometheus stays the default (24h, mgmt only).
+# Mimir (gitops/apps/mimir): every cluster's metrics, 15 days. Default
+# datasource: dashboards open on it and the `cluster` variable picks the
+# cluster. The local Prometheus (24h, mgmt only) stays in the dropdown.
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
@@ -15,7 +15,7 @@ spec:
     type: prometheus
     access: proxy
     url: http://mimir-gateway.monitoring.svc/prometheus
-    isDefault: false
+    isDefault: true
     jsonData:
       prometheusType: Mimir
       timeInterval: 30s
