@@ -43,6 +43,25 @@ spec:
           requests:
             cpu: 250m
             memory: 1536Mi
+        # Kamaji's defaults (1s timeout, 3 failures, ~30s to start) killed
+        # all apiservers in a loop while etcd was slow (2026-10-02) and kept
+        # killing them during their cache warm-up. Up to 5 min to start,
+        # ~60s of real unresponsiveness before a restart. The provider only
+        # passes probes on when apiServer, controllerManager, scheduler and
+        # deployment probes are ALL set.
+        probes:
+          startup:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          liveness:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readiness:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
       scheduler:
         extraArgs:
           - --bind-address=0.0.0.0
@@ -50,6 +69,19 @@ spec:
           requests:
             cpu: 10m
             memory: 64Mi
+        probes:
+          startup:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          liveness:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readiness:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
       controllerManager:
         extraArgs:
           - --bind-address=0.0.0.0
@@ -57,11 +89,37 @@ spec:
           requests:
             cpu: 50m
             memory: 192Mi
+        probes:
+          startup:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          liveness:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readiness:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
       # One replica per mgmt node: with replicas > 1 a single node failure
       # must not take a tenant API down (megumin incident, 2026-10-02).
       # matchLabelKeys scopes the spread to this cluster's pods of the same
       # rollout, so a surge rollout (maxSurge 100%) can still schedule.
       deployment:
+        probes:
+          startup:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          liveness:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readiness:
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
         # Replace one pod at a time without surge: a surge rollout starts a
         # second set of apiservers (~1.85Gi each) next to the old ones, more
         # than the 10 GB mgmt nodes have free. 2 of 3 replicas keep serving.
