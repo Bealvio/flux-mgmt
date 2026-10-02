@@ -1,0 +1,13 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: coredns
+spec:
+  folder: administration
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  resyncPeriod: 10m
+  configMapRef:
+    name: grafana-dashboard-coredns
+    key: coredns.json

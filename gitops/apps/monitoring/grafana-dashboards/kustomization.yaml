@@ -1,2 +1,5 @@
+# generated/ is built by `devenv shell -- buildDashboards` (nix/grafana-dashboards.nix):
+# multi-cluster versions of the administration dashboards, plus kube-prometheus
+# dashboards that lacked a visible `cluster` variable. Don't hand-edit it.
 resources:
-  - administration-dashboards.yaml
+  - generated

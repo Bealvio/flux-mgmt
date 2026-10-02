@@ -40,6 +40,10 @@ in
     buildKubeProm.exec = buildInto + ''
       build_into gitops/apps/monitoring/upstream nix/kube-prometheus.nix
     '';
+    buildDashboards.description = "Build multi-cluster Grafana dashboards (cluster variable + Mimir)";
+    buildDashboards.exec = buildInto + ''
+      build_into gitops/apps/monitoring/grafana-dashboards/generated nix/grafana-dashboards.nix
+    '';
     buildSnapshotter.description = "Build external-snapshotter upstream manifests";
     buildSnapshotter.exec = buildInto + ''
       build_into gitops/apps/external-snapshotter/upstream nix/external-snapshotter.nix
@@ -87,6 +91,7 @@ in
     echo "Available build scripts:"
     echo ""
     echo "  buildKubeProm        - Build kube-prometheus upstream manifests"
+    echo "  buildDashboards      - Build multi-cluster Grafana dashboards"
     echo "  buildSnapshotter     - Build external-snapshotter upstream manifests"
     echo "  buildFlux <version>  - Build flux-operator upstream manifests"
     echo "  buildCertManager <version> - Build cert-manager upstream manifests"

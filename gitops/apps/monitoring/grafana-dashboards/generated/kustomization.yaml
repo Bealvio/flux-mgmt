@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - alertmanager-overview-mc-cm.yaml
+  - blackbox-exporter-cm.yaml
+  - blackbox-exporter.yaml
+  - cert-manager-cm.yaml
+  - cert-manager.yaml
+  - cluster-overview-cm.yaml
+  - cluster-overview.yaml
+  - contour-cm.yaml
+  - contour.yaml
+  - coredns-cm.yaml
+  - coredns.yaml
+  - flux-cluster-cm.yaml
+  - flux-cluster.yaml
+  - grafana-overview-mc-cm.yaml
+  - node-cluster-rsrc-use-mc-cm.yaml
+  - node-exporter-cm.yaml
+  - node-exporter.yaml
+  - node-rsrc-use-mc-cm.yaml
+  - nodes-mc-cm.yaml
