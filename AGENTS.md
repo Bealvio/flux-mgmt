@@ -38,7 +38,7 @@ devenv.nix          # dev shell + build scripts
 - `GitRepository/infra` → this repo, `main`, only `/bootstrap/fluxcd` and `/gitops` are included (see `ignore:` in `bootstrap/fluxcd/repo.yaml`).
 - `Kustomization/flux-system` → `bootstrap/fluxcd/setup` (FluxInstance).
 - `Kustomization/flux-operator` → `bootstrap/fluxcd/upstream`.
-- `Kustomization/apps` → `gitops/kustomizations` (interval 2m, prune). Each file there is a Kustomization for one app (interval 1m, usually `prune: true`, sometimes `healthChecks`/`dependsOn`).
+- `Kustomization/apps` → `gitops/kustomizations` (interval 10m, prune). Each file there is a Kustomization for one app (interval 10m, 30m for CRD/upstream bundles; usually `prune: true`, sometimes `healthChecks`/`dependsOn`). HelmReleases use 30m+. A new commit is still applied within ~1 min: the GitRepository polls every 1m and a new revision triggers the Kustomizations immediately; the interval only paces drift correction. Child clusters get the same (Sveltos `fluxcd` / `monitoring` templates).
 - Everything is namespace `flux-system`, secret `github-fluxcd-chan` for GitHub access.
 
 ### What reaches the child clusters (important for blast radius)
@@ -52,6 +52,7 @@ Sveltos ClusterProfiles in `gitops/apps/sveltos/clusterprofiles/` deploy **paths
 | `gitops/apps/ingress-controller` (contour/envoy)                                        | `ingress-controller: "true"`   |
 | `gitops/apps/external-snapshotter`                                                      | `external-snapshotter: "true"` |
 | `gitops/apps/monitoring` + `monitoring/upstream/kube-prometheus/crds`                   | `monitoring: "true"`           |
+| `gitops/apps/ballast` + `gitops/apps/ballast/enrollment` (Ballast right-sizing)         | `ballast: "true"` (opt-in)     |
 | `gitops/apps/proxmox-csi`, `gitops/apps/trust-manager`, external-dns / velero templates | respective labels              |
 
 The child's own repo (e.g. Bealvio/bealv) is wired as `GitRepository/infra` + `Kustomization/apps` → `./gitops/kustomizations` by `fluxcd.yaml`.
@@ -88,7 +89,7 @@ What is covered:
 | Source                                                                                                                                                                                                                                                                                           | Manager                                             |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
 | Container images in manifests under `gitops/`                                                                                                                                                                                                                                                    | `kubernetes`                                        |
-| HelmRelease charts (HelmRepository / OCI) and images in HelmRelease `spec.values`                                                                                                                                                                                                                | `flux`                                              |
+| HelmRelease charts (HelmRepository / OCI). Images inside `spec.values` are **not** extracted: annotate them or add a narrow regex (e.g. the velero plugin initContainer)                                                                                                                         | `flux` / custom regex                               |
 | `images:` in kustomizations                                                                                                                                                                                                                                                                      | `kustomize` (grafana-operator excluded, see npins)  |
 | `bootstrap/tf/vault` providers                                                                                                                                                                                                                                                                   | `terraform`                                         |
 | Workflow actions (grouped, weekly)                                                                                                                                                                                                                                                               | `github-actions`                                    |
@@ -114,7 +115,7 @@ Other details:
 2. Read upstream release notes for minor/major bumps and 0.x minor bumps; check config/flags used in this repo against removals.
 3. Remember the blast radius table above: cert-manager, flux-operator, contour/envoy, snapshotter and monitoring changes also roll to child clusters.
 4. Renovate PRs touching the same file get rebased automatically after a merge; tick "rebase" in the PR if needed.
-5. After merge Flux picks it up within ~1–2 min (GitRepository 1m, Kustomizations 1–2m). To force: `flux reconcile source git infra -n flux-system` then `flux reconcile kustomization <name> -n flux-system` (`nix run nixpkgs#fluxcd -- …` if `flux` isn't on PATH). The API servers are on the private `10.250.0.0/24` network (mgmt `10.250.0.3`, bealv `10.250.0.13`), reachable only from inside the LAN/VPN.
+5. After merge Flux picks it up within ~1–2 min (GitRepository 1m; a new revision triggers the Kustomizations at once, their 10m/30m intervals are only for drift). To force: `flux reconcile source git infra -n flux-system` then `flux reconcile kustomization <name> -n flux-system` (`nix run nixpkgs#fluxcd -- …` if `flux` isn't on PATH). The API servers are on the private `10.250.0.0/24` network (mgmt `10.250.0.3`, bealv `10.250.0.13`), reachable only from inside the LAN/VPN.
 
 ### Lessons learned / pending upgrades
 
@@ -125,12 +126,22 @@ Other details:
   - dragonfly-operator v1.6.x and powerdns-operator v0.4.x (PR #172). dragonfly v1.6 adds NetworkPolicies that allow same-namespace clients only, plus new RBAC and a new env var. powerdns v0.4 has a breaking CRD change (Zone becomes namespaced, v1alpha2).
   - csi-provisioner v6.3.0 (PR #179) needs Kubernetes ≥ 1.34, but `bootstrap/kubernetes/kubeadm.yaml` pins v1.31.4.
 
+## Ballast (request right-sizing)
+
+Adopted from RPCU/argus. `gitops/apps/ballast` (operator HelmRelease, webhook post-rendered to `failurePolicy: Ignore`) and `gitops/apps/ballast/enrollment` (a `MutatingAdmissionPolicy` that labels controller-owned pods with the Ballast mode and the identity `ballast.bealv.io/workload=<ns>--<workload>`; skips pods with a CPU limit, Jobs/bare pods, CNPG instances and system/storage/monitoring namespaces). Deployed to children by the Sveltos `ballast` profile (opt-in label `ballast: "true"` on the CAPI Cluster; chihiro defaults to `"false"`).
+
+- Mode is `measure` (collect only). Flip it to `apply` in `enrollment-policy.yaml` once `kubectl get workloadprofiles` looks sane; pods are then sized at their next restart. In-place resize stays dry-run until clusters are ≥ 1.35.
+- Metrics come from metrics.k8s.io (prometheus-adapter of the `monitoring` profile), so monitoring must be on for that cluster.
+- `MutatingAdmissionPolicy` is beta/off in 1.34: `--feature-gates=MutatingAdmissionPolicy=true` + `--runtime-config=admissionregistration.k8s.io/v1beta1=true` are set in the `KamajiControlPlaneTemplate`. Only valid while every cluster of the class is ≥ 1.34; drop them and move the policy to `admissionregistration.k8s.io/v1` at ≥ 1.36.
+- Kill switch: `kubectl -n ballast-system create configmap ballast-kill-switch`.
+
 ## Conventions
 
 - GitHub only allows **rebase merges** (`gh pr merge --rebase`); branches are auto-deleted. `main` is unprotected.
 - Commit messages: conventional-ish (`fix:`, `chore(deps):`, `feat ✨:`, `refactor 🎨 (scope):`).
 - Don't hand-edit `upstream/` directories; patch via kustomize patches next to them (e.g. `monitoring/*-patch.yaml`, `ingress-controller/cm-patch.yaml`).
 - Secrets come from Vault through external-secrets (`ExternalSecret` → `ClusterSecretStore/vault-backend`); never commit plaintext credentials.
+- Kamaji GitRepository tag / image tag and the CAPMOX `fetchConfig.url` drifted from their pins under updatecli (fixed 2026-10): when reviewing a Renovate PR for these, check that both values moved together.
 - Known quirk: `nix/fluxcd.nix` fetch URL contains `flux-operator/flux-operator/releases` (duplicated path segment); `buildFlux` prefetches the hash from the correct URL — if `buildFlux` fails to fetch, fix the URL in `nix/fluxcd.nix`.
 
 ## Keep this file current

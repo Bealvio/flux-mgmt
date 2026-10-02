@@ -1,0 +1,61 @@
+# Ballast request right-sizing on opt-in child clusters (pattern from
+# RPCU/argus). Opt a cluster in by labelling its CAPI Cluster:
+#   kubectl -n capi-system label cluster <name> ballast=true
+#
+# Two Flux Kustomizations on the child so the operator installs even where the
+# MutatingAdmissionPolicy API is not served yet: `ballast-enrollment` then just
+# stays not Ready and nothing is enrolled.
+# Needs on the child: cert-manager for the webhook cert (no dependsOn: it is
+# not a Flux Kustomization on every child, the HelmRelease retries instead) and
+# metrics.k8s.io (prometheus-adapter from the `monitoring` profile).
+apiVersion: config.projectsveltos.io/v1beta1
+kind: ClusterProfile
+metadata:
+  name: ballast
+spec:
+  clusterSelector:
+    matchLabels:
+      ballast: "true"
+      fluxcd: "true"
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  policyRefs:
+    - name: ballast-clusterprofile
+      namespace: projectsveltos
+      kind: ConfigMap
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ballast-clusterprofile
+data:
+  ballast.yaml: |
+    apiVersion: kustomize.toolkit.fluxcd.io/v1
+    kind: Kustomization
+    metadata:
+      name: ballast
+      namespace: flux-system
+    spec:
+      interval: 30m
+      path: ./gitops/apps/ballast
+      prune: true
+      wait: true
+      timeout: 10m
+      sourceRef:
+        kind: GitRepository
+        name: mgmt
+    ---
+    apiVersion: kustomize.toolkit.fluxcd.io/v1
+    kind: Kustomization
+    metadata:
+      name: ballast-enrollment
+      namespace: flux-system
+    spec:
+      interval: 30m
+      path: ./gitops/apps/ballast/enrollment
+      prune: true
+      sourceRef:
+        kind: GitRepository
+        name: mgmt
+      dependsOn:
+        - name: ballast
