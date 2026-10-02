@@ -18,3 +18,4 @@ resources:
   - capsule-bealv-services.yaml
   - ingress-replication.yaml
   - ballast.yaml
+  - descheduler.yaml
