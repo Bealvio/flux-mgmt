@@ -1,5 +1,25 @@
 let
   sources = import ./npins;
+  # Shared by every build* script. Builds FIRST and only then replaces the
+  # target dir, so a failed nix-build can't leave it empty, and copies from
+  # "$out"/. so an empty result can never become `cp -r /* <dir>` (which once
+  # copied the whole root filesystem into the repo). <nixpkgs> is the npins pin.
+  buildInto = ''
+    set -euo pipefail
+    build_into() {
+      local dest="$1"
+      shift
+      local out
+      out="$(nix-build --no-out-link -I nixpkgs=${sources.nixpkgs} "$@")"
+      if [ -z "$out" ] || [ ! -d "$out" ]; then
+        echo "build_into: nix-build $* produced no output directory" >&2
+        exit 1
+      fi
+      rm -rf "$dest"
+      mkdir -p "$dest"
+      cp -r --no-preserve=mode "$out"/. "$dest"/
+    }
+  '';
 in
 {
   pkgs,
@@ -17,56 +37,35 @@ in
 
   scripts = {
     buildKubeProm.description = "Build kube-prometheus upstream manifests";
-    buildKubeProm.exec = ''
-      set -e
-      rm -rf gitops/apps/monitoring/upstream
-      mkdir -p gitops/apps/monitoring/upstream
-      cp -r --no-preserve=mode $(nix-build nix/kube-prometheus.nix)/* gitops/apps/monitoring/upstream/
+    buildKubeProm.exec = buildInto + ''
+      build_into gitops/apps/monitoring/upstream nix/kube-prometheus.nix
     '';
     buildSnapshotter.description = "Build external-snapshotter upstream manifests";
-    buildSnapshotter.exec = ''
-      set -e
-      rm -rf gitops/apps/external-snapshotter/upstream
-      mkdir -p gitops/apps/external-snapshotter/upstream
-      cp -r --no-preserve=mode $(nix-build nix/external-snapshotter.nix)/* gitops/apps/external-snapshotter/upstream/
+    buildSnapshotter.exec = buildInto + ''
+      build_into gitops/apps/external-snapshotter/upstream nix/external-snapshotter.nix
     '';
     buildFlux.description = "Build flux-operator upstream manifests (requires version arg)";
-    buildFlux.exec = ''
-      set -e
-      rm -rf bootstrap/fluxcd/upstream
-      mkdir -p bootstrap/fluxcd/upstream
-      fluxhash=$(nix-prefetch-url https://github.com/controlplaneio-fluxcd/flux-operator/releases/download/$1/install.yaml)
-      cp -r --no-preserve=mode $(nix-build nix/fluxcd.nix --argstr manifest01Hash "$fluxhash" --argstr version $1)/* bootstrap/fluxcd/upstream/
+    buildFlux.exec = buildInto + ''
+      fluxhash="$(nix-prefetch-url "https://github.com/controlplaneio-fluxcd/flux-operator/releases/download/$1/install.yaml")"
+      build_into bootstrap/fluxcd/upstream nix/fluxcd.nix --argstr manifest01Hash "$fluxhash" --argstr version "$1"
     '';
     buildCertManager.description = "Build cert-manager upstream manifests (requires version arg)";
-    buildCertManager.exec = ''
-      set -e
-      rm -rf gitops/apps/cert-manager/upstream
-      mkdir -p gitops/apps/cert-manager/upstream
-      certmanagerhash=$(nix-prefetch-url https://github.com/cert-manager/cert-manager/releases/download/$1/cert-manager.yaml)
-      cp -r --no-preserve=mode $(nix-build nix/cert-manager.nix --argstr certManagerHash "$certmanagerhash" --argstr version $1)/* gitops/apps/cert-manager/upstream/
+    buildCertManager.exec = buildInto + ''
+      certmanagerhash="$(nix-prefetch-url "https://github.com/cert-manager/cert-manager/releases/download/$1/cert-manager.yaml")"
+      build_into gitops/apps/cert-manager/upstream nix/cert-manager.nix --argstr certManagerHash "$certmanagerhash" --argstr version "$1"
     '';
     buildCapi.description = "Build cluster-api-operator upstream manifests (requires version arg)";
-    buildCapi.exec = ''
-      set -e
-      rm -rf gitops/apps/cluster-api/upstream
-      mkdir -p gitops/apps/cluster-api/upstream
-      capihash=$(nix-prefetch-url https://github.com/kubernetes-sigs/cluster-api-operator/releases/download/$1/operator-components.yaml)
-      cp -r --no-preserve=mode $(nix-build nix/capi.nix --argstr manifest01Hash "$capihash" --argstr version $1)/* gitops/apps/cluster-api/upstream/
+    buildCapi.exec = buildInto + ''
+      capihash="$(nix-prefetch-url "https://github.com/kubernetes-sigs/cluster-api-operator/releases/download/$1/operator-components.yaml")"
+      build_into gitops/apps/cluster-api/upstream nix/capi.nix --argstr manifest01Hash "$capihash" --argstr version "$1"
     '';
     buildIngressContour.description = "Build ingress-contour upstream manifests";
-    buildIngressContour.exec = ''
-      set -e
-      rm -rf gitops/apps/ingress-controller/upstream
-      mkdir -p gitops/apps/ingress-controller/upstream
-      cp -r --no-preserve=mode $(nix-build nix/ingress-contour.nix)/* gitops/apps/ingress-controller/upstream/
+    buildIngressContour.exec = buildInto + ''
+      build_into gitops/apps/ingress-controller/upstream nix/ingress-contour.nix
     '';
     buildKamaji.description = "Build kamaji upstream manifests";
-    buildKamaji.exec = ''
-      set -e
-      rm -rf gitops/apps/kamaji/upstream
-      mkdir -p gitops/apps/kamaji/upstream
-      cp -r --no-preserve=mode $(nix-build nix/kamaji.nix)/* gitops/apps/kamaji/upstream/
+    buildKamaji.exec = buildInto + ''
+      build_into gitops/apps/kamaji/upstream nix/kamaji.nix
     '';
   };
 
