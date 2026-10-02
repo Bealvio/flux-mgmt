@@ -20,6 +20,6 @@ metadata:
   namespace: capi-kubeadm-bootstrap-system
 spec:
   # renovate: datasource=github-releases depName=kubernetes-sigs/cluster-api
-  version: v1.11.1
+  version: v1.12.11
   configSecret:
     name: capi-vars

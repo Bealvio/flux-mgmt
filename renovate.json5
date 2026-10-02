@@ -129,6 +129,11 @@
       schedule: ["before 6am on monday"],
     },
     {
+      description: "Cluster API core: one minor at a time. The Kamaji provider (v0.19, v1beta1 contract) relies on CAPI's temporary v1beta1-contract compatibility, scheduled for removal: check it before each minor bump",
+      matchDepNames: ["kubernetes-sigs/cluster-api"],
+      allowedVersions: "<1.13.0",
+    },
+    {
       description: "CAPMOX v0.9 needs Cluster API 1.12 (we run 1.11): stay on v0.8.x until CAPI core is upgraded",
       matchDepNames: ["ionos-cloud/cluster-api-provider-proxmox"],
       allowedVersions: "<0.9.0",
