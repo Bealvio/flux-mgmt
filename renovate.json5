@@ -88,6 +88,15 @@
     },
     {
       customType: "regex",
+      description: "Velero plugin initContainer images in HelmRelease values (the flux manager doesn't extract them, and the kubernetes manager skips *helm* files)",
+      managerFilePatterns: ["/^gitops/apps/velero/velero-helmrelease\\.yaml$/"],
+      matchStrings: [
+        "image: (?<depName>velero/velero-plugin-for-[a-z]+):(?<currentValue>\\S+)",
+      ],
+      datasourceTemplate: "docker",
+    },
+    {
+      customType: "regex",
       description: "Operator images inside hand-vendored bundles that have no generator yet",
       managerFilePatterns: [
         "/^gitops/apps/dragonfly/upstream/dragonfly-operator\\.yaml$/",

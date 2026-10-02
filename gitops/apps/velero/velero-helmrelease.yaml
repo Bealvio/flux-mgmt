@@ -33,7 +33,7 @@ spec:
             s3Url: http://minio-mgmt.minio.svc:9000
     initContainers:
       - name: velero-plugin-for-aws
-        image: velero/velero-plugin-for-aws:v1.8.1
+        image: velero/velero-plugin-for-aws:v1.13.2
         volumeMounts:
           - mountPath: /target
             name: plugins
