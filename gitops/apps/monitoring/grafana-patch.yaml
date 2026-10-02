@@ -11,6 +11,13 @@ spec:
   config:
     log:
       mode: "console"
+    # Grafana 13 ships its core datasources (prometheus, loki, ...) as bundled
+    # plugins and, by default, "auto-updates" them at startup: it unregisters
+    # each one, then fails to replace it on the read-only root filesystem and
+    # leaves it unregistered ("Plugin not registered"), so every Prometheus
+    # panel is empty. Keep the versions shipped in the image.
+    plugins:
+      preinstall_auto_update: "false"
     auth:
       disable_login_form: "false"
     security:

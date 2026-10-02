@@ -6,6 +6,11 @@ rules:
   - apiGroups: [""]
     resources: ["services", "endpoints", "pods"]
     verbs: ["get", "list", "watch"]
+  # Prometheus discovers ServiceMonitor targets through EndpointSlices: without
+  # this, cert-manager, flux-system, ingress-contour and velero are not scraped.
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
