@@ -1,17 +1,70 @@
-apiVersion: cluster.x-k8s.io/v1beta1
+# v1beta2 (v1beta1 is unserved from CAPI 1.14); content = the stored object,
+# with the KubeadmConfigTemplate ref moved to v1beta2.
+apiVersion: cluster.x-k8s.io/v1beta2
 kind: ClusterClass
 metadata:
   name: kamaji-proxmox
   namespace: capi-system
 spec:
+  controlPlane:
+    templateRef:
+      apiVersion: controlplane.cluster.x-k8s.io/v1alpha1
+      kind: KamajiControlPlaneTemplate
+      name: kamaji-proxmox
+  infrastructure:
+    templateRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+      kind: ProxmoxClusterTemplate
+      name: kamaji-proxmox
+  patches:
+    - definitions:
+        - jsonPatches:
+            - op: replace
+              path: /spec/template/spec/dnsServers
+              valueFrom:
+                variable: dnsServers
+          selector:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+            kind: ProxmoxClusterTemplate
+            matchResources:
+              infrastructureCluster: true
+      name: proxmox-cluster
+    - definitions:
+        - jsonPatches:
+            - op: replace
+              path: /spec/template/spec/templateID
+              valueFrom:
+                variable: templateID
+          selector:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+            kind: ProxmoxMachineTemplate
+            matchResources:
+              machineDeploymentClass:
+                names:
+                  - default-worker
+      name: templateID
+    - definitions:
+        - jsonPatches:
+            - op: replace
+              path: /spec/template/spec/templateID
+              valueFrom:
+                variable: templateAltID
+          selector:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+            kind: ProxmoxMachineTemplate
+            matchResources:
+              machineDeploymentClass:
+                names:
+                  - default-worker-alt
+      name: templateAltID
   variables:
     - name: dnsServers
       required: true
       schema:
         openAPIV3Schema:
-          type: array
           items:
             type: string
+          type: array
     - name: templateID
       required: true
       schema:
@@ -22,92 +75,33 @@ spec:
       schema:
         openAPIV3Schema:
           type: integer
-  patches:
-    - name: proxmox-cluster
-      definitions:
-        - selector:
-            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
-            kind: ProxmoxClusterTemplate
-            matchResources:
-              infrastructureCluster: true
-          jsonPatches:
-            - op: replace
-              path: /spec/template/spec/dnsServers
-              valueFrom:
-                variable: dnsServers
-    - name: templateID
-      definitions:
-        - selector:
-            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
-            kind: ProxmoxMachineTemplate
-            matchResources:
-              machineDeploymentClass:
-                names:
-                  - default-worker
-          jsonPatches:
-            - op: replace
-              path: /spec/template/spec/templateID
-              valueFrom:
-                variable: templateID
-    - name: templateAltID
-      definitions:
-        - selector:
-            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
-            kind: ProxmoxMachineTemplate
-            matchResources:
-              machineDeploymentClass:
-                names:
-                  - default-worker-alt
-          jsonPatches:
-            - op: replace
-              path: /spec/template/spec/templateID
-              valueFrom:
-                variable: templateAltID
-  controlPlane:
-    ref:
-      apiVersion: controlplane.cluster.x-k8s.io/v1alpha1
-      kind: KamajiControlPlaneTemplate
-      name: kamaji-proxmox
-      namespace: capi-system
-  infrastructure:
-    ref:
-      apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
-      kind: ProxmoxClusterTemplate
-      name: kamaji-proxmox
-      namespace: capi-system
   workers:
     machineDeployments:
-      - class: default-worker
-        template:
-          metadata:
-            labels:
-              node-role.kubernetes.io/slave: ""
-          bootstrap:
-            ref:
-              apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
-              kind: KubeadmConfigTemplate
-              name: kamaji-proxmox
-              namespace: capi-system
-          infrastructure:
-            ref:
-              apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
-              kind: ProxmoxMachineTemplate
-              name: kamaji-proxmox
-              namespace: capi-system
-      - class: default-worker-alt
-        template:
-          metadata:
-            labels:
-              node-role.kubernetes.io/slave-hddb: ""
-          bootstrap:
-            ref:
-              apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
-              kind: KubeadmConfigTemplate
-              name: kamaji-proxmox
-              namespace: capi-system
-          infrastructure:
-            ref:
-              apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
-              kind: ProxmoxMachineTemplate
-              name: kamaji-proxmox
-              namespace: capi-system
+      - bootstrap:
+          templateRef:
+            apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+            kind: KubeadmConfigTemplate
+            name: kamaji-proxmox
+        class: default-worker
+        infrastructure:
+          templateRef:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+            kind: ProxmoxMachineTemplate
+            name: kamaji-proxmox
+        metadata:
+          labels:
+            node-role.kubernetes.io/slave: ""
+      - bootstrap:
+          templateRef:
+            apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+            kind: KubeadmConfigTemplate
+            name: kamaji-proxmox
+        class: default-worker-alt
+        infrastructure:
+          templateRef:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+            kind: ProxmoxMachineTemplate
+            name: kamaji-proxmox
+        metadata:
+          labels:
+            node-role.kubernetes.io/slave-hddb: ""

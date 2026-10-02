@@ -205,7 +205,8 @@ spec:
       sourceNode: proxmox-alv
       templateID: 102
 ---
-apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+# v1beta2 (CAPI >= 1.11 storage version); content = the stored object.
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
 kind: KubeadmConfigTemplate
 metadata:
   name: kamaji-proxmox
@@ -214,15 +215,21 @@ spec:
   template:
     spec:
       clusterConfiguration:
-        scheduler:
-          extraArgs:
-            bind-address: "0.0.0.0"
         controllerManager:
           extraArgs:
-            bind-address: "0.0.0.0"
+            - name: bind-address
+              value: 0.0.0.0
+        scheduler:
+          extraArgs:
+            - name: bind-address
+              value: 0.0.0.0
+      format: cloud-config
       joinConfiguration:
         nodeRegistration:
+          imagePullPolicy: IfNotPresent
           kubeletExtraArgs:
-            provider-id: proxmox://'{{ ds.meta_data.instance_id }}'
-            node-labels: "topology.kubernetes.io/region=proxmox-alv,topology.kubernetes.io/zone=proxmox-alv"
+            - name: node-labels
+              value: topology.kubernetes.io/region=proxmox-alv,topology.kubernetes.io/zone=proxmox-alv
+            - name: provider-id
+              value: proxmox://'{{ ds.meta_data.instance_id }}'
 ---
