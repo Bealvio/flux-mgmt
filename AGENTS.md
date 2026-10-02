@@ -53,6 +53,7 @@ Sveltos ClusterProfiles in `gitops/apps/sveltos/clusterprofiles/` deploy **paths
 | `gitops/apps/external-snapshotter`                                                      | `external-snapshotter: "true"` |
 | `gitops/apps/monitoring` + `monitoring/upstream/kube-prometheus/crds`                   | `monitoring: "true"`           |
 | `gitops/apps/ballast` + `gitops/apps/ballast/enrollment` (Ballast right-sizing)         | `ballast: "true"` (opt-in)     |
+| `gitops/apps/descheduler` (also on mgmt via `gitops/kustomizations/descheduler.yaml`)   | `descheduler: "true"` (opt-in) |
 | `gitops/apps/proxmox-csi`, `gitops/apps/trust-manager`, external-dns / velero templates | respective labels              |
 
 The child's own repo (e.g. Bealvio/bealv) is wired as `GitRepository/infra` + `Kustomization/apps` → `./gitops/kustomizations` by `fluxcd.yaml`.
@@ -134,6 +135,17 @@ Adopted from RPCU/argus. `gitops/apps/ballast` (operator HelmRelease, webhook po
 - Metrics come from metrics.k8s.io (prometheus-adapter of the `monitoring` profile), so monitoring must be on for that cluster.
 - `MutatingAdmissionPolicy` is beta/off in 1.34: `--feature-gates=MutatingAdmissionPolicy=true` + `--runtime-config=admissionregistration.k8s.io/v1beta1=true` are set in the `KamajiControlPlaneTemplate`. Only valid while every cluster of the class is ≥ 1.34; drop them and move the policy to `admissionregistration.k8s.io/v1` at ≥ 1.36.
 - Kill switch: `kubectl -n ballast-system create configmap ballast-kill-switch`.
+
+## Descheduler
+
+`gitops/apps/descheduler` (kubernetes-sigs descheduler chart, Deployment mode, every 30m) runs on mgmt (Flux Kustomization `descheduler`) and on children labelled `descheduler: "true"` (Sveltos `descheduler` profile). It is there to rebalance after a node reboot/drain and to fix broken affinity/taint/spread placement. The policy is deliberately conservative:
+
+- pods with a PVC are protected, and so are system-critical pods (`nodeFit` is on);
+- `kube-system`, `capi-system` (Kamaji tenant control planes, i.e. the bealv API server), `kamaji-system`, `vault` and the unsealer are excluded;
+- at most 2 evictions per node, 1 per namespace and 5 per run;
+- `LowNodeUtilization` uses requests: a node under 20% CPU+memory is underutilized, and pods move off nodes above 60%.
+
+Before changing the policy, dry-run it locally. Extract the binary with `crane export registry.k8s.io/descheduler/descheduler:<tag> - | tar -x bin/descheduler`, then run `bin/descheduler --kubeconfig <kc> --policy-config-file <rendered policy.yaml> --dry-run`.
 
 ## Upgrading CAPI / providers (bealv workers must not roll)
 
