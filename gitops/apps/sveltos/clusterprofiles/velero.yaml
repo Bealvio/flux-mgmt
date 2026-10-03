@@ -55,8 +55,9 @@ spec:
   stopMatchingBehavior: LeavePolicies
   clusterSelector:
     matchLabels:
-      velero: "true"
-      fluxcd: "true"
+      type: workload
+      addons.bealv.io/flux: "enabled"
+      addons.bealv.io/velero: "enabled"
   syncMode: ContinuousWithDriftDetection
   kustomizationRefs:
     - kind: GitRepository
@@ -82,8 +83,9 @@ spec:
   stopMatchingBehavior: LeavePolicies
   clusterSelector:
     matchLabels:
-      velero: "true"
-      fluxcd: "true"
+      type: workload
+      addons.bealv.io/flux: "enabled"
+      addons.bealv.io/velero: "enabled"
   syncMode: ContinuousWithDriftDetection
   reloader: true
   templateResourceRefs:
