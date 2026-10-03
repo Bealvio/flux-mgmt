@@ -57,6 +57,38 @@ spec:
                 names:
                   - default-worker-alt
       name: templateAltID
+    # Proxmox storage of the worker disks. Unset: the clone lands on the
+    # template's storage; set: CAPMOX full-clones onto this one.
+    - definitions:
+        - jsonPatches:
+            - op: add
+              path: /spec/template/spec/storage
+              valueFrom:
+                variable: storage
+          selector:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+            kind: ProxmoxMachineTemplate
+            matchResources:
+              machineDeploymentClass:
+                names:
+                  - default-worker
+      enabledIf: "{{ if .storage }}true{{ end }}"
+      name: storage
+    - definitions:
+        - jsonPatches:
+            - op: add
+              path: /spec/template/spec/storage
+              valueFrom:
+                variable: storageAlt
+          selector:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+            kind: ProxmoxMachineTemplate
+            matchResources:
+              machineDeploymentClass:
+                names:
+                  - default-worker-alt
+      enabledIf: "{{ if .storageAlt }}true{{ end }}"
+      name: storageAlt
   variables:
     - name: dnsServers
       required: true
@@ -75,6 +107,18 @@ spec:
       schema:
         openAPIV3Schema:
           type: integer
+    - name: storage
+      required: false
+      schema:
+        openAPIV3Schema:
+          description: Proxmox storage ID for default-worker disks (e.g. disk_hdd).
+          type: string
+    - name: storageAlt
+      required: false
+      schema:
+        openAPIV3Schema:
+          description: Proxmox storage ID for default-worker-alt disks (e.g. disk_hddb).
+          type: string
   workers:
     machineDeployments:
       - bootstrap:
