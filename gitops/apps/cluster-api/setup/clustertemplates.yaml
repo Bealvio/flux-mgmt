@@ -11,10 +11,17 @@ spec:
       externalManagedControlPlane: true
       dnsServers:
         - 1.1.1.1
+      # The workers' network. CAPMOX (v1alpha2) builds the cluster's default
+      # InClusterIPPool (<cluster>-v4-icip) from this and takes a machine's
+      # InternalIP only from it ("Machine has no default IPAddresses"
+      # otherwise), so it must be real: it used to be a 2.2.2.2/1.1.1.1
+      # placeholder, harmless only while v1alpha1 templates set the worker
+      # pool explicitly. Starts at .10: proxmox-slave-reserved (same subnet,
+      # separate allocations) handed out .2-.9 to earlier workers.
       ipv4Config:
         addresses:
-          - 2.2.2.2-2.2.2.2
-        gateway: 1.1.1.1
+          - 10.250.1.10-10.250.1.250
+        gateway: 10.250.0.1
         prefix: 16
         metric: 100
 ---
