@@ -40,6 +40,14 @@ rules:
   - apiGroups: ["bootstrap.cluster.x-k8s.io"]
     resources: ["*"]
     verbs: ["get", "list", "watch"]
+  # Sveltos add-on status (read-only): ClusterSummaries, and the deployed
+  # resources list from ClusterConfigurations.
+  - apiGroups: ["config.projectsveltos.io"]
+    resources: ["clustersummaries"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["config.projectsveltos.io"]
+    resources: ["clusterconfigurations"]
+    verbs: ["get"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

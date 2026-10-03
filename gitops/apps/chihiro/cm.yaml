@@ -3,37 +3,94 @@ kind: ConfigMap
 metadata:
   name: chihiro-config
 data:
+  # chihiro >= 0.5 config format ({{ chihiro.<key> }} placeholders,
+  # injections, parameters). Server, OIDC, limits and versions come from the
+  # CHIHIRO_* env vars in deploy.yaml.
+  #
+  # Add-ons: every Sveltos add-on is an addons.bealv.io/<addon> label on the
+  # CAPI Cluster (see gitops/apps/sveltos/clusterprofiles and AGENTS.md).
+  # flux and cilium are always on; the others are admin toggles, editable
+  # after creation. Label-writing parameters are linked by chihiro to the
+  # Sveltos add-on selecting on the same key, so the UI shows their status.
   config.yaml: |
-    # Most configuration is now handled via environment variables
-    # See deployment.yaml for CHIHIRO_* environment variables
+    sveltos:
+      enabled: true
     cluster:
+      injections:
+        name:
+          path: metadata.name
+        version:
+          path: spec.topology.version
+          label: "Kubernetes Version"
+          editable: true
+        serviceDomain:
+          path: spec.clusterNetwork.serviceDomain
+        controlPlaneReplicas:
+          path: spec.topology.controlPlane.replicas
+          label: "Control Plane Replicas"
+          editable: true
+          min: 1
+          max: 3
+          visible_groups: [kube-admin]
+        workerGroups:
+          path: spec.topology.workers.machineDeployments
+          label: "Worker Groups"
+          editable: true
+      # One MachineDeployment per group, rendered from worker_group_template.
+      # Classes are the kamaji-proxmox ClusterClass worker classes.
+      worker_group_fields:
+        name:
+          label: "Group name"
+          type: string
+          default: worker
+          required: true
+          order: 0
+        class:
+          label: "Worker class"
+          type: select
+          options: [default-worker, default-worker-alt]
+          default: default-worker
+          order: 1
+        replicas:
+          label: "Replicas"
+          type: number
+          default: "1"
+          min: 1
+          max: 2
+          order: 2
+      worker_group_template: |
+        class: {{ chihiro.field.class }}
+        name: {{ chihiro.field.name }}
+        replicas: {{ chihiro.field.replicas }}
       template: |
         apiVersion: cluster.x-k8s.io/v1beta2
         kind: Cluster
         metadata:
-          name: PLACEHOLDER_NAME
+          name: ignore
           namespace: capi-system
           labels:
-            ballast: "false"
-            capsule: "true"
-            cert-manager: "true"
-            cert-manager-setup: 'generic'
-            cni: cilium
-            external-dns: "true"
-            external-secret: "false"
-            external-snapshotter: "true"
-            fluxcd: "true"
-            ingress-controller: "true"
-            ingress-replication: "true"
-            monitoring: "false"
-            proxmox-csi: "true"
-            velero: "false"
+            type: workload
+            addons.bealv.io/flux: enabled
+            addons.bealv.io/cilium: enabled
+            addons.bealv.io/cert-manager: {{ chihiro.certManager }}
+            addons.bealv.io/trust-manager: {{ chihiro.trustManager }}
+            addons.bealv.io/external-dns: {{ chihiro.externalDns }}
+            addons.bealv.io/ingress-controller: {{ chihiro.ingressController }}
+            addons.bealv.io/ingress-replication: {{ chihiro.ingressReplication }}
+            addons.bealv.io/external-snapshotter: {{ chihiro.externalSnapshotter }}
+            addons.bealv.io/proxmox-csi: {{ chihiro.proxmoxCsi }}
+            addons.bealv.io/capsule: {{ chihiro.capsule }}
+            addons.bealv.io/monitoring: {{ chihiro.monitoring }}
+            addons.bealv.io/velero: {{ chihiro.velero }}
+            addons.bealv.io/external-secrets: {{ chihiro.externalSecrets }}
+            addons.bealv.io/ballast: {{ chihiro.ballast }}
+            addons.bealv.io/descheduler: {{ chihiro.descheduler }}
         spec:
           clusterNetwork:
             pods:
               cidrBlocks:
                 - 172.16.0.0/16
-            serviceDomain: PLACEHOLDER_SERVICE_DOMAIN
+            serviceDomain: ignore
             services:
               cidrBlocks:
                 - 172.17.0.0/16
@@ -41,18 +98,143 @@ data:
             classRef:
               name: kamaji-proxmox
             variables:
-            - name: dnsServers
-              value:
-              - 10.250.0.1
-            - name: templateID
-              value: 997
+              - name: dnsServers
+                value:
+                  - 10.250.0.1
+              - name: templateID
+                value: 997
             controlPlane:
               replicas: 3
-            version: PLACEHOLDER_VERSION
+            version: "0.0.0"
             workers:
-              machineDeployments:
-                - class: default-worker
-                  name: worker
-                  replicas: PLACEHOLDER_NODES
-      # Field mapping: specify where to inject the node count
-      node_count_path: 'spec.topology.workers.machineDeployments[0].replicas'
+              machineDeployments: []
+      parameters:
+        certManager:
+          label: "cert-manager"
+          description: "generic: ClusterIssuers only; gatewayapi: also Gateway API support."
+          type: select
+          options: [generic, gatewayapi]
+          default: generic
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/cert-manager'"
+          visible_groups: [kube-admin]
+        trustManager:
+          label: "trust-manager"
+          description: "Distribute CA bundles (trust-manager)."
+          type: boolean
+          default: true
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/trust-manager'"
+          visible_groups: [kube-admin]
+        externalDns:
+          label: "External DNS"
+          description: "Publish Services/Ingresses to DNS (needs cert-manager)."
+          type: boolean
+          default: true
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/external-dns'"
+          visible_groups: [kube-admin]
+        ingressController:
+          label: "Ingress controller"
+          description: "Contour ingress controller."
+          type: boolean
+          default: true
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/ingress-controller'"
+          visible_groups: [kube-admin]
+        ingressReplication:
+          label: "Ingress → HTTPRoute"
+          description: "Mirror Ingresses as Gateway API HTTPRoutes."
+          type: boolean
+          default: true
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/ingress-replication'"
+          visible_groups: [kube-admin]
+        externalSnapshotter:
+          label: "Volume snapshots"
+          description: "CSI external-snapshotter."
+          type: boolean
+          default: true
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/external-snapshotter'"
+          visible_groups: [kube-admin]
+        proxmoxCsi:
+          label: "Proxmox CSI"
+          description: "Persistent volumes on Proxmox."
+          type: boolean
+          default: true
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/proxmox-csi'"
+          visible_groups: [kube-admin]
+        capsule:
+          label: "Capsule"
+          description: "Multi-tenancy with Capsule tenants."
+          type: boolean
+          default: true
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/capsule'"
+          visible_groups: [kube-admin]
+        monitoring:
+          label: "Monitoring"
+          description: "kube-prometheus stack, shipping to Mimir on mgmt."
+          type: boolean
+          default: false
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/monitoring'"
+          visible_groups: [kube-admin]
+        velero:
+          label: "Velero"
+          description: "Backups to minio-clusters."
+          type: boolean
+          default: false
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/velero'"
+          visible_groups: [kube-admin]
+        externalSecrets:
+          label: "External Secrets"
+          description: "External Secrets Operator wired to Vault."
+          type: boolean
+          default: false
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/external-secrets'"
+          visible_groups: [kube-admin]
+        ballast:
+          label: "Ballast"
+          description: "Request right-sizing (needs monitoring)."
+          type: boolean
+          default: false
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/ballast'"
+          visible_groups: [kube-admin]
+        descheduler:
+          label: "Descheduler"
+          description: "Rebalance pods across nodes."
+          type: boolean
+          default: false
+          true_value: enabled
+          false_value: disabled
+          editable: true
+          path: "metadata.labels.'addons.bealv.io/descheduler'"
+          visible_groups: [kube-admin]
