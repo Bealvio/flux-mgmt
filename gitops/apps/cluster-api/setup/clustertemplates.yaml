@@ -183,6 +183,41 @@ spec:
         serviceType: LoadBalancer
       registry: registry.k8s.io
 ---
+# Workers (both classes). ProxmoxMachineTemplate is immutable, hence -v2.
+# - net0 takes its address only from the cluster default pool (ProxmoxCluster
+#   ipv4Config, 10.250.1.10-250 via 10.250.0.1): CAPMOX v1alpha2 derives the
+#   machine InternalIP from it. The old extra ipPoolRef gave a 2nd IP.
+# - tags: CAPMOX v0.9.1 bug: if the clone already matches the spec (cores,
+#   memory, network, description, tags), reconcileVirtualMachineConfig
+#   returns without leaving the "Cloning" state, every later step (IP,
+#   cloud-init, power-on) is skipped and the stopped VM is marked ready. A tag
+#   the template never has guarantees a config change after the clone.
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+kind: ProxmoxMachineTemplate
+metadata:
+  name: kamaji-proxmox-v2
+  namespace: capi-system
+spec:
+  template:
+    spec:
+      checks:
+        skipCloudInitStatus: true
+      format: qcow2
+      full: true
+      network:
+        networkDevices:
+          - name: net0
+            bridge: vmbr2
+            model: virtio
+            defaultIPv4: true
+            defaultIPv6: false
+      sourceNode: proxmox-alv
+      tags:
+        - capi
+      templateID: 102
+---
+# Previous worker template, no longer referenced by the ClusterClass. Kept
+# until no MachineDeployment uses it any more; then delete.
 # v1alpha2 (CAPMOX >= v0.8): content is exactly what the v0.8 conversion
 # webhook produced from the former v1alpha1 template, incl. its defaults
 # (full, defaultIPv4/6, metric), so CAPI sees no change and rolls nothing.

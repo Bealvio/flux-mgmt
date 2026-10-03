@@ -87,7 +87,7 @@ spec:
           templateRef:
             apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
             kind: ProxmoxMachineTemplate
-            name: kamaji-proxmox
+            name: kamaji-proxmox-v2
         metadata:
           labels:
             node-role.kubernetes.io/slave: ""
@@ -101,7 +101,7 @@ spec:
           templateRef:
             apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
             kind: ProxmoxMachineTemplate
-            name: kamaji-proxmox
+            name: kamaji-proxmox-v2
         metadata:
           labels:
             node-role.kubernetes.io/slave-hddb: ""
