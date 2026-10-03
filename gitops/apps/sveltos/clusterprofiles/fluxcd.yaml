@@ -8,7 +8,8 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      fluxcd: "true"
+      type: workload
+      addons.bealv.io/flux: "enabled"
   kustomizationRefs:
     - kind: GitRepository
       name: infra
@@ -25,7 +26,8 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      fluxcd: "true"
+      type: workload
+      addons.bealv.io/flux: "enabled"
   policyRefs:
     - name: fluxinstance-clusterprofile
       namespace: projectsveltos
@@ -121,7 +123,8 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      fluxcd: "true"
+      type: workload
+      addons.bealv.io/flux: "enabled"
   templateResourceRefs:
     - resource:
         apiVersion: v1

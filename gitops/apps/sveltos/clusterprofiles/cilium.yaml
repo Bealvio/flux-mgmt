@@ -8,7 +8,8 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      cni: cilium
+      type: workload
+      addons.bealv.io/cilium: "enabled"
   policyRefs:
     - name: cilium-conf-clusterprofile
       namespace: projectsveltos
