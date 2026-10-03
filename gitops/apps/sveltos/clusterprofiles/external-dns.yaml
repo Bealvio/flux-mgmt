@@ -7,8 +7,12 @@ spec:
   syncMode: ContinuousWithDriftDetection
   clusterSelector:
     matchLabels:
-      external-dns: "true"
-      cert-manager: "true"
+      type: workload
+      addons.bealv.io/external-dns: "enabled"
+    matchExpressions:
+      # any cert-manager variant (gatewayapi or generic)
+      - key: addons.bealv.io/cert-manager
+        operator: Exists
   kustomizationRefs:
     - kind: GitRepository
       name: infra
@@ -66,7 +70,8 @@ spec:
   stopMatchingBehavior: LeavePolicies
   sourceClusterSelector:
     matchLabels:
-      external-dns: "true"
+      type: workload
+      addons.bealv.io/external-dns: "enabled"
   destinationClusterSelector:
     matchLabels:
       type: "mgmt"

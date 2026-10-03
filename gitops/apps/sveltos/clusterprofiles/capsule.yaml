@@ -7,7 +7,8 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      capsule: "true"
+      type: workload
+      addons.bealv.io/capsule: "enabled"
   templateResourceRefs:
     - identifier: ClusterAnnotations
       resource:
@@ -269,7 +270,8 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      capsule: "true"
+      type: workload
+      addons.bealv.io/capsule: "enabled"
   eventSourceName: tenant-created
   syncMode: ContinuousWithDriftDetection
   reloader: true
@@ -323,7 +325,8 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      capsule: "true"
+      type: workload
+      addons.bealv.io/capsule: "enabled"
   destinationClusterSelector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: bealv

@@ -8,7 +8,8 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      cert-manager-setup: "gatewayapi"
+      type: workload
+      addons.bealv.io/cert-manager: "gatewayapi"
   kustomizationRefs:
     - kind: GitRepository
       name: infra
@@ -25,7 +26,8 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      cert-manager-setup: "generic"
+      type: workload
+      addons.bealv.io/cert-manager: "generic"
   kustomizationRefs:
     - kind: GitRepository
       name: infra
@@ -53,7 +55,11 @@ spec:
   stopMatchingBehavior: LeavePolicies
   sourceClusterSelector:
     matchLabels:
-      cert-manager: "true"
+      type: workload
+    matchExpressions:
+      # any cert-manager variant (gatewayapi or generic)
+      - key: addons.bealv.io/cert-manager
+        operator: Exists
   destinationClusterSelector:
     matchLabels:
       type: mgmt

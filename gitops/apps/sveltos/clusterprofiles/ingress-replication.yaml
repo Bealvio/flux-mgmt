@@ -16,7 +16,8 @@ metadata:
 spec:
   sourceClusterSelector:
     matchLabels:
-      ingress-replication: "true"
+      type: workload
+      addons.bealv.io/ingress-replication: "enabled"
   destinationClusterSelector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: bealv
