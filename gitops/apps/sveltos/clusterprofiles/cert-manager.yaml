@@ -166,8 +166,11 @@ data:
       reloader: true
       clusterSelector:
         matchLabels:
-          cert-manager: 'true'
+          type: workload
           cluster.x-k8s.io/cluster-name: {{ $cluster.metadata.name }}
+        matchExpressions:
+          - key: addons.bealv.io/cert-manager
+            operator: Exists
       policyRefs:
         - kind: Secret
           name: cacert-clusterprofile

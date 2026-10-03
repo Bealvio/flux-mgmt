@@ -43,18 +43,36 @@ devenv.nix          # dev shell + build scripts
 
 ### What reaches the child clusters (important for blast radius)
 
-Sveltos ClusterProfiles in `gitops/apps/sveltos/clusterprofiles/` deploy **paths of this repo** onto child clusters (e.g. `bealv`) through a `GitRepository/mgmt` created on each child. Changing these paths changes **every matching child cluster**, not just mgmt:
+Sveltos ClusterProfiles in `gitops/apps/sveltos/clusterprofiles/` deploy **paths of this repo** onto child clusters (e.g. `bealv`) through a `GitRepository/mgmt` created on each child. Changing these paths changes **every matching child cluster**, not just mgmt.
 
-| Path in this repo                                                                       | Child-cluster label selector   |
-| --------------------------------------------------------------------------------------- | ------------------------------ |
-| `bootstrap/fluxcd/upstream/` (flux-operator) + FluxInstance template in `fluxcd.yaml`   | `fluxcd: "true"`               |
-| `gitops/apps/cert-manager/upstream`, `.../setup`                                        | `cert-manager: "true"`         |
-| `gitops/apps/ingress-controller` (contour/envoy)                                        | `ingress-controller: "true"`   |
-| `gitops/apps/external-snapshotter`                                                      | `external-snapshotter: "true"` |
-| `gitops/apps/monitoring` + `monitoring/upstream/kube-prometheus/crds`                   | `monitoring: "true"`           |
-| `gitops/apps/ballast` + `gitops/apps/ballast/enrollment` (Ballast right-sizing)         | `ballast: "true"` (opt-in)     |
-| `gitops/apps/descheduler` (also on mgmt via `gitops/kustomizations/descheduler.yaml`)   | `descheduler: "true"` (opt-in) |
-| `gitops/apps/proxmox-csi`, `gitops/apps/trust-manager`, external-dns / velero templates | respective labels              |
+**Add-on labels** (argus-style, one file per add-on in `clusterprofiles/`). A child cluster gets an add-on when its CAPI `Cluster` carries the label. Every workload profile also requires `type: workload` (the mgmt SveltosCluster is `type: mgmt`):
+
+| Label on the CAPI Cluster                            | Add-on (file)                                                                              | Paths deployed                                                        |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| `addons.bealv.io/flux: enabled`                      | flux-operator, FluxInstance, `GitRepository/mgmt` + `infra` (`fluxcd.yaml`)                | `bootstrap/fluxcd/upstream/`                                          |
+| `addons.bealv.io/cilium: enabled`                    | Cilium chart + L2 policy; LB IP for the child API on mgmt (`cilium.yaml`)                  | -                                                                     |
+| `addons.bealv.io/cert-manager: gatewayapi`/`generic` | cert-manager variant; Vault ClusterIssuer via the cert-vault trigger (`cert-manager.yaml`) | `gitops/apps/cert-manager/upstream`, `.../setup`                      |
+| `addons.bealv.io/trust-manager: enabled`             | trust-manager (`trust-manager.yaml`)                                                       | `gitops/apps/trust-manager`                                           |
+| `addons.bealv.io/external-dns: enabled`              | external-dns + PowerDNS zone (`external-dns.yaml`; also needs cert-manager)                | `clusterprofiles/templates/external-dns`                              |
+| `addons.bealv.io/external-secrets: enabled`          | ESO + Vault backend (`external-secret.yaml`)                                               | -                                                                     |
+| `addons.bealv.io/external-snapshotter: enabled`      | CSI snapshotter (`external-snapshotter.yaml`)                                              | `gitops/apps/external-snapshotter`                                    |
+| `addons.bealv.io/ingress-controller: enabled`        | contour/envoy (`ingress-controller.yaml`)                                                  | `gitops/apps/ingress-controller`                                      |
+| `addons.bealv.io/ingress-replication: enabled`       | Ingress → HTTPRoute mirroring (`ingress-replication.yaml`)                                 | -                                                                     |
+| `addons.bealv.io/proxmox-csi: enabled`               | Proxmox CSI (`proxmox-csi.yaml`)                                                           | `gitops/apps/proxmox-csi`                                             |
+| `addons.bealv.io/monitoring: enabled`                | kube-prometheus + remote_write to Mimir (`monitoring.yaml`)                                | `gitops/apps/monitoring` + `monitoring/upstream/kube-prometheus/crds` |
+| `addons.bealv.io/velero: enabled`                    | Velero + bucket on minio-clusters (`velero.yaml`)                                          | `clusterprofiles/templates/velero`                                    |
+| `addons.bealv.io/ballast: enabled`                   | Ballast right-sizing (`ballast.yaml`)                                                      | `gitops/apps/ballast` (+ `enrollment`)                                |
+| `addons.bealv.io/descheduler: enabled`               | descheduler (`descheduler.yaml`)                                                           | `gitops/apps/descheduler`                                             |
+| `addons.bealv.io/capsule: enabled`                   | Capsule tenants (`capsule.yaml`)                                                           | -                                                                     |
+
+Any other value (chihiro writes `disabled`) means off. bealv's labels are set by hand (`kubectl -n capi-system label cluster bealv …`); clusters created by chihiro get them from `gitops/apps/chihiro/cm.yaml`, where each add-on is an admin toggle.
+
+**Changing selectors or labels without withdrawing anything.** A ClusterProfile that stops matching a cluster (selector or label change, or the profile renamed/deleted) withdraws what it deployed, unless it is `LeavePolicies`. Many profiles changing at once also redeploys everything to the children (on 2026-10-02 that overloaded kamaji-etcd and took bealv's API down). So:
+
+1. add new labels to the clusters first (additive, nothing changes);
+2. change selectors a few profiles per PR. `scripts/sveltos-match-diff.sh [origin/main]` must print "match sets identical": it compares, for every ClusterProfile/EventTrigger (cluster, source and destination selectors), the live clusters matched at the base ref and in the working tree. `scripts/check-addon-labels.py` must pass: every selector, including those in ConfigMap templates rendered by EventTriggers (e.g. `cert-manager-configs-<cluster>`), uses only the catalog keys;
+3. remove old labels last, and only after a live check (`kubectl get clusterprofile,profile,eventtrigger -A -o json`) shows no selector still using them;
+4. never rename a profile.
 
 The child's own repo (e.g. Bealvio/bealv) is wired as `GitRepository/infra` + `Kustomization/apps` → `./gitops/kustomizations` by `fluxcd.yaml`.
 
