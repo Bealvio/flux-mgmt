@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: cilium
-      version: 1.18.2
+      version: 1.18.14
       sourceRef:
         kind: HelmRepository
         name: cilium
@@ -17,6 +17,13 @@ spec:
   values:
     k8sServiceHost: 10.250.0.3
     k8sServicePort: 6443
+    # One agent at a time (chart default 2 of 3 nodes): mgmt announces bealv's
+    # API server (10.250.0.13) through Cilium L2 announcements.
+    updateStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 0
+        maxUnavailable: 1
     operator:
       replicas: 1
       updateStrategy:
