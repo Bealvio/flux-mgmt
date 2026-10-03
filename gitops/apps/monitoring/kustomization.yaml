@@ -99,6 +99,30 @@ patches:
       - op: replace
         path: /spec/datasource/isDefault
         value: false
+  # kube-prometheus PDBs dropped: Prometheus and Alertmanager run a single
+  # replica (a minAvailable/maxUnavailable PDB only blocks node drains), and
+  # workload clusters have 2 nodes where downtime during rollouts is accepted.
+  - patch: |-
+      $patch: delete
+      apiVersion: policy/v1
+      kind: PodDisruptionBudget
+      metadata:
+        name: alertmanager-main
+        namespace: monitoring
+  - patch: |-
+      $patch: delete
+      apiVersion: policy/v1
+      kind: PodDisruptionBudget
+      metadata:
+        name: prometheus-k8s
+        namespace: monitoring
+  - patch: |-
+      $patch: delete
+      apiVersion: policy/v1
+      kind: PodDisruptionBudget
+      metadata:
+        name: prometheus-adapter
+        namespace: monitoring
 transformers:
   - |-
     apiVersion: builtin
