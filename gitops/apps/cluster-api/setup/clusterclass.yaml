@@ -89,6 +89,24 @@ spec:
                   - default-worker-alt
       enabledIf: "{{ if .storageAlt }}true{{ end }}"
       name: storageAlt
+    # Worker RAM (both classes). Overrides the reference template's 32 GB:
+    # 4 x 32 GB workers during a rollout OOM-killed VMs on the Proxmox host.
+    - definitions:
+        - jsonPatches:
+            - op: add
+              path: /spec/template/spec/memoryMiB
+              valueFrom:
+                variable: workerMemoryMiB
+          selector:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+            kind: ProxmoxMachineTemplate
+            matchResources:
+              machineDeploymentClass:
+                names:
+                  - default-worker
+                  - default-worker-alt
+      enabledIf: "{{ if .workerMemoryMiB }}true{{ end }}"
+      name: workerMemoryMiB
   variables:
     - name: dnsServers
       required: true
@@ -107,6 +125,13 @@ spec:
       schema:
         openAPIV3Schema:
           type: integer
+    - name: workerMemoryMiB
+      required: false
+      schema:
+        openAPIV3Schema:
+          description: RAM of every worker VM in MiB (a multiple of 8, e.g. 16384). Unset = the template's.
+          type: integer
+          minimum: 2048
     - name: storage
       required: false
       schema:
