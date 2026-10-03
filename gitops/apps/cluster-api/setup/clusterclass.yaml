@@ -149,3 +149,13 @@ spec:
         metadata:
           labels:
             node-role.kubernetes.io/slave-hddb: ""
+            node-role.kubernetes.io/gpu: ""
+        # GPU group: templateAltID points at a kaassopeia "gpu" template
+        # (hostpci0 = the iGPU mapping, one GVT-g vGPU). The iGPU has a single
+        # vGPU slot, so the old VM must be gone before the new one can start.
+        rollout:
+          strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxSurge: 0
+              maxUnavailable: 1
