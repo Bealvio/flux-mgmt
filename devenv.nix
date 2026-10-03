@@ -30,8 +30,10 @@ in
   imports = [ "${sources.nixbook}/devenvModules/devenv.nix" ];
 
   packages = with pkgs; [
+    jq
     kustomize
     npins
+    python3
     yq-go
   ];
 
@@ -43,6 +45,12 @@ in
     buildDashboards.description = "Build multi-cluster Grafana dashboards (cluster variable + Mimir)";
     buildDashboards.exec = buildInto + ''
       build_into gitops/apps/monitoring/grafana-dashboards/generated nix/grafana-dashboards.nix
+    '';
+    checkSveltos.description = "Lint Sveltos selectors and diff their live cluster matches against origin/main";
+    checkSveltos.exec = ''
+      set -euo pipefail
+      python3 scripts/check-addon-labels.py
+      scripts/sveltos-match-diff.sh "''${1:-origin/main}"
     '';
     buildSnapshotter.description = "Build external-snapshotter upstream manifests";
     buildSnapshotter.exec = buildInto + ''
@@ -92,6 +100,7 @@ in
     echo ""
     echo "  buildKubeProm        - Build kube-prometheus upstream manifests"
     echo "  buildDashboards      - Build multi-cluster Grafana dashboards"
+    echo "  checkSveltos [ref]   - Lint add-on labels, diff Sveltos cluster matches vs ref"
     echo "  buildSnapshotter     - Build external-snapshotter upstream manifests"
     echo "  buildFlux <version>  - Build flux-operator upstream manifests"
     echo "  buildCertManager <version> - Build cert-manager upstream manifests"
