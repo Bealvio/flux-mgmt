@@ -160,6 +160,16 @@ spec:
         metadata:
           labels:
             node-role.kubernetes.io/slave: ""
+        # Delete-first and bounded drains: downtime during rollouts is accepted,
+        # and a surge VM costs host RAM (the host OOM-killed workers).
+        rollout:
+          strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxSurge: 0
+              maxUnavailable: 1
+        deletion:
+          nodeDrainTimeoutSeconds: 120
       - bootstrap:
           templateRef:
             apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
@@ -184,3 +194,5 @@ spec:
             rollingUpdate:
               maxSurge: 0
               maxUnavailable: 1
+        deletion:
+          nodeDrainTimeoutSeconds: 120
