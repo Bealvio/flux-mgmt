@@ -8,8 +8,9 @@ metadata:
 spec:
   clusterSelector:
     matchLabels:
-      descheduler: "true"
-      fluxcd: "true"
+      type: workload
+      addons.bealv.io/descheduler: "enabled"
+      addons.bealv.io/flux: "enabled"
   syncMode: ContinuousWithDriftDetection
   reloader: true
   policyRefs:
