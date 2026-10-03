@@ -22,7 +22,8 @@ spec:
             - --config=/config.yaml
           command:
             - /chihiro
-          image: zot.bealv.io/public/chihiro:v0.6.0
+          # Images moved to zot.rpcu.io with v0.7.0.
+          image: zot.rpcu.io/public/chihiro:v0.8.3@sha256:05d72fa707fc4172f3f27d3b28b762fd6f0921afff07cba28d5a7bd05baf6dc8
           ports:
             - containerPort: 8080
               name: http
@@ -72,6 +73,9 @@ spec:
               value: "2"
             - name: CHIHIRO_MAX_TOTAL_NODES
               value: "2"
+            # Tenant control planes run on mgmt (Kamaji): cap their replicas.
+            - name: CHIHIRO_MAX_TOTAL_CP
+              value: "3"
           volumeMounts:
             - name: config
               mountPath: /config.yaml
