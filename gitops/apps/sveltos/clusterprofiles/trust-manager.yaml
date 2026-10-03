@@ -8,7 +8,8 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      cert-manager: "true"
+      type: workload
+      addons.bealv.io/trust-manager: "enabled"
   kustomizationRefs:
     - kind: GitRepository
       name: infra
