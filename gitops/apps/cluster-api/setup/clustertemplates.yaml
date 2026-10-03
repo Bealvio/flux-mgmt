@@ -179,6 +179,21 @@ spec:
         cgroupfs: systemd
         preferredAddressTypes:
           - InternalIP
+        # Pull images in parallel: serialized pulls made a fresh worker wait
+        # 5-10 min for its ~60 images (each pull itself takes 2-30 s).
+        configurationJSONPatches:
+          - op: add
+            path: /serializeImagePulls
+            value: false
+          - op: add
+            path: /maxParallelImagePulls
+            value: 5
+          - op: add
+            path: /registryPullQPS
+            value: 10
+          - op: add
+            path: /registryBurst
+            value: 20
       network:
         serviceType: LoadBalancer
       registry: registry.k8s.io
