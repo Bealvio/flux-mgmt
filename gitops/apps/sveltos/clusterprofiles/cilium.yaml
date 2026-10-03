@@ -72,9 +72,12 @@ spec:
     - group: "cluster.x-k8s.io"
       version: "v1beta1"
       kind: "Cluster"
+      # Clusters opted into Cilium (add-on label catalog, AGENTS.md). Removing
+      # the label drops the event and deletes the generated profile (its
+      # resources stay: the trigger is LeavePolicies).
       labelFilters:
-        - key: cni
-          value: cilium
+        - key: addons.bealv.io/cilium
+          value: enabled
           operation: Equal
 ---
 apiVersion: lib.projectsveltos.io/v1beta1

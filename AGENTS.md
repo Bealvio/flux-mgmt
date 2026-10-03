@@ -71,7 +71,7 @@ Any other value (chihiro writes `disabled`) means off. bealv's labels are set by
 
 1. add new labels to the clusters first (additive, nothing changes);
 2. change selectors a few profiles per PR. `scripts/sveltos-match-diff.sh [origin/main]` must print "match sets identical": it compares, for every ClusterProfile/EventTrigger (cluster, source and destination selectors), the live clusters matched at the base ref and in the working tree. `scripts/check-addon-labels.py` must pass: every selector, including those in ConfigMap templates rendered by EventTriggers (e.g. `cert-manager-configs-<cluster>`), uses only the catalog keys;
-3. remove old labels last, and only after a live check (`kubectl get clusterprofile,profile,eventtrigger -A -o json`) shows no selector still using them;
+3. remove old labels last, and only after a live check shows nothing still using them: selectors of `clusterprofile,profile,eventtrigger` (including generated `sveltos-*` / `*-<cluster>` profiles) **and `eventsource` `labelFilters` on CAPI Clusters**. An EventSource that stops matching a cluster drops the event, and its EventTrigger deletes the profile generated for it (on 2026-10-03 removing `cni` from bealv did that to the `cilium-lb` profile; its resources survived only because the trigger is `LeavePolicies`);
 4. never rename a profile.
 
 The child's own repo (e.g. Bealvio/bealv) is wired as `GitRepository/infra` + `Kustomization/apps` → `./gitops/kustomizations` by `fluxcd.yaml`.
