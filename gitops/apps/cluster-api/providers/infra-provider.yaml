@@ -17,3 +17,25 @@ spec:
   fetchConfig:
     # renovate: datasource=github-releases depName=ionos-cloud/cluster-api-provider-proxmox
     url: https://github.com/ionos-cloud/cluster-api-provider-proxmox/releases/download/v0.9.1/infrastructure-components.yaml
+  # CAPMOX v0.9.1 rejects every spec change to a ProxmoxMachineTemplate,
+  # including CAPI's topology dry-run: CAPI dry-runs an update of the current
+  # worker template to detect changes, gets "immutable" and errors out
+  # instead of rotating, so changing templateID (or the ClusterClass worker
+  # template) froze the rollout. Skip the webhook for dry-run requests only:
+  # real updates are still rejected, rotation creates new templates.
+  # The test op guards the index if CAPMOX reorders its webhooks.
+  patches:
+    - target:
+        group: admissionregistration.k8s.io
+        version: v1
+        kind: ValidatingWebhookConfiguration
+        name: capmox-validating-webhook-configuration
+      patch: |
+        - op: test
+          path: /webhooks/3/name
+          value: validation.proxmoxmachinetemplate.infrastructure.cluster.x-k8s.io
+        - op: add
+          path: /webhooks/3/matchConditions
+          value:
+            - name: skip-dry-run
+              expression: "!request.dryRun"
