@@ -15,8 +15,9 @@ metadata:
 spec:
   clusterSelector:
     matchLabels:
-      ballast: "true"
-      fluxcd: "true"
+      type: workload
+      addons.bealv.io/ballast: "enabled"
+      addons.bealv.io/flux: "enabled"
   syncMode: ContinuousWithDriftDetection
   reloader: true
   policyRefs:

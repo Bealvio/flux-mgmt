@@ -8,7 +8,8 @@ spec:
   reloader: true
   clusterSelector:
     matchLabels:
-      external-snapshotter: "true"
+      type: workload
+      addons.bealv.io/external-snapshotter: "enabled"
   kustomizationRefs:
     - kind: GitRepository
       name: infra
