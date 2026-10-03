@@ -44,3 +44,55 @@ stringData:
       namespace: external-dns
     data:
       api_key: {{ index (getResource "dnsSecrets").data "api_key" }}
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventSource
+metadata:
+  name: pdns-cluster-eventsource
+spec:
+  collectResources: true
+  resourceSelectors:
+    - group: "apps"
+      version: "v1"
+      kind: "Deployment"
+      name: "external-dns-internal"
+      namespace: "external-dns"
+---
+apiVersion: lib.projectsveltos.io/v1beta1
+kind: EventTrigger
+metadata:
+  name: pdns-cluster-eventtrigger
+spec:
+  stopMatchingBehavior: LeavePolicies
+  sourceClusterSelector:
+    matchLabels:
+      external-dns: "true"
+  destinationClusterSelector:
+    matchLabels:
+      type: "mgmt"
+  eventSourceName: pdns-cluster-eventsource
+  syncMode: ContinuousWithDriftDetection
+  reloader: true
+  oneForEvent: true
+  policyRefs:
+    - kind: ConfigMap
+      name: pdns-zone
+      namespace: projectsveltos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pdns-zone
+  annotations:
+    projectsveltos.io/instantiate: "true"
+data:
+  zone.yaml: |
+    apiVersion: dns.cav.enablers.ob/v1alpha1
+    kind: Zone
+    metadata:
+      name: {{ .Cluster.metadata.name }}.lan
+    spec:
+      nameservers:
+        - dummy.{{ .Cluster.metadata.name }}.lan
+      kind: Native
+---
