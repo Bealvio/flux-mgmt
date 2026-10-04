@@ -143,7 +143,8 @@ Other details:
 - external-dns ≥ v0.22 requires `--policy` and defaults to the `external-dns.kubernetes.io/` annotation prefix. We set `--policy=sync --enable-legacy-annotation-prefix` in `gitops/apps/external-dns/internal-deploy.yaml` **and** in the Sveltos template `gitops/apps/sveltos/clusterprofiles/templates/external-dns/deploy-patch.yaml`, whose args list fully replaces the base one. Keep both in sync.
 - Pending (as of 2026-09-28), deliberately not merged:
   - dragonfly-operator v1.6.x and powerdns-operator v0.4.x (PR #172). dragonfly v1.6 adds NetworkPolicies that allow same-namespace clients only, plus new RBAC and a new env var. powerdns v0.4 has a breaking CRD change (Zone becomes namespaced, v1alpha2).
-  - csi-provisioner v6.3.0 (PR #179) needs Kubernetes ≥ 1.34, but `bootstrap/kubernetes/kubeadm.yaml` pins v1.31.4.
+  - csi-provisioner v6.3.0 (PR #179) needs Kubernetes ≥ 1.34: no longer blocked, mgmt runs ≥ 1.36 since 2026-10-03.
+- `bootstrap/kubernetes/kubeadm.yaml` is only read by `kubeadm init`; upgrades use the live `kube-system/kubeadm-config` and `kubelet-config` ConfigMaps. Keep it at the cluster's version and kubeadm API (`v1beta4`; kubeadm 1.37 removed `v1beta3`), validated with `kubeadm config validate --config`. Kubelet feature gates set there end up in `kubelet-config` and every node's `/var/lib/kubelet/config.yaml`: kubelet 1.37 refuses to start on a removed gate (`SidecarContainers`), so drop GA gates from the ConfigMap before a kubelet minor bump.
 
 ## Ballast (request right-sizing)
 
