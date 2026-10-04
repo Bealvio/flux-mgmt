@@ -3,6 +3,11 @@ kind: Deployment
 metadata:
   name: minio-clusters
 spec:
+  # Single RWO volume: a rolling update starts the new pod first, and it waits
+  # forever for the volume when the old pod can't run (2026-10-04).
+  strategy:
+    type: Recreate
+    rollingUpdate: null
   selector:
     matchLabels:
       app: minio-clusters
