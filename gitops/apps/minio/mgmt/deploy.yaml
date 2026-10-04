@@ -13,7 +13,9 @@ spec:
     spec:
       containers:
         - name: minio
-          image: minio/minio:latest
+          # minio/minio is gone from Docker Hub and quay.io ("repository does not
+          # exist", 2026-10-04): community build of the MinIO source, pinned.
+          image: docker.io/pgsty/minio:RELEASE.2026-08-04T00-00-00Z@sha256:b6bfe7239bfc83fb90d31612d9704d86039dd714f7904b3f1ad68f211e602372
           args:
             - server
             - /storage
