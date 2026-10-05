@@ -24,13 +24,24 @@ spec:
       rollingUpdate:
         maxSurge: 0
         maxUnavailable: 1
+    # Fewer lease renewals (etcd writes on the worn NVMe, 2026-10-05). The
+    # L2 leases stay shorter than the operator's: they carry bealv's API IP,
+    # which moves after up to 30s when its node dies. Agents only read the
+    # L2 settings at start (rollOutCiliumPods is off).
     operator:
       replicas: 1
       updateStrategy:
         type: Recreate
         rollingUpdate: null
+      extraArgs:
+        - --leader-election-lease-duration=60s
+        - --leader-election-renew-deadline=40s
+        - --leader-election-retry-period=10s
     l2announcements:
       enabled: true
+      leaseDuration: 30s
+      leaseRenewDeadline: 20s
+      leaseRetryPeriod: 5s
     socketLB:
       hostNamespaceOnly: true
     kubeProxyReplacement: true

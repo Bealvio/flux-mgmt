@@ -11,9 +11,15 @@ apiServer:
 controllerManager:
   extraArgs:
     bind-address: "0.0.0.0"
+    leader-elect-lease-duration: "60s"
+    leader-elect-renew-deadline: "40s"
+    leader-elect-retry-period: "10s"
 scheduler:
   extraArgs:
     bind-address: "0.0.0.0"
+    leader-elect-lease-duration: "60s"
+    leader-elect-renew-deadline: "40s"
+    leader-elect-retry-period: "10s"
 controlPlaneEndpoint: "10.250.0.3:6443"
 ---
 apiVersion: kubeadm.k8s.io/v1beta3
