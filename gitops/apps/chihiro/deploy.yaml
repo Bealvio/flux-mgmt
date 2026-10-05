@@ -23,7 +23,7 @@ spec:
           command:
             - /chihiro
           # Images moved to zot.rpcu.io with v0.7.0.
-          image: zot.rpcu.io/public/chihiro:v0.8.3@sha256:05d72fa707fc4172f3f27d3b28b762fd6f0921afff07cba28d5a7bd05baf6dc8
+          image: zot.rpcu.io/public/chihiro:v0.9.0@sha256:fb7690d1b0f8eb0babda4036952c9f1119de04c1e82e71d103d21de91ad25df2
           ports:
             - containerPort: 8080
               name: http
