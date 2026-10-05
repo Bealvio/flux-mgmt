@@ -37,7 +37,9 @@ data:
           label: "Worker Groups"
           editable: true
       # One MachineDeployment per group, rendered from worker_group_template.
-      # Classes are the kamaji-proxmox ClusterClass worker classes.
+      # Classes are the kamaji-proxmox ClusterClass worker classes, minus
+      # default-worker-alt: that is the GPU group (templateAltID, the iGPU's
+      # single vGPU slot is held by bealv).
       worker_group_fields:
         name:
           label: "Group name"
@@ -48,7 +50,7 @@ data:
         class:
           label: "Worker class"
           type: select
-          options: [default-worker, default-worker-alt]
+          options: [default-worker]
           default: default-worker
           order: 1
         replicas:
@@ -102,13 +104,38 @@ data:
                 value:
                   - 10.250.0.1
               - name: templateID
-                value: 997
+                value: {{ chihiro.nodeTemplate }}
             controlPlane:
               replicas: 3
             version: "0.0.0"
             workers:
               machineDeployments: []
       parameters:
+        # Worker image: the kaassopeia Proxmox template built for the chosen
+        # Kubernetes version (nixOS-server kaas-templates CI, tag
+        # k8s-v<version>). chihiro switches it when the version changes.
+        # Every CHIHIRO_AVAILABLE_VERSIONS entry needs an option here.
+        # Not editable: chihiro writes select edits as strings and the
+        # ClusterClass templateID variable is an integer.
+        nodeTemplate:
+          label: "Node image"
+          description: "kaassopeia Proxmox template matching the Kubernetes version."
+          type: select
+          options:
+            - value: "119"
+              label: "kaassopeia v1.37.1 (119)"
+              constrain:
+                version: ["v1.37.1"]
+            - value: "117"
+              label: "kaassopeia v1.36.3 (117)"
+              constrain:
+                version: ["v1.36.3"]
+            - value: "113"
+              label: "kaassopeia v1.35.4 (113)"
+              constrain:
+                version: ["v1.35.4"]
+          default: "119"
+          visible_groups: [kube-admin]
         certManager:
           label: "cert-manager"
           description: "generic: ClusterIssuers only; gatewayapi: also Gateway API support."
