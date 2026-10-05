@@ -73,6 +73,13 @@ spec:
       scheduler:
         extraArgs:
           - --bind-address=0.0.0.0
+          # Renew leader-election leases every 10s instead of 2s: lease
+          # renewals were most of the tenant's etcd writes, and kamaji-etcd
+          # shares a worn NVMe with mgmt (slow fsyncs, 2026-10-05). Failover
+          # of a crashed scheduler/controller-manager takes up to 60s.
+          - --leader-elect-lease-duration=60s
+          - --leader-elect-renew-deadline=40s
+          - --leader-elect-retry-period=10s
         resources:
           requests:
             cpu: 10m
@@ -93,6 +100,9 @@ spec:
       controllerManager:
         extraArgs:
           - --bind-address=0.0.0.0
+          - --leader-elect-lease-duration=60s
+          - --leader-elect-renew-deadline=40s
+          - --leader-elect-retry-period=10s
         resources:
           requests:
             cpu: 50m

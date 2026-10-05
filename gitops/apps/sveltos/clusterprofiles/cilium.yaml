@@ -26,13 +26,23 @@ spec:
       values: |
         k8sServiceHost: "{{ .Cluster.spec.controlPlaneEndpoint.host }}"
         k8sServicePort: "{{ .Cluster.spec.controlPlaneEndpoint.port }}"
+        # Leases renew every 10s instead of 2s (etcd write load on the worn
+        # mgmt NVMe, 2026-10-05). A dead node's LB IPs move after up to 60s.
+        # Agents only read these at start (rollOutCiliumPods is off).
         operator:
           replicas: 1
           updateStrategy:
             type: Recreate
             rollingUpdate: null
+          extraArgs:
+            - --leader-election-lease-duration=60s
+            - --leader-election-renew-deadline=40s
+            - --leader-election-retry-period=10s
         l2announcements:
           enabled: true
+          leaseDuration: 60s
+          leaseRenewDeadline: 40s
+          leaseRetryPeriod: 10s
         socketLB:
           hostNamespaceOnly: true
         kubeProxyReplacement: true
