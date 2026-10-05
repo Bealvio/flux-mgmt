@@ -7,3 +7,18 @@ patches:
     target:
       kind: ConfigMap
       name: contour
+  # Lease renewals every 10s instead of 2s (etcd writes on the worn mgmt
+  # NVMe, 2026-10-05). Also rolls to children (Sveltos ingress-controller).
+  - target:
+      kind: Deployment
+      name: contour
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --leader-election-lease-duration=60s
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --leader-election-renew-deadline=40s
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --leader-election-retry-period=10s

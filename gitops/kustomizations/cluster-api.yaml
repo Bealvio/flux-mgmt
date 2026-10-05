@@ -10,6 +10,22 @@ spec:
   sourceRef:
     kind: GitRepository
     name: infra
+  # Lease renewals every 10s instead of 2s (etcd writes on the worn mgmt
+  # NVMe, 2026-10-05). Here because buildCapi regenerates upstream/.
+  patches:
+    - target:
+        kind: Deployment
+        name: capi-operator-controller-manager
+      patch: |
+        - op: add
+          path: /spec/template/spec/containers/0/args/-
+          value: --leader-elect-lease-duration=60s
+        - op: add
+          path: /spec/template/spec/containers/0/args/-
+          value: --leader-elect-renew-deadline=40s
+        - op: add
+          path: /spec/template/spec/containers/0/args/-
+          value: --leader-elect-retry-period=10s
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
