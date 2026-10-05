@@ -184,3 +184,10 @@ spec:
           memory: 32Mi
         limits:
           memory: 128Mi
+      nginx:
+        config:
+          # Keep push bodies and proxied responses in memory: with nginx's
+          # 16k default both spilled to the disk-backed /tmp emptyDir.
+          httpSnippet: |-
+            client_body_buffer_size 4m;
+            proxy_max_temp_file_size 0;

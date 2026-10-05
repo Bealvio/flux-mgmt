@@ -15,6 +15,13 @@ spec:
                 path: ca.crt
       containers:
         - name: blackbox-exporter
+          # Upstream's 40Mi limit sat at the cap and kept evicting the
+          # binary's own page cache: ~40 MB/s of re-reads on the mgmt NVMe.
+          resources:
+            requests:
+              memory: 48Mi
+            limits:
+              memory: 128Mi
           volumeMounts:
             - name: ca-cert-volume
               mountPath: /bealv/ca.crt
