@@ -68,7 +68,8 @@ spec:
             - name: CHIHIRO_CREATOR_GROUPS
               value: "kube-admin"
             - name: CHIHIRO_AVAILABLE_VERSIONS
-              value: "v1.34.0"
+              # Each needs a kaassopeia template option (nodeTemplate in cm.yaml).
+              value: "v1.37.1,v1.36.3,v1.35.4"
             - name: CHIHIRO_MAX_CLUSTERS
               value: "2"
             - name: CHIHIRO_MAX_TOTAL_NODES
