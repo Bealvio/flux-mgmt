@@ -107,6 +107,27 @@ spec:
                   - default-worker-alt
       enabledIf: "{{ if .workerMemoryMiB }}true{{ end }}"
       name: workerMemoryMiB
+    # Worker vCPUs (both classes): one socket of workerNumCores cores. Unset
+    # (bealv) = the template's CPU layout.
+    - definitions:
+        - jsonPatches:
+            - op: add
+              path: /spec/template/spec/numSockets
+              value: 1
+            - op: add
+              path: /spec/template/spec/numCores
+              valueFrom:
+                variable: workerNumCores
+          selector:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+            kind: ProxmoxMachineTemplate
+            matchResources:
+              machineDeploymentClass:
+                names:
+                  - default-worker
+                  - default-worker-alt
+      enabledIf: "{{ if .workerNumCores }}true{{ end }}"
+      name: workerNumCores
   variables:
     - name: dnsServers
       required: true
@@ -132,6 +153,13 @@ spec:
           description: RAM of every worker VM in MiB (a multiple of 8, e.g. 16384). Unset = the template's.
           type: integer
           minimum: 2048
+    - name: workerNumCores
+      required: false
+      schema:
+        openAPIV3Schema:
+          description: vCPUs of every worker VM (one socket). Unset = the template's.
+          type: integer
+          minimum: 1
     - name: storage
       required: false
       schema:
