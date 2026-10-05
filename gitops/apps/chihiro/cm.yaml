@@ -105,6 +105,11 @@ data:
                   - 10.250.0.1
               - name: templateID
                 value: {{ chihiro.nodeTemplate }}
+              # [2] and [3]: edit paths of workerMemoryMiB / workerCpus.
+              - name: workerMemoryMiB
+                value: {{ chihiro.workerMemoryMiB }}
+              - name: workerNumCores
+                value: {{ chihiro.workerCpus }}
             controlPlane:
               replicas: 3
             version: "0.0.0"
@@ -136,6 +141,26 @@ data:
                 version: ["v1.35.4"]
           default: "119"
           visible_groups: [kube-admin]
+        # Worker VM size (all groups). Unset, workers would get the template's
+        # 4 vCPU / 32 GiB. Editing either rotates the workers.
+        workerCpus:
+          label: "Worker vCPUs"
+          description: "vCPUs of each worker VM."
+          type: number
+          default: "2"
+          min: 1
+          max: 4
+          editable: true
+          path: "spec.topology.variables[3].value"
+        workerMemoryMiB:
+          label: "Worker memory (MiB)"
+          description: "RAM of each worker VM, in MiB (a multiple of 1024)."
+          type: number
+          default: "8192"
+          min: 4096
+          max: 16384
+          editable: true
+          path: "spec.topology.variables[2].value"
         certManager:
           label: "cert-manager"
           description: "generic: ClusterIssuers only; gatewayapi: also Gateway API support."
