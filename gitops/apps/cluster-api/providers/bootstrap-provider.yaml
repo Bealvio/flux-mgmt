@@ -20,7 +20,7 @@ metadata:
   namespace: capi-kubeadm-bootstrap-system
 spec:
   # renovate: datasource=github-releases depName=kubernetes-sigs/cluster-api
-  version: v1.13.6
+  version: v1.13.7
   configSecret:
     name: capi-vars
   # Lease renewals every 10s instead of 2s (etcd writes on the worn mgmt
